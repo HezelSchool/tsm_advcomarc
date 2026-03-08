@@ -58,7 +58,7 @@ Une fois l'application téléchargée et extraite, nous pouvons l'exécuter dire
     [Connecter le câble Ethernet entre votre ordinateur et le port Ethernet de l’AP MikroTik]
 )
 
-Un câble Ethernet est connecté sur le port Ethernet `1` de l'AP MikroTik et sur le port Ethernet de l'hôte Windows.
+Un câble Ethernet est connecté sur le port Ethernet `ether3` de l'AP MikroTik et sur le port Ethernet de l'hôte Windows.
 
 #qbox(
     [Lancer Winbox, cliquer sur l’onglet « Neighbors » pour découvrir l’appareil puis sélectionner l’appareil détecté (connexion par adresse MAC recommandée). Les identifiants par défaut sont `Username` : `admin` et `Password` : (vide). Finalement cliquer sur « Connect ».]
@@ -237,7 +237,7 @@ Puis dans l'onglet `Security`, appuyer sur le bouton adjacent au champ `Authenti
 
 9. *Connexion à Internet*
 
-D'un point de vue physique, l'AP est connecté à Internet (via mon routeur personnel) via l'interface `2.5G` et connecter à un hôte Windows via l'interface `ether1`.
+D'un point de vue physique, l'AP est connecté à Internet (via mon routeur personnel) via l'interface `2.5G` et connecter à un hôte Windows via l'interface `ether3`.
 
 Sur le laptop (`Arch OS`), nous pouvons afficher les réseaux WiFi disponibles et constater que le réseau `MyWifi` est bien détecté.
 
@@ -304,7 +304,19 @@ TODO
     ]
 )
 
-TODO
+La procédure de téléchargement du fichier de configuration est disponible #link("https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/")[sur le site de SocialWiFi: https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/].
+
+Cliquer sur le sous-menu `New Terminal` puis entrer la commande suivante :
+
+#sourcecode(```bash
+export file=config-lab01
+```)
+
+#image("../asset/save_config_terminal.png", width: 100%)
+
+Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-lab01.rsc` a bien été créé.
+
+#image("../asset/file_backup.png", width: 100%)
 
 === Téléchargement du fichier de configuration
 
@@ -319,7 +331,9 @@ TODO
     ]
 )
 
-TODO
+Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab01.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("TODO")[_repository_ GitHub du projet: TODO].
+
+#image("../asset/download_config.png", width: 100%)
 
 == Questions
 
