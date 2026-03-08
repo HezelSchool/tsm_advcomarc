@@ -27,6 +27,7 @@
 
   // ---------- Imports
 
+#import "@preview/codelst:2.0.2": sourcecode
 #import "../helper.typ": qbox
 
 // ---------- Implementation
