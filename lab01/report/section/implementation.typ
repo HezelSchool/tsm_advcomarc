@@ -290,7 +290,114 @@ PING google.com (2a00:1450:400a:1009::65) 56 data bytes
     [Pour cette étape, capturez les différents échanges entre l’AP/serveur et un hôte. Enregistrez-les dans un fichier pcap. Pour cela, il est recommandé d’utiliser aircrack-ng, wireshark ou à l’aide de l’outil dans Router OS (Tools-> Packet sniffer).]
 )
 
+Nous avons d'abord essayé de capturer le _4-way handshake_ entre l'AP et le _laptop_ `Arch OS` à l'aide des outils `Wireshark` (sur le _laptop_) et/ou du _packet sniffer_ de l'AP. À chaque tentative, nous n'avons pas réussi à obtenir les paquets du _4-way handshake_ (en filtrant sur le protocol `eapol`).
+
+Nous soupconnons que le problème vient du fait que la carte WiFi du _laptop_ et celle de l'AP ne sont pas capable de communiquer en mode _monitor_. Nous avons donc utilisé l'outil `aircrack-ng` depuis le _laptop_ `Arch OS` pour capturer le _4-way handshake_ entre l'AP et un smartphone `Android`.
+
+1. *Passer la carte _WiFi_ en mode _monitor_*
+
+Identifier l'interface _WiFi_ du _laptop_. Dans notre cas, il s'agit de l'interface `wlp97s0`.
+
+#sourcecode(```sh
+iw dev
+# Output
+phy#0
+	Unnamed/non-netdev interface
+		wdev 0x2
+		addr 2c:98:11:78:e8:ed
+		type P2P-device
+		txpower 3.00 dBm
+	Interface wlp97s0
+		ifindex 2
+		wdev 0x1
+		addr 2c:98:11:78:e8:ed
+		ssid HezelPhone
+		type managed
+		channel 153 (5765 MHz), width: 40 MHz, center1: 5755 MHz
+		txpower 3.00 dBm
+		multicast TXQ:
+			qsz-byt	qsz-pkt	flows	drops	marks	overlmt	hashcol	tx-bytes	tx-packets
+			0	0	0	0	0	0	0	0		0
+```)
+
+Pour éviter de potentiels interférences, désactiver l'application `NetworkManager` qui gère les connexions réseau sur le _laptop_.
+
+#sourcecode(```sh
+sudo systemctl stop NetworkManager
+```)
+
+Activer le mode _monitor_ sur l'interface `wlp97s0`. L'_output_ de cette commande indique les programmes pouvant interférer dans notre processus. Cette action "crée" une nouvelle interface `wlp97s0mon` pour le _monitoring_.
+
+#sourcecode(```sh
+sudo airmon-ng start wlp97s0
+# Output
+PHY	Interface	Driver		Chipset
+
+phy0	wlp97s0		mt7921e		MEDIATEK Corp. MT7922 802.11ax PCI Express Wireless Network Adapter
+		(mac80211 monitor mode vif enabled for [phy0]wlp97s0 on [phy0]wlp97s0mon)
+		(mac80211 station mode vif disabled for [phy0]wlp97s0)
+```)
+
+Vérifier la création de l'interface de _monitoring_ `wlp97s0mon`. On peut voir que le type de l'interface est `monitor` dans l'_output_ de la commande.
+
+#sourcecode(```sh
+iw dev
+# Output
+phy#0
+	Interface wlp97s0mon
+		ifindex 3
+		wdev 0x3
+		addr 2c:98:11:78:e8:ed
+		type monitor
+		channel 10 (2457 MHz), width: 20 MHz (no HT), center1: 2457 MHz
+```)
+
+2. *_Scan_ des réseaux _WiFi_*
+
+Utiliser la commande ci-dessous pour scanner les réseaux _WiFi_ disponibles.
+
+#sourcecode(```sh
+sudo airodump-ng --band abg wlp97s0mon
+```)
+
+L'image ci-dessous est un exemple de résultat de la commande précédente, la _MAC Address_ n'apparaît donc pas dans la liste. TODO refaire capture avec MAC Adresse de l'AP
+
+#image("../asset/airodump-ng.png", width: 100%)
+
+3. *Capturer le traffic du réseau*
+
+TODO refaire avec le vrai réseau
+Pour capturer le traffic du réseau _WiFi_ de l'AP, utiliser la commande ci-dessous. Le canal 
+
+#sourcecode(```sh
+sudo airodump-ng -c 136 --bssid D4:01:C3:FA:9A:3A -w handshake wlp97s0mon
+# Output
 TODO
+```)
+
+4. *Forcer la reconnexion des clients*
+
+Utiliser la commande suivante pour forcer la déconnexion des clients au réseau.
+
+#sourcecode(```sh
+sudo aireplay-ng --deauth 5 -a D4:01:C3:FA:9A:3A wlp97s0mon
+# Output
+TODO
+```)
+
+5. *Effectuer le _4-way handshake_*
+
+Finallement, se connecter avec le _smartphone_ `Android` sur le réseau `MyWifi`. Sur le _laptop_ `Arch OS`, stopper la capture du réseau. Les fichiers de captures générés sont les suivants :
+
+- `handshake-01.cap`
+- `handshake-01.csv`
+- `handshake-01.kismet.csv`
+- `handshake-01.kismet.netxml`
+- `handshake-01.log.csv`
+
+Ces fichiers de captures sont disponibles dans le #link("TODO")[_repository_ GitHub du projet: TODO]
+
+TODO faire l'analyse de la capture
 
 == Étape 3 : Exporter votre configuration
 
@@ -343,19 +450,82 @@ Télécharger le fichier de configuration en effectuant un clic droit sur le fic
     [Dans quel menu peut-on trouver les informations concernant le matériel ainsi que les paquets installés sur l’appareil ?]
 )
 
+La liste des _packages_ installés sur l'appareil est disponible dans le menu `System > Packages`.
+
+TODO capture
+
+Il est également possible d'obtenir des informations sur les _packages_ installés via le terminal en utilisant la commande suivante : 
+
+#sourcecode(```sh
+/system package print
+# Output
 TODO
+```)
+
+Les informations matérielles de l'AP (_CPU_, mémoire, etc.) sont disponibles dans les menus : 
+
+- `System > Resources`
+
+TODO capture
+
+- `System > Routerboard`
+
+TODO capture
+
+Il est également possible d'obtenir des informations matérielles via le terminal en utilisant la commande suivante :
+
+#sourcecode(```sh
+/system resource print
+# Output
+TODO
+```)
+
 
 === Question 2
 
 #qbox([Quelles sont les différentes manières de réinitialiser la configuration de l’appareil ?])
 
-TODO
+Comme déjà expliquer précédemment dans le rapport (voir section "Première connexion"), il est possible de faire un _reset_ physique en suivant les étapes ci-desssous :
+
+1. Débrancher l'alimentation de l'AP.
+2. Maintenir le bouton de réinitialisation enfoncé.
+3. Rebrancher l'alimentation tout en maintenant le bouton de réinitialisation enfoncé jusqu'à ce que les LED clignotent.
+4. Relâcher le bouton de réinitialisation.
+
+Il est également possible de faire un _reset_ en ligne de commande en utilisant la commande suivante :
+
+#sourcecode(```sh
+/system reset-configuration
+```)
+
+Via l'interface graphique, on peut également effectuer un _reset_ en naviguant dans le menu `System > Reset Configuration`. Cette interface permet de remettre à zéro la configuration de l'appareil.
+
+TODO capture
+
+TODO :
+
+- Différences entre les méthodes
+— Options disponibles (keep/remove default config)
+- ypes d’informations disponibles
 
 === Question 3
 
 #qbox([Dans quel menu peut-on trouver les informations concernant le matériel ?])
 
+Comme déjà expliqué précédemment dans le rapport (voir section "Question 1"), les informations matérielles de l'AP sont disponibles dans les menus :
+
+- `System > Resources`
+- `System > Routerboard`
+
+Il est également possible d'obtenir des informations matérielles via le terminal en utilisant la commande suivante :
+
+#sourcecode(```sh
+/system resource print
+# Output
 TODO
+```)
+
+TODO : types d’informations disponibles
 
 === Question 4
 
@@ -363,8 +533,27 @@ TODO
 
 TODO
 
+Réponse attendue :
+— Description des 4 messages EAPOL
+— Rôle de chaque message
+— Éléments à identifier dans Wireshark (ANonce, SNonce, MIC, GTK)
+— Critères de validation d’une capture complète
+— Captures d’écran annotées de Wireshark
+
 === Question 5
 
 #qbox([Quelle est la faiblesse de la sécurité WPA2-PSK ? Par quoi la remplacer ?])
 
 TODO
+
+Réponse attendue :
+— Vulnérabilités de WPA2-PSK :
+— Attaques par dictionnaire sur le 4-way handshake capturé
+— Faiblesse liée aux mots de passe simples
+— Partage du même PSK entre tous les utilisateurs
+— Vulnérabilité KRACK (Key Reinstallation Attack)
+— Solutions de remplacement :
+— WPA3-SAE (Simultaneous Authentication of Equals)
+— WPA2-Enterprise avec RADIUS (802.1X)
+— Protection contre les attaques par force brute
+— Authentification individuelle par utilisateur
