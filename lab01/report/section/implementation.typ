@@ -395,7 +395,7 @@ Finallement, se connecter avec le _smartphone_ `Android` sur le réseau `MyWifi`
 - `handshake-01.kismet.netxml`
 - `handshake-01.log.csv`
 
-Ces fichiers de captures sont disponibles dans le #link("TODO")[_repository_ GitHub du projet: TODO]
+Ces fichiers de captures sont disponibles dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe]
 
 TODO faire l'analyse de la capture
 
@@ -438,7 +438,7 @@ Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-
     ]
 )
 
-Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab01.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/blob/main/lab01/config-lab01.rsc")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/blob/main/lab01/config-lab01.rsc].
+Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab01.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe].
 
 #image("../asset/download_config.png", width: 100%)
 
