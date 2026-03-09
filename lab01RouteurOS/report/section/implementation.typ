@@ -360,29 +360,16 @@ Utiliser la commande ci-dessous pour scanner les réseaux _WiFi_ disponibles.
 sudo airodump-ng --band abg wlp97s0mon
 ```)
 
-L'image ci-dessous est un exemple de résultat de la commande précédente, la _MAC Address_ n'apparaît donc pas dans la liste. TODO refaire capture avec MAC Adresse de l'AP
+Sur l'image ci-dessous, nous pouvons voir le réseau _WiFi_ (`MyWifi`), ainsi que l'adresse _MAC_ de l'AP (`D4:01:C3:FA:9A:3A`) et son canal (`140`).
 
-#image("../asset/airodump-ng.png", width: 100%)
+#align(center, image("../asset/airodump-ng.png", width: 70%))
 
 3. *Capturer le traffic du réseau*
 
-TODO refaire avec le vrai réseau
-Pour capturer le traffic du réseau _WiFi_ de l'AP, utiliser la commande ci-dessous. Le canal 
+Pour capturer le traffic du réseau _WiFi_ de l'AP, utiliser la commande ci-dessous.
 
 #sourcecode(```sh
-sudo airodump-ng -c 136 --bssid D4:01:C3:FA:9A:3A -w handshake wlp97s0mon
-# Output
-TODO
-```)
-
-4. *Forcer la reconnexion des clients*
-
-Utiliser la commande suivante pour forcer la déconnexion des clients au réseau.
-
-#sourcecode(```sh
-sudo aireplay-ng --deauth 5 -a D4:01:C3:FA:9A:3A wlp97s0mon
-# Output
-TODO
+sudo airodump-ng -c 140 --bssid D4:01:C3:FA:9A:3D -w handshake wlp97s0mon
 ```)
 
 5. *Effectuer le _4-way handshake_*
@@ -396,8 +383,6 @@ Finallement, se connecter avec le _smartphone_ `Android` sur le réseau `MyWifi`
 - `handshake-01.log.csv`
 
 Ces fichiers de captures sont disponibles dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe]
-
-TODO faire l'analyse de la capture
 
 == Étape 3 : Exporter votre configuration
 
@@ -419,11 +404,11 @@ Cliquer sur le sous-menu `New Terminal` puis entrer la commande suivante :
 export file=config-lab01
 ```)
 
-#image("../asset/save_config_terminal.png", width: 100%)
+#align(center, image("../asset/save_config_terminal.png", width: 65%))
 
 Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-lab01.rsc` a bien été créé.
 
-#image("../asset/file_backup.png", width: 100%)
+#align(center, image("../asset/file_backup.png", width: 65%))
 
 === Téléchargement du fichier de configuration
 
@@ -442,6 +427,8 @@ Télécharger le fichier de configuration en effectuant un clic droit sur le fic
 
 #image("../asset/download_config.png", width: 100%)
 
+#pagebreak()
+
 == Questions
 
 === Question 1
@@ -452,34 +439,41 @@ Télécharger le fichier de configuration en effectuant un clic droit sur le fic
 
 La liste des _packages_ installés sur l'appareil est disponible dans le menu `System > Packages`.
 
-TODO capture
+#image("../asset/q1_system_packages.png", width: 100%)
 
-Il est également possible d'obtenir des informations sur les _packages_ installés via le terminal en utilisant la commande suivante : 
+Il est également possible d'obtenir des informations sur les _packages_ installés via le terminal en utilisant la commande suivante :
 
 #sourcecode(```sh
 /system package print
-# Output
-TODO
 ```)
+
+#image("../asset/q1_terminal_system_packages.png", width: 100%)
+
+#pagebreak()
 
 Les informations matérielles de l'AP (_CPU_, mémoire, etc.) sont disponibles dans les menus : 
 
 - `System > Resources`
 
-TODO capture
+#image("../asset/q1_system_resources.png", width: 100%)
 
 - `System > Routerboard`
 
-TODO capture
+#image("../asset/q1_system_routerboard.png", width: 100%)
 
-Il est également possible d'obtenir des informations matérielles via le terminal en utilisant la commande suivante :
+Il est également possible d'obtenir des informations matérielles via le terminal en utilisant les commandes suivante :
 
 #sourcecode(```sh
-/system resource print
-# Output
-TODO
+/system package resource print
 ```)
 
+#image("../asset/q1_terminal_system_resources.png", width: 100%)
+
+#sourcecode(```sh
+/system package routerboard print
+```)
+
+#image("../asset/q1_terminal_system_routerboard.png", width: 100%)
 
 === Question 2
 
@@ -500,13 +494,13 @@ Il est également possible de faire un _reset_ en ligne de commande en utilisant
 
 Via l'interface graphique, on peut également effectuer un _reset_ en naviguant dans le menu `System > Reset Configuration`. Cette interface permet de remettre à zéro la configuration de l'appareil.
 
-TODO capture
+#image("../asset/q2_system_reset.png", width: 100%)
 
 TODO :
 
 - Différences entre les méthodes
 — Options disponibles (keep/remove default config)
-- ypes d’informations disponibles
+- Types d’informations disponibles
 
 === Question 3
 
@@ -521,8 +515,7 @@ Il est également possible d'obtenir des informations matérielles via le termin
 
 #sourcecode(```sh
 /system resource print
-# Output
-TODO
+/system routerboard print
 ```)
 
 TODO : types d’informations disponibles
