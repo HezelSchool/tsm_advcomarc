@@ -1,7 +1,7 @@
 /*
  * --------------------------------------------------------------------------------
- * File: /home/hezeltm/Projects/typst_template/practical_work/data/metadata.typ
- * Project: /home/hezeltm/Projects/typst_template/practical_work/data
+ * File: /home/hezeltm/Projects/typst_template/practical_work/section/conclusion.typ
+ * Project: /home/hezeltm/Projects/typst_template/practical_work/section
  * Created Date: Friday, December 19th 2025, 8:47:21 am
  * Author: Dimitri Julmy, dev@dimitri-julmy.com
  * --------------------------------------------------------------------------------
@@ -26,40 +26,6 @@
  */
 
 
-// ---------- Metadata
+// ---------- Conclusion
 
-#let metadata = (
-  lang: "en",
-  logo: "logo_hes-so.png",
-  type: "Report",
-  scope: "Scope",
-  name: "LabXX - Title",
-  course: "TSM - Advanced Communication Architecture",
-  git_url: "https://github.com/HezelTm/tsm_advcomarc",
-  date_creation: datetime(year: 2026, month: 03, day: 04),
-  date_due: datetime.today(),
-  entity: "University of Applied Sciences and Arts of Western Switzerland",
-  entity_acronym: "HES-SO",
-  section : "Master of Science in Engineering",
-  section_acronym: "MSE",
-  profil: "Information and cyber security",
-  profil_acronym: "ICS",
-  locality: "Lausanne",
-)
-
-// ---------- Persons
-
-#let authors = (
-  (
-    firstname: "Dimitri",
-    lastname: "Julmy",
-    gender: "m",
-    locality: "Fribourg",
-  ),
-  (
-    firstname: "Dylan",
-    lastname: "Flotte",
-    gender: "m",
-    locality: "Lausanne",
-  )
-)
+TODO

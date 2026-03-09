@@ -1,8 +1,8 @@
 /*
  * --------------------------------------------------------------------------------
- * File: /home/hezeltm/Projects/typst_template/practical_work/data/metadata.typ
+ * File: /home/hezeltm/Projects/typst_template/practical_work/data/styling.typ
  * Project: /home/hezeltm/Projects/typst_template/practical_work/data
- * Created Date: Friday, December 19th 2025, 8:47:21 am
+ * Created Date: Friday, December 19th 2025, 8:52:37 am
  * Author: Dimitri Julmy, dev@dimitri-julmy.com
  * --------------------------------------------------------------------------------
  * Last Modified: Fri Dec 19 2025
@@ -26,40 +26,11 @@
  */
 
 
-// ---------- Metadata
+// ---------- Colors
 
-#let metadata = (
-  lang: "en",
-  logo: "logo_hes-so.png",
-  type: "Report",
-  scope: "Scope",
-  name: "LabXX - Title",
-  course: "TSM - Advanced Communication Architecture",
-  git_url: "https://github.com/HezelTm/tsm_advcomarc",
-  date_creation: datetime(year: 2026, month: 03, day: 04),
-  date_due: datetime.today(),
-  entity: "University of Applied Sciences and Arts of Western Switzerland",
-  entity_acronym: "HES-SO",
-  section : "Master of Science in Engineering",
-  section_acronym: "MSE",
-  profil: "Information and cyber security",
-  profil_acronym: "ICS",
-  locality: "Lausanne",
-)
-
-// ---------- Persons
-
-#let authors = (
-  (
-    firstname: "Dimitri",
-    lastname: "Julmy",
-    gender: "m",
-    locality: "Fribourg",
-  ),
-  (
-    firstname: "Dylan",
-    lastname: "Flotte",
-    gender: "m",
-    locality: "Lausanne",
-  )
+#let colors = (
+  c1: rgb(0, 31, 63),
+  c2: rgb(58, 109, 140),
+  c3: rgb(106, 154, 176),
+  c4: rgb(234, 216, 177),
 )

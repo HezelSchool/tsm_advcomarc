@@ -35,7 +35,7 @@
   scope: "Scope",
   name: "Lab01 - Prise en main de Router OS",
   course: "TSM - Advanced Communication Architecture",
-  git_url: "https://gitlab-url.com",
+  git_url: "https://github.com/HezelTm/tsm_advcomarc",
   date_creation: datetime(year: 2026, month: 03, day: 04),
   date_due: datetime.today(),
   entity: "University of Applied Sciences and Arts of Western Switzerland",
