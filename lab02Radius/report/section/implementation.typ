@@ -228,7 +228,55 @@ Finalement, dans le menu `WiFi`, double-cliquer sur l'entré `wifi1` pour le con
     - Enfin, vérifiez que vous arrivez à vous authentifier sur le WLAN sécurisé en WPA2 Enterprise depuis un appareil externe
 ])
 
-TODO
+Dans le sous-menu `System > Certificates`, cliquer sur le bouton `Settings`. Cocher les options `CRL Download` et `Use CRL`. Cliquer sur le bouton `Apply` puis `OK` pour appliquer les changements.
+
+#align(center, image("../asset/crl_download_crl_use.png", width: 100%))
+
+Dans le sous-menu `User Manager > Routers`, cliquer sur le bouton `Settings`. Dans le champ `RadSec Certificate`, sélectionner le certificat `userman-cert`. Cliquer sur le bouton `Apply` puis `OK` pour appliquer les changements.
+
+#align(center, image("../asset/radsec_cert.png", width: 100%))
+
+Dans le sous-menu `User Manager > User Groups`, créer deux nouveaux groupes d'utilisateurs en cliquant sur le bouton `New` et en configurant les groupes comme suit :
+
+- Groupe `auth-by-cert` :
+  - Saisir la valeur `auth-by-cert` dans le champ `Name`
+  - Cocher l'option `EAP TLS` dans la section `Outer Auths`
+  - Créer le groupe en cliquant sur le bouton `Apply` puis `OK`
+
+#align(center, image("../asset/auth_by_cert.png", width: 100%))
+
+- Groupe `auth-with-passwd` :
+    - Saisir la valeur `auth-with-passwd` dans le champ `Name`
+    - Cocher les options `EAP TLS`, `EAP PEAP`, `MSCHAP2`, `EAP TTLS` et `EAP MSCHAP2` dans la section `Outer Auths`
+    - Cocher l'option `PEAP MSCHAP2` ET `TTLS MSCHAP2` dans la section `Inner Auths`
+    - Créer le groupe en cliquant sur le bouton `Apply` puis `OK`
+
+#align(center, image("../asset/auth_with_pwd.png", width: 100%))
+
+Les groupes d'utilisateurs créés apparaissent dans la liste des groupes d'utilisateurs.
+
+#align(center, image("../asset/list_user_group.png", width: 100%))
+
+Dans le sous-menu `User Manager > Users`, double-cliquer sur l'utilisateur `labo`. Dans le champ `Group`, sélectionner le groupe `auth-with-passwd`. Cliquer sur le bouton `Apply` puis `OK` pour appliquer les changements.
+
+#align(center, image("../asset/group_labo.png", width: 100%))
+
+TODO test connection.
+
+#sourcecode(```sh
+sudo mv ~/Downloads/cert_export_advcomarc-client-cert.p12 /etc/ca-certificates/trust-source/anchors/
+sudo mv ~/Downloads/advcomarc-radius-ca.crt /etc/ca-certificates/trust-source/anchors/
+sudo update-ca-trust
+
+nmcli con add type wifi ifname wlp97s0 con-name test-radius ssid MyWifi \
+wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
+802-1x.ca-cert /etc/ca-certificates/trust-source/anchors/advcomarc-radius-ca.crt \
+802-1x.client-cert /etc/ca-certificates/trust-source/anchors/cert_export_advcomarc-client-cert.p12 \
+802-1x.private-key-password "MyWifiPassword" \
+802-1x.identity "labo" 802-1x.password "labo"
+
+nmcli con up test-radius & sudo journalctl -fu NetworkManager
+```)
 
 == Étape 3 : Exportez votre configuration
 
@@ -236,7 +284,19 @@ TODO
     Pour exporter votre configuration actuelle de Router OS, ouvrez un terminal à l’intérieur de Router OS et entrez la commande : export file=FILE_NAME
 ])
 
-TODO
+La procédure de téléchargement du fichier de configuration est disponible #link("https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/")[sur le site de SocialWiFi: https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/].
+
+Cliquer sur le sous-menu `New Terminal` puis entrer la commande suivante :
+
+#sourcecode(```bash
+export file=config-lab02
+```)
+
+#align(center, image("../asset/save_config_terminal.png", width: 65%)) TODO
+
+Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-lab02.rsc` a bien été créé.
+
+#align(center, image("../asset/file_backup.png", width: 65%)) TODO
 
 #qbox([
     Pour exporter le fichier sur votre machine :
@@ -245,7 +305,9 @@ TODO
     - Faites un clic droit sur le fichier et « Download »
 ])
 
-TODO
+Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab01.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe].
+
+#image("../asset/download_config.png", width: 100%) TODO
 
 == Questions
 
