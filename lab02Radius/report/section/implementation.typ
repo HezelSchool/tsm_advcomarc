@@ -45,13 +45,40 @@
     ]
 )
 
-TODO
+Cliquer sur le menu `RADIUS` puis sur le bouton `New`. Configurer le serveur comme suit :
+
+- Cocher l'option `login` dans la section `Service`
+- Cocher l'option `wireless` dans la section `Service`
+- Saisir l'adresse IP `127.0.0.1` dans le champ `Address`
+- Saisir un `Secret` (ici `radius`) dans le champ `Secret`
+- Garder les autres paramètres par défaut
+
+Cliquer sur le bouton `OK` puis `Apply` pour créer le serveur RADIUS.
+
+#align(center, image("../asset/create_radius.png", width: 100%))
+
+Le serveur RADIUS créé apparaît dans la liste des serveurs RADIUS.
+
+#align(center, image("../asset/radius_list.png", width: 100%))
 
 #qbox(
     [Pour créer le serveur, ouvrez le menu « User Manager » et dans l’onglet « Router », ajoutez-en un nouveau avec les paramètres adéquats.]
 )
 
-TODO
+Dans le sous-menu `User Manager > Router` et l'onglet `Router`, cliquer sur le bouton `New`. Configurer le routeur comme suit :
+
+- Saisir la valeur `lab02_radius_router` dans le champ `Name`
+- Saisir l'adresse IP `127.0.0.1` dans le champ `Address`
+- Saisir le `Secret` (ici `radius`) dans le champ `Secret`
+- Garder les autres paramètres par défaut
+
+Cliquer sur le bouton `OK` puis `Apply` pour créer le routeur.
+
+#align(center, image("../asset/create_radius_router.png", width: 100%))
+
+Le routeur RADIUS créé apparaît dans la liste des routeurs.
+
+#align(center, image("../asset/radius_router_list.png", width: 100%))
 
 #qbox(
     [Toujours dans les paramètres de l’application « User Manager », ajoutez un utilisateur avec les paramètres suivant :
@@ -61,53 +88,99 @@ TODO
     N’oubliez pas d’activer le serveur RADIUS dans les « Settings ».]
 )
 
-TODO
+Dans le sous-menu `User Manager > Users`, onglet `Users`, cliquer sur le bouton `New`. Configurer l'utilisateur comme suit :
+
+- Saisir la valeur `labo` dans le champ `Username`
+- Saisir la valeur `labo` dans le champ `Password`
+- Cliquer sur le bouton `+` à côté de `Attributes` pour ajouter un attribut `Mikrotik-Group` avec la valeur `write`
+
+#align(center, image("../asset/create_user.png", width: 100%))
+
+L'utilisateur créé apparaît dans la liste des utilisateurs.
+
+#align(center, image("../asset/list_user.png", width: 100%))
+
+Pour activer le serveur RADIUS, aller dans le menu `User Manager > Settings`, onglet `Routers` et cliquer sur le bouton `Settings`. Cocher l'option `Enabled` et garder les autres paramètres par défaut. Cliquer sur le bouton `OK` puis `Apply` pour activer le serveur RADIUS.
+
+#align(center, image("../asset/enable_radius.png", width: 100%))
 
 #qbox([
     Afin que RouterOS authentifie les utilisateurs au travers de ce que l’on vient de configurer, rendez-vous dans les utilisateurs système de l’access point et activez l’authentification AAA. Testez vos logins avec une nouvelle fenêtre Winbox et observer les sessions ouvertes.
 ])
 
-TODO
+Dans le sous-menu `System > Users`, onglet `Users`, sélectionner l'utilisateur `system default user` et cliquer sur le bouton `AAA`. Cocher l'option `Use RADIUS` et garder les autres paramètres par défaut. Cliquer sur le bouton `Apply`.
+
+#align(center, image("../asset/activate_aaa.png", width: 100%))
+
+Pour tester les _logins_, ouvrir une nouvelle fenêtre `Winbox` et se connecter à l'AP en utilisant les crédits de connexion `labo` (_Username_: `labo`, _Password_: `labo`).
+
+#align(center, image("../asset/login_labo.png", width: 100%))
+
+Nous pouvons observer que l'utilisateur `labo` est connecté à l'AP.
+
+#align(center, image("../asset/logged_labo.png", width: 100%))
+
+On peut également vérifier les sessions ouvertes dans le sous-menu `User Manager > Sessions`, où l'on peut voir que l'utilisateur `labo` est connecté.
+
+#align(center, image("../asset/labo_session.png", width: 100%))
+
 
 == Étape 2 : Configuration de l’authentification avec WPA2 Enterprise
 
 #qbox([Pour cette étape vous aurez besoin de certificats. Afin de faciliter la création de ces derniers,voici les commandes à exécuter pour les générer.
 ])
 
+Nous exécutons les commandes suivantes dans le terminal de l'AP pour générer les certificats (_Certificate Authority_, _Certificate User Manager_ et _Certificate Client_) nécessaires à l'authentification _WPA2 Enterprise_.
+
 #sourcecode(```sh
 # Generating a Certificate Authority
 /certificate
-add name=advcomarc-radius-ca common-name="AdvComArc CA" key-size=secp384r1 digest-algorithm=sha384
-days-valid=1825 key-usage=key-cert-sign,crl-sign
+add name=advcomarc-radius-ca common-name="AdvComArc CA" key-size=secp384r1 digest-algorithm=sha384 days-valid=1825 key-usage=key-cert-sign,crl-sign
 sign advcomarc-radius-ca ca-crl-host=advcomarc.mse.ch
+print
 ```)
+
+#align(center, image("../asset/cert1.png", width: 100%))
 
 #sourcecode(```sh
 # Generating a server certificate for User Manager
-add name=userman-cert common-name=advcomarc.mse.ch subject-alt-name=DNS:advcomarc.mse.ch key-
-size=secp384r1 digest-algorithm=sha384 days-valid=800 key-usage=tls-server
+/certificate
+add name=userman-cert common-name=advcomarc.mse.ch subject-alt-name=DNS:advcomarc.mse.ch key-size=secp384r1 digest-algorithm=sha384 days-valid=800 key-usage=tls-server
 sign userman-cert ca=advcomarc-radius-ca
+print
 ```)
+
+#align(center, image("../asset/cert2.png", width: 100%))
 
 #sourcecode(```sh
 # Generating a client certificate
-add name=advcomarc-client-cert common-name=advcomarc.mse.ch key-usage=tls-client days-valid=800 key-
-size=secp384r1 digest-algorithm=sha384
+/certificate
+add name=advcomarc-client-cert common-name=advcomarc.mse.ch key-usage=tls-client days-valid=800 key-size=secp384r1 digest-algorithm=sha384
 sign advcomarc-client-cert ca=advcomarc-radius-ca
+print
 ```)
 
+#align(center, image("../asset/cert3.png", width: 100%))
+
 #sourcecode(```sh
-# Exporting the public key of the CA as well as the generated client private key and certificate for
-distribution to client devices
+# Exporting the public key of the CA as well as the generated client private key and certificate for distribution to client devices
+/certificate
 export-certificate advcomarc-radius-ca file-name=advcomarc-radius-ca
 ```)
 
+#align(center, image("../asset/export_ca_pubk.png", width: 100%))
+
 #sourcecode(```sh
 # A passphrase is needed for the export to include the private key
-export-certificate advcomarc-client-cert type=pkcs12 export-passphrase="keep it simple stupid"
+/certificate
+export-certificate advcomarc-client-cert type=pkcs12 export-passphrase="12345678"
 ```)
 
-TODO
+#align(center, image("../asset/include_passphrase.png", width: 100%))
+
+On peut vérifier que les certificats ont été créés dans le menu `System > Certificates`.
+
+#align(center, image("../asset/list_cert.png", width: 100%))
 
 #qbox([
     Configurez le WLAN dans le menu « Wireless ».
@@ -116,7 +189,28 @@ TODO
     - Configurez l’un des deux WLAN pour qu’il utilise le profil adéquat
 ])
 
-TODO
+Dans le sous-menu `WiFi > Security`, cliquer sur le bouton `New`. Configurer un nouveau profil de sécurité comme suit :
+
+- Saisir la valeur `radius-auth` dans le champ `Name`
+- Sélectionner `WPA2 EAP` dans le champ `Authentication Types`
+- Dans l'onglet `EAP`:
+  - Sélectionner `TLS` dans le champ `EAP Methods`
+  - Sélectionner `verify certificate` dans le champ `EAP Certificate Mode`
+  - Sélectionner le certificat `userman-cert` dans le champ `EAP TLS Certificate`
+
+Cliquer sur le bouton `OK` puis `Apply` pour créer le profil de sécurité.
+
+#align(center, image("../asset/eap_sec.png", width: 100%))
+
+#align(center, image("../asset/wifi_sec.png", width: 100%))
+
+Le profil de sécurité créé apparaît dans la liste des profils de sécurité.
+
+#align(center, image("../asset/list_wifi_sec.png", width: 100%))
+
+Finalement, dans le menu `WiFi`, double-cliquer sur l'entré `wifi1` pour le configurer.  Dans l'onglet `Security`, sélectionner le profil de sécurité `radius-auth` dans le champ `Security`. Cliquer sur le bouton `Apply` puis `OK` pour appliquer les changements.
+
+#align(center, image("../asset/apply_wifi_sec.png", width: 100%))
 
 #qbox([
     A partir d’ici, on doit indiquer à notre serveur RADIUS que nous allons utiliser TLS pour l’authentification des utilisateurs.
