@@ -457,6 +457,8 @@ Les informations matérielles de l'AP (_CPU_, mémoire, etc.) sont disponibles d
 
 #image("../asset/q1_system_resources.png", width: 100%)
 
+#pagebreak()
+
 - `System > Routerboard`
 
 #image("../asset/q1_system_routerboard.png", width: 100%)
@@ -469,11 +471,13 @@ Il est également possible d'obtenir des informations matérielles via le termin
 
 #image("../asset/q1_terminal_system_resources.png", width: 100%)
 
+#pagebreak()
+
 #sourcecode(```sh
 /system package routerboard print
 ```)
 
-#image("../asset/q1_terminal_system_routerboard.png", width: 100%)
+#align(center, image("../asset/q1_terminal_system_routerboard.png", width: 50%))
 
 === Question 2
 
@@ -492,15 +496,20 @@ Il est également possible de faire un _reset_ en ligne de commande en utilisant
 /system reset-configuration
 ```)
 
-Via l'interface graphique, on peut également effectuer un _reset_ en naviguant dans le menu `System > Reset Configuration`. Cette interface permet de remettre à zéro la configuration de l'appareil.
+Via l'interface graphique, on peut également effectuer un _reset_ en naviguant dans le menu `System > Reset Configuration`. Cette interface permet de remettre à zéro la configuration de l'appareil. Il est également possible de le faire en ligne de commande en utilisant la commande `/system reset-configuration` dans le terminal de RouterOS.
 
-#image("../asset/q2_system_reset.png", width: 100%)
+#align(center, image("../asset/q2_system_reset.png", width: 50%))
 
-TODO :
+Ces trois méthodes offrent chacune offrant des options différentes :
 
-- Différences entre les méthodes
-— Options disponibles (keep/remove default config)
-- Types d’informations disponibles
+1. *_Reset_ Physique* :
+    - Utile lorsque l'accès à l'interface est impossible
+    - _Reset_ l'appareil aux paramètres d'usine (donc perte de toute la configuration courante) (_Hard Reset_)
+
+2. *_Reset_ via Interface Graphique / Ligne de Commande* :
+    - Permet de choisir des options spécifiques pour le _reset_ : `Keep Users`, `CAPS Mode`, `No Default Configuration`, `Do Not Backup` et`Run After Reset`
+
+#pagebreak()
 
 === Question 3
 
@@ -508,8 +517,8 @@ TODO :
 
 Comme déjà expliqué précédemment dans le rapport (voir section "Question 1"), les informations matérielles de l'AP sont disponibles dans les menus :
 
-- `System > Resources`
-- `System > Routerboard`
+- `System > Resources` : donne des informations sur les ressources de l'AP telles que le modèle du _CPU_, la quantité de mémoire, l'espace de stockage disponible, le dernier _build_ , etc.
+- `System > Routerboard`: donne des informations sur l'AP telles que le modèle, le _Serial Number_, le type ainsi que la version courante du _firmware_.
 
 Il est également possible d'obtenir des informations matérielles via le terminal en utilisant la commande suivante :
 
@@ -518,35 +527,92 @@ Il est également possible d'obtenir des informations matérielles via le termin
 /system routerboard print
 ```)
 
-TODO : types d’informations disponibles
-
 === Question 4
 
 #qbox([Expliquez la capture Wireshark. Comment s’assurer que vous avez bien capturé le 4-way hand-shake ?])
 
-TODO
+Nous pouvons ouvrir le fichier `handshake-02.cap` généré lors de la capture avec l'outil `airodump-ng` avec `Wireshark` et filtrer les paquets sur le protocole `eapol` pour retrouver les échanges du _4-way handshake_.
 
-Réponse attendue :
-— Description des 4 messages EAPOL
-— Rôle de chaque message
-— Éléments à identifier dans Wireshark (ANonce, SNonce, MIC, GTK)
-— Critères de validation d’une capture complète
-— Captures d’écran annotées de Wireshark
+#align(center, image("../asset/4_way_handshake.png", width: 100%))
+
+Le _4-way handshake_ est composé de 4 messages échangés entre le client et l'AP pour établir une connexion sécurisée. Ce processus est initié par l'AP et permet d'authentifier et de créer les clés de chiffrement nécessaires à la communication sécurisée entre le client et l'AP.
+
+#pagebreak()
+
+*Message 1 (`Anonce`)*, (AP -> Client) (Paquet 1060)
+
+L'AP envoie `Anonce` (_Authenticator Nonce_) au client pour initier le _handshake_ et permettre au client de calculer la `PTK` (_Pairwise Transient Key_). Sur l'image du paquet 1060, nous pouvons identifier les éléments suivants :
+
+- `Key Information`
+  - `Key Descriptor Version bits` : indique les protocoles de chiffrement et d'intégrité utilisés.
+  - `Key Type bit` : indique que la clé utilisée est la `PTK`.
+- `Replay Counter`: un compteur de répétition utilisé pour identifier les retransmissions de messages.
+- `WPA Key Nonce` : le nonce de l'AP (`Anonce`) utilisé pour dériver la `PTK`.
+
+#align(center, image("../asset/pck1.png", width: 100%))
+
+#pagebreak()
+
+*Message 2 (SNonce + MIC)*, (Client -> AP) (Paquet 1062)
+
+Le client envoie `SNonce` (_Supplicant Nonce_) et un `MIC` (_Message Integrity Check_). Le `MIC` est calculé à partir de la `KCK` (_Key Confirmation Key_) et assure l'intégritié du message. Le `SNonce` est utilisé par l'AP pour calculer la `PTK` et vérifier que le client possède la même clé pré-partagée (`PSK`) que l'AP. Sur l'image du paquet 1062, nous pouvons identifier les éléments suivants :
+
+- `Key MIC bit` : indique que le client a ajouté une vérification d'intégrité à ce message, donc ce bit est activé.
+- `WPA Key Nonce` : le nonce du client (`SNonce`) utilisé pour dériver la `PTK`.
+- `WPA Key MIC` : la valeur de la vérification d'intégrité calculée à partir de la `KCK` et du message.
+- `RSN Information` : contient des informations sur les suites de chiffrement (algorithmes de chiffrement) et la méthode d'authentification utilisée.
+
+#align(center, image("../asset/pck2.png", width: 100%))
+
+#pagebreak()
+
+*Message 3 (GTK + MIC)*, (AP -> Client) (Paquet 1064)
+
+L'AP envoie la `GTK` (_Group Temporal Key_), un `MIC` ainsi qu'une requête d'installation de clé. Sur l'image du paquet 1064, nous pouvons identifier les éléments suivants :
+
+- `Key Information`
+  - `Install` : indique que le client doit installer les clés dérivées.
+  - `Key ACK` : indique que le client doit accuser réception de ce message.
+  - `Key MIC` : indique que la vérification d'intégrité est présente dans ce message.
+  - `Secure` : indique que l'échange de clés initial est maintenant complet et signale au client que la connexion doit passer de non sécurisée à sécurisée.
+- `Encrypted Key Data` : la `GTK` est incluse dans ce message de manière chiffrée.
+- `WPA Key MIC` : la valeur de la vérification d'intégrité.
+- `WPA Key Data` : contient la `GTK` chiffrée.
+
+#align(center, image("../asset/pck3.png", width: 100%))
+
+#pagebreak()
+
+- *Message 4 (ACK)*, (Client -> AP) (Paquet 1066)
+
+Le client envoie une `EAPOL-Key` avec un `MIC` pour confirmer l'installation des clés. L'AP vérifie l'intégrité du message à l'aide du `MIC` et installe la `PTK` et la `GTK` si le `MIC` est correct. Sur l'image du paquet 1066, nous pouvons identifier les éléments suivants :
+
+- `Key Information`
+    - `Key MIC` : indique que la vérification d'intégrité est présente dans ce message.
+    - `Secure` : indique que la connexion est maintenant sécurisée.
+- `WPA Key MIC` : la valeur de la vérification d'intégrité calculée à partir de la `KCK` et du message.
+
+#align(center, image("../asset/pck4.png", width: 100%))
+
+#pagebreak()
+
+L'image ci-dessous résume le processus du _4-way handshake_ et les éléments clés à identifier dans chaque message.
+
+#align(center, image("../asset/resume_4_handshake_way.png", width: 40%))
+
+Sources :
+- #link("https://networklessons.com/wireless/wpa-and-wpa2-4-way-handshake")[NetworkLessons - WPA and WPA2 4-Way Handshake : https://networklessons.com/wireless/wpa-and-wpa2-4-way-handshake]
+- #link("https://networklessons.com/wireless/wpa-key-hierarchy-explained")[NetworkLessons - WPA Key Hierarchy Explained : https://networklessons.com/wireless/wpa-key-hierarchy-explained]
 
 === Question 5
 
 #qbox([Quelle est la faiblesse de la sécurité WPA2-PSK ? Par quoi la remplacer ?])
 
-TODO
+Le protocole de sécurité `WPA2-PSK` utilise une clé pré-partagée (`PSK`), un mot de passe partagé entre l'AP et tous les clients qui souhaitent se connecter au réseau. Cette approche présente plusieurs faiblesses de sécurité :
 
-Réponse attendue :
-— Vulnérabilités de WPA2-PSK :
-— Attaques par dictionnaire sur le 4-way handshake capturé
-— Faiblesse liée aux mots de passe simples
-— Partage du même PSK entre tous les utilisateurs
-— Vulnérabilité KRACK (Key Reinstallation Attack)
-— Solutions de remplacement :
-— WPA3-SAE (Simultaneous Authentication of Equals)
-— WPA2-Enterprise avec RADIUS (802.1X)
-— Protection contre les attaques par force brute
-— Authentification individuelle par utilisateur
+- Chaque personne qui connaît le mot de passe est un point de compromission potentiel.
+- Les mots de passe faibles ou courants sont vulnérables aux attaques par dictionnaire.
+
+Il existe également l'attaque `KRACK` (Key Reinstallation Attack) qui exploite une vulnérabilité dans le processus de _4-way handshake_ de `WPA2`. Cette attaque permet à un attaquant de lire des données sensées être chiffrées.
+
+Il existe plusieurs solutions de remplacement tel que `WPA3-SAE`, `WPA2-Enterprise`, la protection contre les attaques par force brute avec l'utilisation de mots de passe forts, ainsi que l'authentification individuelle par utilisateur.

@@ -28,4 +28,6 @@
 
 // ---------- Conclusion
 
-TODO
+Ce laboratoire a permis de valider la mise en service complète d'un environnement réseau basé sur _RouterOS_, confirmant la bonne configuration des interfaces, de l'adressage IP et de la connectivité Internet. Malgré des difficultés initiales liées à la configuration du _pool_ _DHCP_ et à la capture de paquets du _4-way handshake_, les solutions apportées ont permis d'établir une connexion stable et sécurisée pour les utilisateurs du réseau.
+
+Enfin, l'étude des mécanismes d'authentification a mis en lumière l'importance de l'évolution vers le _WPA3-SAE_ pour pallier les vulnérabilités du protocol _WPA2-PSK_, notamment face aux attaques par dictionnaire et à l'attaque _KRACK_. Cette expérience pratique constitue une base solide pour la compréhension des architectures de communication avancées et de la sécurisation des accès sans fil.
