@@ -28,4 +28,8 @@
 
 // ---------- Conclusion
 
-TODO
+Ce laboratoire a permis de valider la mise en œuvre complète d'un système d'authentification mutuelle conforme aux principes des réseaux 3G et LTE, confirmant le bon fonctionnement des mécanismes cryptographiques de challenge-réponse bidirectionnels. L'implémentation développée illustre l'évolution significative par rapport au GSM, avec l'introduction d'un token d'authentification permettant au client de vérifier l'identité du serveur, établissant ainsi une session doublement authentifiée avant tout échange de données.
+
+Malgré l'utilisation d'un chiffrement XOR simplifié pour cette simulation, l'architecture mise en place démontre efficacement les principes de l'authentification mutuelle et la dérivation sécurisée de clé de session Kc. Les captures de fonctionnement présentées attestent de la réussite des échanges cryptographiques bidirectionnels et de la validation mutuelle des identités, prévenant ainsi les attaques par usurpation d'identité du réseau.
+
+Enfin, cette étude pratique met en lumière les améliorations apportées par les générations successives de réseaux mobiles, notamment la protection contre les IMSI catchers et les faux relais qui exploitaient l'absence d'authentification du réseau dans le GSM. Elle souligne également la continuité de l'évolution vers le LTE-Advanced et la 5G, qui renforcent encore davantage ces mécanismes avec des algorithmes cryptographiques plus robustes et une meilleure protection de la vie privée. Cette expérience constitue ainsi un maillon essentiel dans la compréhension de l'évolution des architectures de sécurité des communications mobiles.

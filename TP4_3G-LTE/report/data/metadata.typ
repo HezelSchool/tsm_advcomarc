@@ -29,11 +29,11 @@
 // ---------- Metadata
 
 #let metadata = (
-  lang: "en",
+  lang: "fr",
   logo: "logo_hes-so.png",
-  type: "Report",
-  scope: "Scope",
-  name: "LabXX - Title",
+  type: "Rapport",
+  scope: "Laboratoire",
+  name: "TP4 - 3G & LTE",
   course: "TSM - Advanced Communication Architecture",
   git_url: "https://gitlab-url.com",
   date_creation: datetime(year: 2026, month: 03, day: 04),
