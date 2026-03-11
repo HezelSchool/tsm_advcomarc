@@ -1,0 +1,8 @@
+\babel@toc {french}{}\relax 
+\contentsline {chapter}{\numberline {1}Code Python}{2}{chapter.1}%
+\contentsline {section}{\numberline {1.1}config.py}{2}{section.1.1}%
+\contentsline {section}{\numberline {1.2}crypto.py}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}session.py}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}server.py}{3}{section.1.4}%
+\contentsline {section}{\numberline {1.5}client.py}{6}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Capture du fonctionnement}{9}{chapter.2}%
