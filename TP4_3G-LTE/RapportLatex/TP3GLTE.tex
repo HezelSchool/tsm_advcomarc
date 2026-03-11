@@ -46,6 +46,14 @@
 \tableofcontents
 \newpage
 
+\chapter*{Introduction}
+
+Le présent rapport expose les travaux réalisés dans le cadre du laboratoire "TP4 - 3G \& LTE", effectué pour le module TSM - Advanced Communication Architecture. L'objectif principal de cette manipulation est de comprendre et d'implémenter les mécanismes d'authentification mutuelle introduits dans les réseaux 3G (UMTS) et perfectionnés dans les réseaux 4G (LTE), en développant un système client-serveur simulant les protocoles de sécurité bidirectionnels.
+
+Les étapes essentielles de l'implémentation sont suivies, depuis la génération du challenge aléatoire (RAND) jusqu'à l'établissement d'une session sécurisée avec authentification mutuelle des deux parties. Ce travail reprend les fondements du GSM tout en introduisant une amélioration majeure : l'authentification du réseau par le terminal mobile via un token cryptographique. L'architecture développée permet ainsi de pallier les vulnérabilités du GSM en garantissant l'identité du serveur, prévenant ainsi les attaques de type IMSI catcher et les faux relais.
+
+Ce laboratoire offre une approche pratique de l'évolution des mécanismes de sécurité entre les générations de réseaux mobiles et permet d'appréhender les améliorations successives introduites par les standards 3G et 4G en matière d'authentification et de protection de la confidentialité des communications.
+
 \chapter{Code Python}
 
 \section{config.py}
@@ -513,5 +521,13 @@ if __name__ == "__main__":
     \caption{Capture fonctionnement côté client}
     \label{fig:monimage}
 \end{figure}
+
+\chapter*{Conclusion}
+
+Ce laboratoire a permis de valider la mise en œuvre complète d'un système d'authentification mutuelle conforme aux principes des réseaux 3G et LTE, confirmant le bon fonctionnement des mécanismes cryptographiques de challenge-réponse bidirectionnels. L'implémentation développée illustre l'évolution significative par rapport au GSM, avec l'introduction d'un token d'authentification permettant au client de vérifier l'identité du serveur, établissant ainsi une session doublement authentifiée avant tout échange de données.
+
+Malgré l'utilisation d'un chiffrement XOR simplifié pour cette simulation, l'architecture mise en place démontre efficacement les principes de l'authentification mutuelle et la dérivation sécurisée de clé de session Kc. Les captures de fonctionnement présentées attestent de la réussite des échanges cryptographiques bidirectionnels et de la validation mutuelle des identités, prévenant ainsi les attaques par usurpation d'identité du réseau.
+
+Enfin, cette étude pratique met en lumière les améliorations apportées par les générations successives de réseaux mobiles, notamment la protection contre les IMSI catchers et les faux relais qui exploitaient l'absence d'authentification du réseau dans le GSM. Elle souligne également la continuité de l'évolution vers le LTE-Advanced et la 5G, qui renforcent encore davantage ces mécanismes avec des algorithmes cryptographiques plus robustes et une meilleure protection de la vie privée. Cette expérience constitue ainsi un maillon essentiel dans la compréhension de l'évolution des architectures de sécurité des communications mobiles.
 
 \end{document}

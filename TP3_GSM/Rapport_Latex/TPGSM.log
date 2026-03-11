@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.18)  11 MAR 2026 18:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.18)  11 MAR 2026 18:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -594,104 +594,108 @@ been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.45 \newpage
-              [1]
-Chapitre 1.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-0.
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2
+              [1] [2
 
 ]
-Overfull \hbox (26.40613pt too wide) in paragraph at lines 199--199
+Chapitre 1.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
+8.
+(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [3
+
+]
+Overfull \hbox (26.40613pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] RAND généré: {rand.hex()[:32]} ({len
 (rand)} octets)")[] 
  []
 
-[3]
-Overfull \hbox (131.38118pt too wide) in paragraph at lines 199--199
+[4]
+Overfull \hbox (131.38118pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] SRES reçu du client: {client_sres.he
 x()} ({len(client_sres)} octets)")[] 
  []
 
 
-Overfull \hbox (88.15616pt too wide) in paragraph at lines 199--199
+Overfull \hbox (88.15616pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] Clé de session Kc générée: {kc.hex()
 [:32]} ({len(kc)} octets)")[] 
  []
 
 
-Overfull \hbox (69.63115pt too wide) in paragraph at lines 199--199
+Overfull \hbox (69.63115pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] Fichier chiffré complet reçu: {len(e
 ncrypted_data)} octets")[] 
  []
 
-[4]
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 199--199
+[5]
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] Fichier déchiffré: {len(decrypted_da
 ta)} octets")[] 
  []
 
 
-Overfull \hbox (137.54918pt too wide) in paragraph at lines 199--199
+Overfull \hbox (137.54918pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 with open("files/bombinsound-rap-rap-beat-beats-music
 -20-second-491118.mp3", "rb") as f:[] 
  []
 
 
-Overfull \hbox (14.05612pt too wide) in paragraph at lines 199--199
+Overfull \hbox (14.05612pt too wide) in paragraph at lines 207--207
 []        \T1/lmtt/m/n/12 print(f"[SERVER] Fichier chiffré: {len(encrypted_resp
 onse)} octets")[] 
  []
 
-[5]
-Overfull \hbox (125.20618pt too wide) in paragraph at lines 280--280
+[6]
+Overfull \hbox (125.20618pt too wide) in paragraph at lines 288--288
 []    \T1/lmtt/m/n/12 print(f"[CLIENT] Réponse d'authentification: {response.de
 code('utf-8', errors='ignore')}")[] 
  []
 
-[6]
-Overfull \hbox (14.05612pt too wide) in paragraph at lines 280--280
+[7]
+Overfull \hbox (14.05612pt too wide) in paragraph at lines 288--288
 []    \T1/lmtt/m/n/12 print(f"[CLIENT] Clé de session Kc: {kc.hex()[:32]} ({len
 (kc)} octets)")[] 
  []
 
 
-Overfull \hbox (112.84917pt too wide) in paragraph at lines 280--280
+Overfull \hbox (112.84917pt too wide) in paragraph at lines 288--288
 []    \T1/lmtt/m/n/12 with open("files/bombinsound-rap-rap-beat-beats-music-20-
 second-491118.mp3", "rb") as f:[] 
  []
 
 
-Overfull \hbox (69.63115pt too wide) in paragraph at lines 280--280
+Overfull \hbox (69.63115pt too wide) in paragraph at lines 288--288
 []    \T1/lmtt/m/n/12 print(f"[CLIENT] Fichier chiffré complet reçu: {len(encry
 pted_response)} octets")[] 
  []
 
 
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 280--280
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 288--288
 []    \T1/lmtt/m/n/12 print(f"[CLIENT] Fichier déchiffré: {len(decrypted_respon
 se)} octets")[] 
  []
 
-[7] [8]
+[8] [9]
 Chapitre 2.
-<Cap1.png, id=79, 732.7375pt x 442.65375pt>
+<Cap1.png, id=84, 732.7375pt x 442.65375pt>
 File: Cap1.png Graphic file (type png)
 <use Cap1.png>
-Package pdftex.def Info: Cap1.png  used on input line 286.
+Package pdftex.def Info: Cap1.png  used on input line 294.
 (pdftex.def)             Requested size: 455.24411pt x 275.02335pt.
-<Cap2.png, id=81, 732.7375pt x 489.83pt>
+<Cap2.png, id=86, 732.7375pt x 489.83pt>
 File: Cap2.png Graphic file (type png)
 <use Cap2.png>
-Package pdftex.def Info: Cap2.png  used on input line 293.
+Package pdftex.def Info: Cap2.png  used on input line 301.
 (pdftex.def)             Requested size: 455.24411pt x 304.33423pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[9
+[10
 
- <./Cap1.png>] [10 <./Cap2.png>] (./TPGSM.aux)
+ <./Cap1.png>] [11 <./Cap2.png>] [12
+
+] (./TPGSM.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -704,20 +708,20 @@ Package rerunfilecheck Info: File `TPGSM.out' has not changed.
 (rerunfilecheck)             Checksum: 302F8FA7FE691796D5181649711737A2;775.
  ) 
 Here is how much of TeX's memory you used:
- 13068 strings out of 474222
- 200253 string characters out of 5748733
+ 13072 strings out of 474222
+ 200287 string characters out of 5748733
  1934975 words of memory out of 5000000
  35120 multiletter control sequences out of 15000+600000
  613588 words of font info for 80 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,252b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,630b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/ty
 pe1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></u
 sr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on TPGSM.pdf (11 pages, 264136 bytes).
+Output written on TPGSM.pdf (13 pages, 270547 bytes).
 PDF statistics:
- 122 PDF objects out of 1000 (max. 8388607)
- 96 compressed objects within 1 object stream
- 20 named destinations out of 1000 (max. 500000)
+ 134 PDF objects out of 1000 (max. 8388607)
+ 105 compressed objects within 2 object streams
+ 24 named destinations out of 1000 (max. 500000)
  67 words of extra memory for PDF output out of 10000 (max. 10000000)
 

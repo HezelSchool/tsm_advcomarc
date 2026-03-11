@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.18)  11 MAR 2026 18:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.18)  11 MAR 2026 18:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -594,86 +594,90 @@ been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.47 \newpage
-              [1]
+              [1] [2
+
+]
 Chapitre 1.
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 5
-2.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 6
+0.
 (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [2
+) [3
 
-] [3]
-Overfull \hbox (7.88112pt too wide) in paragraph at lines 154--154
+] [4]
+Overfull \hbox (7.88112pt too wide) in paragraph at lines 162--162
 []    \T1/lmtt/m/n/12 result = bytes([data[i] ^ key[i % len(key)] for i in rang
 e(len(data))])[] 
  []
 
 
-Overfull \hbox (7.88112pt too wide) in paragraph at lines 154--154
+Overfull \hbox (7.88112pt too wide) in paragraph at lines 162--162
 []        \T1/lmtt/m/n/12 print(f"[CRYPTO] XOR cipher appliqué - Taille: {len(d
 ata)} octets")[] 
  []
 
 
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 154--154
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 162--162
 []        \T1/lmtt/m/n/12 print(f"[CRYPTO] Token d'authentification calculé: {t
 oken.hex()}")[] 
  []
 
-[4]
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 328--328
+[5]
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 336--336
 []\T1/lmtt/m/n/12 from crypto import compute_sres, derive_kc, xor_cipher, compu
 te_auth_token[] 
  []
 
-[5]
-Overfull \hbox (7.88112pt too wide) in paragraph at lines 328--328
+[6]
+Overfull \hbox (7.88112pt too wide) in paragraph at lines 336--336
 []                \T1/lmtt/m/n/12 print(f"[SESSION]   Token attendu: {expected_
 token.hex()}")[] 
  []
 
-[6] [7]
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 328--328
+[7] [8]
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 336--336
 []            \T1/lmtt/m/n/12 print(f"[SESSION] Déchiffrement de {len(cipher_da
 ta)} octets")[] 
  []
 
-[8] [9]
-Overfull \hbox (1.70612pt too wide) in paragraph at lines 413--413
+[9] [10]
+Overfull \hbox (1.70612pt too wide) in paragraph at lines 421--421
 []        \T1/lmtt/m/n/12 print(f"[SERVEUR] Token d'authentification envoyé: {t
 oken.hex()}")[] 
  []
 
 
-Overfull \hbox (168.4312pt too wide) in paragraph at lines 413--413
+Overfull \hbox (168.4312pt too wide) in paragraph at lines 421--421
 []        \T1/lmtt/m/n/12 print(f"[SERVEUR] Données chiffrées reçues ({len(ciph
 er_data)} octets): {cipher_data.hex()}")[] 
  []
 
-[10] [11] [12]
-Overfull \hbox (51.05711pt too wide) in paragraph at lines 499--499
+[11] [12] [13]
+Overfull \hbox (51.05711pt too wide) in paragraph at lines 507--507
 []        \T1/lmtt/m/n/12 data = b"a3f7b2c1d9e845607f2c1a3b9d4e6f8a01c3b5d7e9f2
 a4c6b8d0e1f3a5c7b9d0"[] 
  []
 
-[13]
+[14]
 Chapitre 2.
-<Cap1.png, id=100, 1772.6225pt x 774.895pt>
+<Cap1.png, id=105, 1772.6225pt x 774.895pt>
 File: Cap1.png Graphic file (type png)
 <use Cap1.png>
-Package pdftex.def Info: Cap1.png  used on input line 505.
+Package pdftex.def Info: Cap1.png  used on input line 513.
 (pdftex.def)             Requested size: 455.24411pt x 199.00856pt.
-<Cap2.png, id=102, 1578.89874pt x 774.895pt>
+<Cap2.png, id=107, 1578.89874pt x 774.895pt>
 File: Cap2.png Graphic file (type png)
 <use Cap2.png>
-Package pdftex.def Info: Cap2.png  used on input line 512.
+Package pdftex.def Info: Cap2.png  used on input line 520.
 (pdftex.def)             Requested size: 455.24411pt x 223.42499pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[14
+[15
 
- <./Cap1.png>] [15 <./Cap2.png>] (./TP3GLTE.aux)
+ <./Cap1.png>] [16 <./Cap2.png>] [17
+
+] (./TP3GLTE.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -686,20 +690,20 @@ Package rerunfilecheck Info: File `TP3GLTE.out' has not changed.
 (rerunfilecheck)             Checksum: 302F8FA7FE691796D5181649711737A2;775.
  ) 
 Here is how much of TeX's memory you used:
- 13073 strings out of 474222
- 200336 string characters out of 5748733
+ 13079 strings out of 474222
+ 200393 string characters out of 5748733
  1935975 words of memory out of 5000000
- 35120 multiletter control sequences out of 15000+600000
+ 35122 multiletter control sequences out of 15000+600000
  613588 words of font info for 80 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,254b,611s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,688b,611s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/ty
 pe1/public/lm/lmcsc10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></u
 sr/share/texmf/fonts/type1/public/lm/lmtt12.pfb>
-Output written on TP3GLTE.pdf (16 pages, 406269 bytes).
+Output written on TP3GLTE.pdf (18 pages, 412773 bytes).
 PDF statistics:
- 145 PDF objects out of 1000 (max. 8388607)
- 113 compressed objects within 2 object streams
- 25 named destinations out of 1000 (max. 500000)
+ 155 PDF objects out of 1000 (max. 8388607)
+ 121 compressed objects within 2 object streams
+ 29 named destinations out of 1000 (max. 500000)
  67 words of extra memory for PDF output out of 10000 (max. 10000000)
 
