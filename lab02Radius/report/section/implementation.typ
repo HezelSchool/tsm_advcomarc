@@ -124,7 +124,6 @@ On peut également vérifier les sessions ouvertes dans le sous-menu `User Manag
 
 #align(center, image("../asset/labo_session.png", width: 100%))
 
-
 == Étape 2 : Configuration de l’authentification avec WPA2 Enterprise
 
 #qbox([Pour cette étape vous aurez besoin de certificats. Afin de faciliter la création de ces derniers,voici les commandes à exécuter pour les générer.
@@ -292,11 +291,11 @@ Cliquer sur le sous-menu `New Terminal` puis entrer la commande suivante :
 export file=config-lab02
 ```)
 
-#align(center, image("../asset/save_config_terminal.png", width: 65%)) TODO
+// #align(center, image("../asset/save_config_terminal.png", width: 65%)) TODO changer l'image
 
 Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-lab02.rsc` a bien été créé.
 
-#align(center, image("../asset/file_backup.png", width: 65%)) TODO
+// #align(center, image("../asset/file_backup.png", width: 65%)) TODO changer l'image
 
 #qbox([
     Pour exporter le fichier sur votre machine :
@@ -305,9 +304,9 @@ Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-
     - Faites un clic droit sur le fichier et « Download »
 ])
 
-Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab01.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab01/annexe].
+Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab02.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab02/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab02/annexe].
 
-#image("../asset/download_config.png", width: 100%) TODO
+// #image("../asset/download_config.png", width: 100%) TODO changer l'image
 
 == Questions
 
@@ -317,7 +316,16 @@ Télécharger le fichier de configuration en effectuant un clic droit sur le fic
     Avec vos mots, expliquez l’utilité de RADIUS ?
 ])
 
-TODO
+_`RADIUS`_ (_(Remote Authentication Dial-In User Service)_) est un protocole client-serveur qui implémente le _framework_ `AAA` qui signifie _Authentication_, _Authorization_ et _Accounting_.
+
+- _Authentication_ : permet de vérifier l'identité d'un utilisateur ou d'un appareil qui tente de se connecter à un réseau ou à un service. Cela peut être fait à l'aide de différentes méthodes d'authentification, telles que les mots de passe, les certificats ou les jetons d'authentification.
+
+- _Authorization_ : une fois qu'un utilisateur ou un appareil est authentifié, le processus d'autorisation détermine les ressources ou les services auxquels il a accès. Cela peut être basé sur des politiques définies par l'administrateur du réseau, telles que les groupes d'utilisateurs ou les rôles.
+
+- _Accounting_ : permet de suivre et d'enregistrer les activités des utilisateurs ou des appareils sur le réseau. Cela peut inclure des informations telles que la durée de la session, les ressources utilisées ou les données transférées. Ces informations peuvent être utilisées à des fins de facturation, de surveillance ou d'analyse.
+
+Il a pour but de fournir une solution centralisée pour les processus et base de données `AAA`, permettant ainsi une solution efficace, _scalable_ et une intéropérabilité dans le système (même avec des constructeurs différents). Il permet également une gestion granulaire des accès (_ACL_), la sécurisation des accès distants et la gestion de l'itinérance (_Roaming_).
+
 
 === Question 2
 
@@ -325,7 +333,9 @@ TODO
     Quel est le type de chiffrement utilisé pour les certificats qui ont été générés ? Quelle est la taille de la clé ?
 ])
 
-TODO
+Etant donné que ce sont des certificats, le chiffrement utilisé est de type asymétrique. La taille de la clé est de `384` bits (nous le voyons avec l'attribut `key-size=secp384r1` dans les commandes utilisées à la section Étape 2). Plus précisément, `secp384r1` fait référence à une courbe elliptique `P-384`.
+
+Source : #link("https://std.neuromancer.sk/secg/secp384r1")[Center for Research on Cryptography and Security - secp384r1: https://std.neuromancer.sk/secg/secp384r1]
 
 === Question 3
 
@@ -333,7 +343,7 @@ TODO
     Pour quelle(s) raison(s) avons-nous besoin de certificats dans EAP-TLS ?
 ])
 
-TODO
+Les certificats sont nécessaires dans EAP-TLS pour assurer une authentification forte et mutuelle entre le client et le serveur. Ils permettent de vérifier l'identité des deux parties et d'établir une connexion sécurisée en utilisant le chiffrement asymétrique.
 
 === Question 4
 
@@ -341,7 +351,9 @@ TODO
     Ou peut-on vérifier les utilisateurs qui ont des sessions ouvertes dans le RADIUS ?
 ])
 
-TODO
+Cette information est disponible dans le sous-menu `User Manager > Sessions` (voir section Étape 1).
+
+TODO ajouter capture
 
 === Question 5
 
@@ -349,4 +361,10 @@ TODO
     Dans le cas d’une mise en production de notre AP dans un open space. On souhaite éviter l’utilisation de certificats autogénérés. Quelles sont les opérations additionnelles ?
 )]
 
-TODO
+Pour éviter l'utilisation de certificats autogénérés, il est possible d'utiliser une autorité de certification (CA) reconnue. On peut donc utiliser une _Public Key Infrastructure_ (_PKI_), externe (tiers de confiance) ou interne, pour créer, gérer et délivrer les certificats nécessaires à l'authentification EAP-TLS. La _PKI_ émets donc le certificat du serveur _RADIUS_ ainsi que les certificats clients, qui sont tous signés par la même CA, permettant ainsi une authentification mutuelle fiable et sécurisée.
+
+Cette approche nécessite certains prérequis, comme :
+
+- Stockage sécurisé des clés privés (à l'aide d'un _Hardware Security Module_ (_HSM_) par exemple)
+- Mise en place de procédures de gestion des certificats (génération, renouvellement, révocation des certificats / clés)
+- Mise en place d'une cérémonie sûre et sécurisée pour la création et la rotation du certificat racine.

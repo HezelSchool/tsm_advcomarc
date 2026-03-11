@@ -28,4 +28,6 @@
 
 // ---------- Conclusion
 
-TODO
+En conclusion, ce laboratoire a permis de démontrer l'efficacité d'un serveur _RADIUS_ pour la gestion centralisée et granulaire des accès réseau. Grâce à l'utilisation de certificats asymétriques basés sur la courbe elliptique `secp384r1` et le chiffrement asymétrique, nous avons pu établir un environnement sécurisé garantissant l'identité des utilisateurs et l'intégrité des échanges.
+
+Les tests de connexion effectués avec l'utilisateur `labo` ont confirmé le bon fonctionnement de l'infrastructure, tant au niveau de l'authentification système que de l'accès sans fil sécurisé. Pour une mise en production réelle, l'utilisation d'une infrastructure à clés publiques (_PKI_) structurée et de modules de sécurité matériels (_HSM_) constituerait une évolution nécessaire afin de s'affranchir des certificats auto-générés et d'assurer une gestion rigoureuse du cycle de vie des identités.
