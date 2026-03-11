@@ -28,4 +28,8 @@
 
 // ---------- Conclusion
 
-TODO
+Ce laboratoire a permis de valider la mise en œuvre complète d'un système d'authentification GSM, confirmant le bon fonctionnement des algorithmes cryptographiques A3 et A8, ainsi que l'établissement d'un canal de communication sécurisé entre le client et le serveur. L'implémentation développée illustre les mécanismes fondamentaux de génération de RAND, de calcul de SRES et de dérivation de la clé de session Kc, permettant ainsi de comprendre concrètement les protocoles d'authentification des réseaux mobiles 2G.
+
+Malgré la simplicité du chiffrement par XOR utilisé dans cette simulation, l'architecture mise en place démontre efficacement les principes de l'authentification unidirectionnelle et du transfert sécurisé de données. Les captures de fonctionnement présentées attestent de la réussite de l'échange cryptographique entre les deux entités et de la validité de la session établie.
+
+Enfin, cette étude pratique met en perspective les limitations inhérentes aux systèmes GSM, notamment la vulnérabilité du chiffrement A5/1 et l'absence d'authentification mutuelle dans les premières versions du protocole. Elle souligne l'importance de l'évolution vers les standards 3G (UMTS) et 4G (LTE) qui ont introduit des mécanismes d'authentification bidirectionnelle et des algorithmes cryptographiques plus robustes. Cette expérience constitue ainsi une base solide pour appréhender les architectures de sécurité des communications mobiles modernes et leur évolution historique.
