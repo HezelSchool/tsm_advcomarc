@@ -1,5 +1,5 @@
 import socket
-from crypto import compute_sres, generate_kc, xor_cipher
+from crypto import compute_sres, generate_kc, a5_cipher
 from config import *
 
 def start_client():
@@ -41,7 +41,7 @@ def start_client():
 
     print(f"[CLIENT] Fichier lu: {len(data)} octets")
     print("[CLIENT] Chiffrement en cours")
-    encrypted_data = xor_cipher(data, kc)
+    encrypted_data = a5_cipher(data, kc)
     print(f"[CLIENT] Fichier chiffré: {len(encrypted_data)} octets")
     print("[CLIENT] Envoi du fichier")
     client.sendall(encrypted_data)
@@ -62,7 +62,7 @@ def start_client():
 
     print(f"[CLIENT] Fichier chiffré complet reçu: {len(encrypted_response)} octets")
     print("[CLIENT] Déchiffrement en cours")
-    decrypted_response = xor_cipher(encrypted_response, kc)
+    decrypted_response = a5_cipher(encrypted_response, kc)
     print(f"[CLIENT] Fichier déchiffré: {len(decrypted_response)} octets")
 
     with open("files/client_received.mp3", "wb") as f:

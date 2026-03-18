@@ -1,6 +1,6 @@
 import socket
 import os
-from crypto import generate_rand, compute_sres, generate_kc, xor_cipher
+from crypto import generate_rand, compute_sres, generate_kc, a5_cipher
 from session import Session
 from config import *
 
@@ -54,7 +54,7 @@ def handle_client(conn):
             return
 
         print("[SERVER] Déchiffrement en cours")
-        decrypted_data = xor_cipher(encrypted_data, session.kc)
+        decrypted_data = a5_cipher(encrypted_data, session.kc)
         print(f"[SERVER] Fichier déchiffré: {len(decrypted_data)} octets")
 
         with open("files/server_received.mp3", "wb") as f:
@@ -69,7 +69,7 @@ def handle_client(conn):
 
         print(f"[SERVER] Fichier lu: {len(data)} octets")
         print("[SERVER] Chiffrement en cours")
-        encrypted_response = xor_cipher(data, session.kc)
+        encrypted_response = a5_cipher(data, session.kc)
         print(f"[SERVER] Fichier chiffré: {len(encrypted_response)} octets")
         print("[SERVER] Envoi du fichier")
         conn.sendall(encrypted_response)

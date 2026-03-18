@@ -68,9 +68,28 @@ def generate_kc(rand, ki):
     hash_value = hashlib.sha256(data).digest()
     return hash_value[:16]  # 128-bit session key
 
-# --- XOR Encryption/Decryption ---
-def xor_cipher(data, key):
-    return bytes([data[i] ^ key[i % len(key)] for i in range(len(data))])
+# --- A5 Encryption/Decryption ---
+def generate_keystream(kc, length):
+    """
+    Génère un flot pseudo-aléatoire à partir de Kc
+    """
+    keystream = b""
+    counter = 0
+
+    while len(keystream) < length:
+        block = hashlib.sha256(kc + counter.to_bytes(4, 'big')).digest()
+        keystream += block
+        counter += 1
+
+    return keystream[:length]
+
+
+def a5_cipher(data, kc):
+    """
+    Chiffrement / déchiffrement (symétrique)
+    """
+    ks = generate_keystream(kc, len(data))
+    return bytes([d ^ k for d, k in zip(data, ks)])
 ```
 
 == session.py
@@ -147,7 +166,7 @@ def handle_client(conn):
             return
 
         print("[SERVER] Déchiffrement en cours")
-        decrypted_data = xor_cipher(encrypted_data, session.kc)
+        decrypted_data = a5_cipher(encrypted_data, session.kc)
         print(f"[SERVER] Fichier déchiffré: {len(decrypted_data)} octets")
 
         with open("files/server_received.mp3", "wb") as f:
@@ -162,7 +181,7 @@ def handle_client(conn):
 
         print(f"[SERVER] Fichier lu: {len(data)} octets")
         print("[SERVER] Chiffrement en cours")
-        encrypted_response = xor_cipher(data, session.kc)
+        encrypted_response = a5_cipher(data, session.kc)
         print(f"[SERVER] Fichier chiffré: {len(encrypted_response)} octets")
         print("[SERVER] Envoi du fichier")
         conn.sendall(encrypted_response)
@@ -193,7 +212,7 @@ if __name__ == "__main__":
 
 ```python
 import socket
-from crypto import compute_sres, generate_kc, xor_cipher
+from crypto import compute_sres, generate_kc, a5_cipher
 from config import *
 
 def start_client():
@@ -235,7 +254,7 @@ def start_client():
 
     print(f"[CLIENT] Fichier lu: {len(data)} octets")
     print("[CLIENT] Chiffrement en cours")
-    encrypted_data = xor_cipher(data, kc)
+    encrypted_data = a5_cipher(data, kc)
     print(f"[CLIENT] Fichier chiffré: {len(encrypted_data)} octets")
     print("[CLIENT] Envoi du fichier")
     client.sendall(encrypted_data)
@@ -256,7 +275,7 @@ def start_client():
 
     print(f"[CLIENT] Fichier chiffré complet reçu: {len(encrypted_response)} octets")
     print("[CLIENT] Déchiffrement en cours")
-    decrypted_response = xor_cipher(encrypted_response, kc)
+    decrypted_response = a5_cipher(encrypted_response, kc)
     print(f"[CLIENT] Fichier déchiffré: {len(decrypted_response)} octets")
 
     with open("files/client_received.mp3", "wb") as f:
