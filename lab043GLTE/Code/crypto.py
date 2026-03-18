@@ -1,5 +1,5 @@
 """
-Module de fonctions cryptographiques pour l'authentification GSM/LTE
+Module de fonctions cryptographiques pour l'authentification 3G/LTE
 Contient les fonctions de génération et de calcul utilisées par le client et le serveur
 """
 

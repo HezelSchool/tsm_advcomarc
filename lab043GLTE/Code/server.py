@@ -90,7 +90,7 @@ def unpack_file_payload(payload):
 
 def main():
     """
-    Serveur d'authentification GSM/LTE
+    Serveur d'authentification 3G/LTE
     """
     # Initialisation de la session
     session = Session(role="server")

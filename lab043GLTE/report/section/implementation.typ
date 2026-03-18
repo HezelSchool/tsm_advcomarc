@@ -35,6 +35,8 @@
 
 == config.py
 
+Ce script contient les paramètres de configuration globaux utilisés par le client et le serveur, notamment les paramètres de connexion, la clé secrète Ki, les chemins des fichiers échangés, et les options de debug.
+
 ```python
 import os
 
@@ -70,6 +72,8 @@ DEBUG = True
 ```
 
 == crypto.py
+
+Ce script implémente toutes les fonctions cryptographiques nécessaires pour le challenge d'authentification, la dérivation des clés de session, le chiffrement/déchiffrement des données, et la génération des tokens d'authentification.
 
 ```python
 import os
@@ -271,6 +275,8 @@ def compute_auth_token(rand, ki):
 ```
 
 == session.py
+
+Ce script gère l'état d'une session d'authentification, y compris le stockage du RAND, la vérification du SRES, l'établissement de la clé de session Kc, et les fonctions de chiffrement/déchiffrement des données de session. Il encapsule toute la logique liée à une session d'authentification 3G/LTE simulée.
 
 ```python
 import time
@@ -542,6 +548,8 @@ class Session:
 
 == server.py
 
+Ce script implémente un serveur d'authentification 3G/LTE. Il gère la connexion avec le client, l'authentification mutuelle, l'établissement de la clé de session, et l'échange de données chiffrées avec intégrité.
+
 ```python
 import socket
 import os
@@ -635,7 +643,7 @@ def unpack_file_payload(payload):
 
 def main():
     """
-    Serveur d'authentification GSM/LTE
+    Serveur d'authentification 3G/LTE
     """
     # Initialisation de la session
     session = Session(role="server")
@@ -739,6 +747,8 @@ if __name__ == "__main__":
 
 == client.py
 
+Ce script implémente un client d'authentification 3G/LTE. Il gère la connexion au serveur, l'authentification mutuelle, l'établissement de la clé de session, et l'échange de données chiffrées avec intégrité.
+
 ```python
 import socket
 import os
@@ -839,7 +849,7 @@ def unpack_file_payload(payload):
 
 def main():
     """
-    Client d'authentification GSM/LTE
+    Client d'authentification 3G/LTE
     """
     # Initialisation de la session
     session = Session(role="client")

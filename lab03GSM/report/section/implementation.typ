@@ -35,6 +35,8 @@
 
 == config.py
 
+Ce script contient les paramètres de configuration globaux utilisés par le client et le serveur, notamment les paramètres de connexion, la clé secrète Ki et la durée de session.
+
 ```python
 SERVER_HOST = "127.0.0.1"
 SERVER_PORT = 5000
@@ -47,6 +49,8 @@ BUFFER_SIZE = 4096
 ```
 
 == crypto.py
+
+Ce script implémente les fonctions cryptographiques nécessaires pour le challenge d'authentification, le chiffrement/déchiffrement des données, et la génération des tokens d'authentification.
 
 ```python
 import os
@@ -94,6 +98,8 @@ def a5_cipher(data, kc):
 
 == session.py
 
+Ce script gère l'état d'une session d'authentification.
+
 ```python
 import time
 from config import SESSION_DURATION
@@ -109,10 +115,12 @@ class Session:
 
 == server.py
 
+Ce script implémente un serveur d'authentification GSM. Il gère les connexions entrantes, le processus d'authentification, la réception de données chiffrées, et l'envoi de données chiffrées au client. Le serveur suit les étapes définies dans le protocole d'authentification GSM, en utilisant les fonctions cryptographiques définies dans crypto.py.
+
 ```python
 import socket
 import os
-from crypto import generate_rand, compute_sres, generate_kc, xor_cipher
+from crypto import generate_rand, compute_sres, generate_kc, a5_cipher
 from session import Session
 from config import *
 
@@ -209,6 +217,8 @@ if __name__ == "__main__":
 ```
 
 == client.py
+
+Ce script implémente un client d'authentification GSM. Il gère la connexion au serveur, le processus d'authentification, l'envoi de données chiffrées, et la réception de données chiffrées du serveur. Le client suit les étapes définies dans le protocole d'authentification GSM, en utilisant les fonctions cryptographiques définies dans crypto.py.
 
 ```python
 import socket

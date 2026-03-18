@@ -97,7 +97,7 @@ def unpack_file_payload(payload):
 
 def main():
     """
-    Client d'authentification GSM/LTE
+    Client d'authentification 3G/LTE
     """
     # Initialisation de la session
     session = Session(role="client")

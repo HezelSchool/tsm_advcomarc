@@ -1,5 +1,5 @@
 """
-Module de gestion de session pour l'authentification GSM/LTE
+Module de gestion de session pour l'authentification 3G/LTE
 Gère l'état de la session et les opérations d'authentification
 """
 

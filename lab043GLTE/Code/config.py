@@ -1,5 +1,5 @@
 """
-Configuration globale pour l'authentification GSM/LTE
+Configuration globale pour l'authentification 3G/LTE
 Contient les paramètres partagés entre client et serveur
 """
 
