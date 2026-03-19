@@ -38,25 +38,65 @@
     [(a) Ouvrir le fichier SCTP-ADDi.pcap dans Wireshark]
 )
 
-TODO
+La capture `sctp-addip.pcap` contient une communication `SCTP` de 38 paquets entre trois adresses IP différentes (`192.168.0.100`, `192.168.0.101` et `192.168.0.102`).
+
+#align(center, image("../asset/cap_wireshark.png", width: 100%))
 
 #qbox(
     [(b) Appliquer un filtre pour afficher uniquement les paquets SCTP : sctp]
 )
 
-TODO
+L'application du filtre `sctp` ne change rien par rapport à l'affichage initial, car tous les paquets de la capture sont des paquets `SCTP`.
+
+#align(center, image("../asset/cap_wireshark_filter_sctp.png", width: 100%))
 
 #qbox(
     [(c) Identifier les adresses IP source et destination]
 )
 
-TODO
+Les adresses IP sources sont :
+
+- `192.168.0.100`
+- `192.168.0.101`
+- `192.168.0.102`
+
+Les adresses IP destinations sont les mêmes.
 
 #qbox(
     [(d) Repérer les différentes phases de la communication SCTP]
 )
 
-TODO
+La communication `SCTP` est divisée selon les phases suivantes :
+
+1. *_`SCTP` association establishment message flow_*
+
+L'établissement de l'association `SCTP` se fait en quatre étapes (_4-way handshake_) et implique les paquets 1 à 4, entre les stations `192.168.0.100` et `192.168.0.101`.
+
+#align(center, image("../asset/sctp_flow_phase1.png", width: 100%))
+
+La station A `192.168.0.100` initie l'association en envoyant à la station B `192.168.0.101` un paquet contenant un `INIT chunk`, qui peut inclure une ou plusieurs adresses IP utilisées par l'initiateur. La station B `192.168.0.101` répond avec un paquet contenant un `INIT_ACK chunk`, qui peut également inclure une ou plusieurs adresses IP utilisées par le répondant. Les deux  `INIT chunk` et `INIT_ACK chunk` spécifient le nombre de flux sortants supportés par l'association, ainsi que le nombre maximum de flux entrants acceptés de l'autre point de terminaison.
+
+L'association est ensuite complétée par un échange de `COOKIE ECHO/COOKIE ACK` qui spécifie une valeur de _cookie_ utilisée dans tous les échanges de données ultérieurs.
+
+2. *_`SCTP` data transfer_*
+
+Une fois l'association établie, les données peuvent être transférées entre les points de terminaison en utilisant des paquets `DATA chunk`. Le récepteur _acknowledges_ la réception des données avec des paquets `SACK chunk`. Les paquets 5 à 35 (sauf le paquet 34) sont impliqués dans cette phase.
+
+#align(center, image("../asset/sctp_flow_phase2.png", width: 100%))
+
+Les paquets `ASCONF` sont utilisés pour communiquer un changement de configuration et doivent être _acknowledgés_ par un paquet `ASCONF_ACK`. Sur l'image précédente, les paquets 6/8, 17/18 et 27/28 sont des échanges `ASCONF/ASCONF_ACK`.
+
+Il est égalemen possible de voir des paquets `HEARTBEAT Chunks` et `HEARTBEAT ACK Chunks` qui sont utilisés pour une vérification périodique de la disponibilité des points de terminaison. Ceux-ci ne sont pas présent dans la capture.
+
+3. *_`SCTP` association termination_*
+
+La terminaison de l'association peut être initiée par n'importe quel point de terminaison avec un paquet contenant un `SHUTDOWN chunk`. Le point de terminaison destinataire répond avec un paquet contenant un `SHUTDOWN ACK chunk`, et le point de terminaison initiateur conclut la fermeture avec un paquet contenant un `SHUTDOWN COMPLETE chunk`. Dans la capture, on remarque que l'initiateur de la fermeture envoie deux paquets `SHUTDOWN chunk` (paquets 34 et 36) à suivre avant de recevoir un `SHUTDOWN ACK chunk` (paquet 35). Ici la numérotation des paquets est trompeur car si l'on regarde les _timestamps_, on remarque que le paquet 36 est envoyé avant le paquet 35.
+
+#align(center, image("../asset/sctp_flow_phase3.png", width: 100%))
+
+Sources : 
+- #link("https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-E6214D44-39E0-4B00-A491-06A5194CB820.htm")[Oracle Documentation - SCTP Message Flow : https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-E6214D44-39E0-4B00-A491-06A5194CB820.htm]
+- #link("https://www.rfc-editor.org/rfc/rfc5061")[RFC 5061 - Stream Control Transmission Protocol (SCTP) Dynamic Address Reconfiguration : https://www.rfc-editor.org/rfc/rfc5061]
 
 == Diagramme de séquence
 
@@ -73,7 +113,17 @@ TODO
       - Phase de fermeture (si présente)]
 )
 
-TODO (voir exemple de format attendu)
+Le diagramme de séquence ci-dessous illustre la phase d'établissement de l'association `SCTP` entre les stations.
+
+#align(center, image("../asset/seq_diag_phase1.svg", width: 100%))
+
+Le diagramme de séquence ci-dessous illustre la phase de transfert de données `SCTP` entre les stations.
+
+#align(center, image("../asset/seq_diag_phase2.svg", width: 100%))
+
+Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'association `SCTP` entre les stations.
+
+#align(center, image("../asset/seq_diag_phase3.svg", width: 100%))
 
 == Analyse détaillée des chunks
 
@@ -88,7 +138,198 @@ TODO (voir exemple de format attendu)
       - Sa place dans le protocole SCTP]
 )
 
-TODO
++ *[Paquet 1] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `INIT`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 2] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `INIT_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 3] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `COOKIE_ECHO`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 4] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `COOKIE_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 5] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 6] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `ASCONF`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 7] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 8] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `ASCONF_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 9] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 10] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 11] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 12] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 13] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 14] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 15] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 16] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 17] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `ASCONF`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 18] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `ASCONF_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 19] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 20] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 21] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 22] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 23] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 24] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 25] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 26] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 27] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `ASCONF`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 28] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `ASCONF_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 29] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 30] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 31] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 32] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 33] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `DATA`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 34] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `SHUTDOWN`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 35] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `SACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 36] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
+  - _Chunk_ : `SHUTDOWN_ACK`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 37] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `SHUTDOWN`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
+
++ *[Paquet 38] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
+  - _Chunk_ : `SHUTDOWN_COMPLETE`
+    - Rôle/fonction : TODO
+    - Paramètres : TODO
 
 == Questions
 

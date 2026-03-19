@@ -1,0 +1,9 @@
+sequenceDiagram
+    participant A as Client (192.168.0.101)
+    participant B as Server (192.168.0.100)
+
+    Note over A, B: Établissement de la connexion
+        A->>B: 1. [SCTP] INIT
+        B->>A: 2. [SCTP] INIT_ACK
+        A->>B: 3. [SCTP] COOKIE_ECHO
+        B->>A: 4. [SCTP] COOKIE_ACK 

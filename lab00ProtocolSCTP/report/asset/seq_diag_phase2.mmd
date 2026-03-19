@@ -1,0 +1,36 @@
+sequenceDiagram
+    participant A as Client (192.168.0.101)
+    participant B as Server (192.168.0.100)
+    participant C as Server (192.168.0.102)
+
+Note over A, C: Échange de données et Configuration (Phase 2)
+    A->>B: 5. [SCTP] DATA (TSN=0)
+    A->>B: 6. [SCTP] ASCONF
+    B->>A: 7. [SCTP] SACK (Ack=0, Arwnd=109542)
+    B->>A: 8. [SCTP] ASCONF_ACK
+    B->>A: 9. [SCTP] DATA (TSN=0)
+    A->>B: 10. [SCTP] SACK (Ack=0, Arwnd=108568)
+    A->>B: 11. [SCTP] DATA (TSN=1)
+    B->>A: 12. [SCTP] SACK (Ack=1, Arwnd=109516) DATA (TSN=1)
+    B->>A: 13. [SCTP] DATA (TSN=2)
+    A->>B: 14. [SCTP] SACK (Ack=2, Arwnd=107568)
+    B->>A: 15. [SCTP] DATA (TSN=3)
+    A->>B: 16. [SCTP] DATA (TSN=2)
+    A->>B: 17. [SCTP] ASCONF
+    B->>C: 18. [SCTP] ASCONF_ACK
+    A->>B: 19. [SCTP] DATA (TSN=3)
+    B->>A: 20. [SCTP] SACK (Ack=3, Arwnd=109516)
+    A->>B: 21. [SCTP] SACK (Ack=3, Arwnd=109568)
+    A->>B: 22. [SCTP] DATA (TSN=4)
+    B->>C: 23. [SCTP] DATA (TSN=4)
+    B->>C: 24. [SCTP] DATA (TSN=5)
+    A->>B: 25. [SCTP] SACK (Ack=5, Arwnd=107568)
+    B->>C: 26. [SCTP] DATA (TSN=6)
+    C->>B: 27. [SCTP] ASCONF
+    B->>C: 28. [SCTP] ASCONF_ACK
+    C->>B: 29. [SCTP] DATA (TSN=5)
+    B->>C: 30. [SCTP] SACK (Ack=5, Arwnd=109516)
+    C->>B: 31. [SCTP] DATA (TSN=6)
+    C->>B: 32. [SCTP] SACK (Ack=6, Arwnd=109568)
+    C->>B: 33. [SCTP] DATA (TSN=7)
+    B->>C: 35. [SCTP] SACK (Ack=7, Arwnd=109516)
