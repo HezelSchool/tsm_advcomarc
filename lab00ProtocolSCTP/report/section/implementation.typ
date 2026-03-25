@@ -140,196 +140,196 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 
 + *[Paquet 1] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `INIT`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Initialisation d'une association SCTP
+    - Paramètres : Initiate Tag, Initial TSN, Nombre de flux entrants/sortants, a_rwnd (Window size)
 
 + *[Paquet 2] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `INIT_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Répond à la demande d'initialisation et fournit un cookie cryptograhique
+    - Paramètres : Initiate Tag serveur, cookie, a_rwnd
 
 + *[Paquet 3] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `COOKIE_ECHO`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : renvoie le cookie pour prouver l'authenticité de la demande
+    - Paramètres : Cookie
 
 + *[Paquet 4] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `COOKIE_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Confirme la validité du cookie et l'association est donc établie
+    - Paramètres : Aucun
 
 + *[Paquet 5] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=0) 
 
 + *[Paquet 6] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `ASCONF`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Modification d'adresse pour cette association
+    - Paramètres : Paramètres d'adresse, numéro de séquence
 
 + *[Paquet 7] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de reception des données
+    - Paramètres : TSN Ack (=0), Arwnd
 
 + *[Paquet 8] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `ASCONF_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse la prise en compte de la modification d'adresse
+    - Paramètres : numéro de séquence
 
 + *[Paquet 9] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=0)
 
 + *[Paquet 10] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=0), Arwnd
 
 + *[Paquet 11] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=1)
 
 + *[Paquet 12] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : TSN Ack (=1), Arwnd
+    - Paramètres : Accuse de reception les données
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : TSN (=1)
+    - Paramètres : Envoie de données
 
 + *[Paquet 13] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=2)
 
 + *[Paquet 14] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=2), Arwnd
 
 + *[Paquet 15] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=3)
 
 + *[Paquet 16] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=2)
 
 + *[Paquet 17] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `ASCONF`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Demande de modification d'adresse pour cette association
+    - Paramètres : Paramètres d'adresse, numéro de séquence
 
-+ *[Paquet 18] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 18] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `ASCONF_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse la prise en compte de la modification d'adresse
+    - Paramètres : numéro de séquence
 
 + *[Paquet 19] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=3)
 
 + *[Paquet 20] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSn Ack (=3), Arwnd
 
 + *[Paquet 21] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN (=3), Arwnd
 
 + *[Paquet 22] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=4)
 
-+ *[Paquet 23] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 23] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=4)
 
-+ *[Paquet 24] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 24] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=5)
 
 + *[Paquet 25] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=5), Arwnd
 
-+ *[Paquet 26] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 26] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=6)
 
-+ *[Paquet 27] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 27] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `ASCONF`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Demande de modification d'adresse pour cette association
+    - Paramètres : Paramètres d'adresse, numéro de séquence
 
-+ *[Paquet 28] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 28] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `ASCONF_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse la prise en compte de la modification d'adresse
+    - Paramètres : numéro de séquence
 
-+ *[Paquet 29] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 29] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=5)
 
-+ *[Paquet 30] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 30] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=5)
 
-+ *[Paquet 31] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 31] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=6)
 
-+ *[Paquet 32] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 32] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=6)
 
-+ *[Paquet 33] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 33] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Envoie de données
+    - Paramètres : TSN (=7)
 
-+ *[Paquet 34] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 34] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Initialisation de la fermeture de l'association
+    - Paramètres : TSN Ack (dernier reçu avec succès)
 
-+ *[Paquet 35] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 35] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Accuse de réception les données
+    - Paramètres : TSN Ack (=7)
 
-+ *[Paquet 36] - Serveur (`192.168.0.102`) → Serveur (`192.168.0.100`)*
++ *[Paquet 36] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SHUTDOWN_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Confirmation de la réception de la demande de fermeture
+    - Paramètres : Aucun
 
-+ *[Paquet 37] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 37] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Répétition de la demande de fermeture
+    - Paramètres : TSN Ack
 
-+ *[Paquet 38] - Serveur (`192.168.0.100`) → Serveur (`192.168.0.102`)*
++ *[Paquet 38] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN_COMPLETE`
-    - Rôle/fonction : TODO
-    - Paramètres : TODO
+    - Rôle/fonction : Validation de la fermeture de l'association
+    - Paramètres : Aucun
 
 == Questions
 
@@ -337,22 +337,22 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
     [1. Quelle est la différence principale entre le handshake SCTP (4-way) et le handshake TCP (3-way) ?]
 )
 
-TODO
+Outre le fait que SCTP comporte une étape supplémentaire, la différence majeure réside dans le moment où le serveur alloue ses ressources. Avec TCP, cette allocation se fait dès la réception du SYN. En revanche, avec SCTP, le serveur n'alloue ses ressources qu'à la réception du COOKIE_ECHO, une fois que le client a prouvé sa légitimité.
 
 #qbox(
     [2. Pourquoi SCTP utilise-t-il un cookie lors de l’établissement de connexion ?]
 )
 
-TODO
+SCTP utilise un cookie pour pallier les vulnérabilités de TCP face aux attaques par déni de service, comme le SYN Flood, qui visent à saturer et faire planter le serveur. Ce cookie agit comme un mécanisme de sécurité : le serveur n'alloue sa mémoire qu'après avoir reçu un COOKIE_ECHO valide, évitant ainsi de gaspiller des ressources pour des requêtes illégitimes.
 
 #qbox(
     [3. Quel est l’avantage du SACK par rapport à un ACK classique ?]
 )
 
-TODO
+Le principal avantage du SACK est l'optimisation de la bande passante grâce à l'élimination des retransmissions inutiles. Avec un ACK, la perte d'un paquet entraîne souvent la retransmission de celui-ci ainsi que de tous les paquets l'ayant suivi. Le SACK, en revanche, permet d'indiquer précisément les paquets manquants et ceux bien reçus, limitant ainsi le renvoi aux seules données perdues.
 
 #qbox(
     [4. Dans quel contexte l’extension ADD-IP (ASCONF) est-elle utile ?]
 )
 
-TODO
+L'extension ADD-IP est particulièrement utile pour gérer le multihoming et la mobilité, car elle permet de modifier dynamiquement les adresses IP d'une association en cours sans l'interrompre. Concrètement, si l'interface principale d'un serveur tombe en panne, le chunk ASCONF permet de basculer sur une autre adresse IP. De même, si un téléphone passe d'une connexion Wi-Fi à un réseau 4G/5G, cette extension assurera la continuité de la communication.
