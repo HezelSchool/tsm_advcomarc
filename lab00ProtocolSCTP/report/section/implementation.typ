@@ -42,6 +42,8 @@ La capture `sctp-addip.pcap` contient une communication `SCTP` de 38 paquets ent
 
 #align(center, image("../asset/cap_wireshark.png", width: 100%))
 
+#pagebreak()
+
 #qbox(
   [(b) Appliquer un filtre pour afficher uniquement les paquets SCTP : sctp],
 )
@@ -56,11 +58,13 @@ L'application du filtre `sctp` ne change rien par rapport à l'affichage initial
 
 Les adresses IP sources sont :
 
-- `192.168.0.100`
-- `192.168.0.101`
-- `192.168.0.102`
+- `192.168.0.100` (Client, station A)
+- `192.168.0.102` (Client, station A)
+- `192.168.0.101` (Serveur, station B)
 
 Les adresses IP destinations sont les mêmes.
+
+#pagebreak()
 
 #qbox(
   [(d) Repérer les différentes phases de la communication SCTP],
@@ -84,6 +88,8 @@ Une fois l'association établie, les données peuvent être transférées entre 
 
 #align(center, image("../asset/sctp_flow_phase2.png", width: 100%))
 
+#pagebreak()
+
 Les paquets `ASCONF` sont utilisés pour communiquer un changement de configuration et doivent être _acknowledgés_ par un paquet `ASCONF_ACK`. Sur l'image précédente, les paquets 6/8, 17/18 et 27/28 sont des échanges `ASCONF/ASCONF_ACK`.
 
 Il est égalemen possible de voir des paquets `HEARTBEAT Chunks` et `HEARTBEAT ACK Chunks` qui sont utilisés pour une vérification périodique de la disponibilité des points de terminaison. Ceux-ci ne sont pas présent dans la capture.
@@ -101,6 +107,8 @@ Sources :
 - #link(
     "https://www.rfc-editor.org/rfc/rfc5061",
   )[RFC 5061 - Stream Control Transmission Protocol (SCTP) Dynamic Address Reconfiguration : https://www.rfc-editor.org/rfc/rfc5061]
+
+#pagebreak()
 
 == Diagramme de séquence
 
@@ -120,15 +128,21 @@ Sources :
 
 Le diagramme de séquence ci-dessous illustre la phase d'établissement de l'association `SCTP` entre les stations.
 
-#align(center, image("../asset/seq_diag_phase1.svg", width: 100%))
+#align(center, image("../asset/seq_diag_phase1.svg", width: 70%))
+
+#pagebreak()
 
 Le diagramme de séquence ci-dessous illustre la phase de transfert de données `SCTP` entre les stations.
 
-#align(center, image("../asset/seq_diag_phase2.svg", width: 100%))
+#align(center, image("../asset/seq_diag_phase2.svg", width: 90%))
+
+#pagebreak()
 
 Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'association `SCTP` entre les stations.
 
-#align(center, image("../asset/seq_diag_phase3.svg", width: 100%))
+#align(center, image("../asset/seq_diag_phase3.svg", width: 70%))
+
+#pagebreak()
 
 == Analyse détaillée des chunks
 
@@ -180,6 +194,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
           : https://datatracker.ietf.org/doc/html/rfc4960#section-3.1]
 
 #align(center, image("../asset/p1.png", width: 100%))
+
+#pagebreak()
 
 + *[Paquet 2] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `INIT_ACK`
@@ -272,6 +288,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
 
 #align(center, image("../asset/p4.png", width: 100%))
+
+#pagebreak()
 
 + *[Paquet 5] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`
@@ -420,6 +438,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 
 #align(center, image("../asset/p12.png", width: 100%))
 
+#pagebreak()
+
 + *[Paquet 13] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `2`, `SID` : `0`, `SSN` : `2`, `Payload Protocol Identifier` : `0`
@@ -446,6 +466,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
   - `ASCONF Parameter` : Ici, "_Set primary address parameter_" ; indique le changement d'adresse IP principale de l'association à l'adresse IPv4 `192.168.0.102`
 
 #align(center, image("../asset/p17.png", width: 100%))
+
+#pagebreak()
 
 + *[Paquet 18] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `ASCONF_ACK`, voir paquet 8 pour les détails
@@ -494,7 +516,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
   - `Address Parameter` : contient l'adresse IP `192.168.0.102`
   - `ASCONF Parameter` : Ici, "_Delete IP address parameter_" ; indique la demande de suppression de l'adresse IPv4 `192.168.0.101` de l'association
 
-¼#align(center, image("../asset/p27.png", width: 100%))
+#align(center, image("../asset/p27.png", width: 100%))
 
 + *[Paquet 28] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `ASCONF_ACK`, voir paquet 8 pour les détails
@@ -523,6 +545,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
   - `TSN` : `7`, `SID` : `0`, `SSN` : `7`, `Payload Protocol Identifier` : `0`
   - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
+#pagebreak()
+
 + *[Paquet 34] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN`
     - Rôle/fonction : initialise une fermeture "gracieuse" d'une association `SCTP`
@@ -546,6 +570,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 + *[Paquet 35] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SACK`, voir paquet 7 pour les détails
   - `Cumulative TSN Ack (relative)` : `7`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
+
+#pagebreak()
 
 + *[Paquet 36] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SHUTDOWN_ACK`
@@ -620,6 +646,8 @@ Sources :
 - #link(
     "https://en.wikipedia.org/wiki/SYN_flood",
   )[Wikipédia - SYN flood : https://en.wikipedia.org/wiki/SYN_flood]
+
+#pagebreak()
 
 #qbox(
   [3. Quel est l’avantage du SACK par rapport à un ACK classique ?],
