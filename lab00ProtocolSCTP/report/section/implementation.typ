@@ -173,7 +173,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.2]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
       - #link(
           "https://datatracker.ietf.org/doc/html/rfc4960#section-3.1",
         )[IBM Documentation - SCTP Common Header Field Descriptions
@@ -210,7 +210,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.3]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
       - #link(
           "https://www.ibm.com/docs/en/aix/7.2.0?topic=protocol-sctp-association-startup-shutdown",
         )[IBM Documentation - SCTP association startup and shutdown : https://www.ibm.com/docs/en/aix/7.2.0?topic=protocol-sctp-association-startup-shutdown]
@@ -244,7 +244,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[IBM Documentation - SCTP association startup and shutdown : https://www.ibm.com/docs/en/aix/7.2.0?topic=protocol-sctp-association-startup-shutdown]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
 
 #align(center, image("../asset/p3.png", width: 100%))
 
@@ -269,7 +269,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[IBM Documentation - SCTP association startup and shutdown : https://www.ibm.com/docs/en/aix/7.2.0?topic=protocol-sctp-association-startup-shutdown]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
 
 #align(center, image("../asset/p4.png", width: 100%))
 
@@ -308,7 +308,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.1]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
       - #link(
           "https://www.rfc-editor.org/rfc/rfc7053",
         )[RFC 7053 - SACK-IMMEDIATELY Extension for the Stream Control Transmission Protocol : https://www.rfc-editor.org/rfc/rfc7053]
@@ -368,7 +368,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.4]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
 
 #align(center, image("../asset/p7.png", width: 100%))
 
@@ -392,7 +392,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[RFC 5061 - Stream Control Transmission Protocol (SCTP) Dynamic Address Reconfiguration : https://www.rfc-editor.org/rfc/rfc5061#section-4.2.5]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
 
 #align(center, image("../asset/p8.png", width: 100%))
 
@@ -525,14 +525,23 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 
 + *[Paquet 34] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN`
-    - Rôle/fonction : TODO
-    - Paramètres fixes : TODO
-    - Paramètres variables : TODO
+    - Rôle/fonction : initialise une fermeture "gracieuse" d'une association `SCTP`
+    - Paramètres fixes :
+      - `Source Port` : port source du _sender_ du paquet `SHUTDOWN`
+      - `Destination Port` : port destination du _receiver_ du paquet `SHUTDOWN`
+      - `Verification Tag` : utilisé par le _receiver_ du paquet pour valider l'identité du _sender_ du paquet `SHUTDOWN`
+      - `Checksum` : _checksum_ du paquet
+      - `Cumulative TSN Ack (relative)` : contient le numéro de séquence de transmission relatif du dernier paquet reçu en séquence avant écart
+    - Paramètres variables : aucun
     - Sources :
-      //- #link("")[RFC 4960 - Stream Control Transmission Protocol : ]
+      - #link(
+          "https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.8",
+        )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.8]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
+
+#align(center, image("../asset/p34.png", width: 100%))
 
 + *[Paquet 35] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SACK`, voir paquet 7 pour les détails
@@ -540,29 +549,47 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 
 + *[Paquet 36] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SHUTDOWN_ACK`
-    - Rôle/fonction : TODO
-    - Paramètres fixes : TODO
-    - Paramètres variables : TODO
+    - Rôle/fonction : utilisé pour _acknowledge_ la réception d'un `SHUTDOWN` paquet
+    - Paramètres fixes :
+      - `Source Port` : port source du _sender_ du paquet `SHUTDOWN_ACK`
+      - `Destination Port` : port destination du _receiver_ du paquet `SHUTDOWN_ACK`
+      - `Verification Tag` : utilisé par le _receiver_ du paquet pour valider l'identité du _sender_ du paquet `SHUTDOWN_ACK`
+      - `Checksum` : _checksum_ du paquet
+    - Paramètres variables : aucun
+    - Remarque.s :
+      - Ici, le paquet 36 `SHUTDOWN_ACK` est envoyé en réponse au paquet 34 `SHUTDOWN`
+      - Le _chunk_ `SHUTDOWN_ACK` ne possède pas de paramètres propres
     - Sources :
-      //- #link("")[RFC 4960 - Stream Control Transmission Protocol : ]
+      - #link(
+          "https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.9",
+        )[RFC 4960 - Stream Control Transmission Protocol : https://datatracker.ietf.org/doc/html/rfc4960#section-3.3.9]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
+
+#align(center, image("../asset/p36.png", width: 100%))
 
 + *[Paquet 37] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
-  - _Chunk_ : `SHUTDOWN`
-    - Rôle/fonction : voir paquet 34 pour les détails
+  - _Chunk_ : `SHUTDOWN`, voir paquet 34 pour les détails
 
 + *[Paquet 38] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN_COMPLETE`
-    - Rôle/fonction : TODO
-    - Paramètres fixes : TODO
-    - Paramètres variables : TODO
+    - Rôle/fonction : conclut la fermeture "gracieuse" d'une association `SCTP` après l'échange de paquets `SHUTDOWN` et `SHUTDOWN_ACK`
+    - Paramètres fixes :
+      - `Source Port` : port source du _sender_ du paquet `SHUTDOWN_COMPLETE`
+      - `Destination Port` : port destination du _receiver_ du paquet `SHUTDOWN_COMPLETE`
+      - `Verification Tag` : utilisé par le _receiver_ du paquet pour valider l'identité du _sender_ du paquet `SHUTDOWN_COMPLETE`
+      - `Checksum` : _checksum_ du paquet
+    - Paramètres variables : aucun
     - Sources :
-      //- #link("")[RFC 4960 - Stream Control Transmission Protocol : ]
+      - #link(
+          "https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-E6214D44-39E0-4B00-A491-06A5194CB820.htm",
+        )[Oracle Documentation - SCTP Message Flow : https://docs.oracle.com/cd/E80921_01/html/esbc_ecz740_configuration/GUID-E6214D44-39E0-4B00-A491-06A5194CB820.htm]
       - #link(
           "https://en.wikipedia.org/wiki/SCTP_packet_structure",
-        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
+        )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structure]
+
+#align(center, image("../asset/p38.png", width: 100%))
 
 == Questions
 
