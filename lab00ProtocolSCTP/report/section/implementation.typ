@@ -294,6 +294,10 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
     - Paramètres variables : aucun
     - Remarque.s :
       - Le champ `Verification Tag` du paquet contient la valeur du champ `Initiate Tag` de l'`INIT_ACK` paquet
+      - Le champ `I-Bit` est à `0` (le _sender_ du paquet ne demande pas un `SACK` immédiat)
+      - Le champ `U-Bit` est à `0` (c'est un paquet de données ordonné)
+      - Le champ `B-Bit` est à `1` (c'est le premier fragment d'un message utilisateur)
+      - Le champ `E-Bit` est à `1` (c'est le dernier fragment d'un message utilisateur)
       - Le champ `TSN` est à `0` (premier paquet `DATA` de l'association)
       - Le champ `SID` est à `0` (premier flux de l'association)
       - Le champ `SSN` est à `0` (premier paquet `DATA` du flux)
@@ -381,7 +385,7 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
     - Remarque.s :
       - Ici, le paquet 8 `ASCONF_ACK` est envoyé en réponse au paquet 6 `ASCONF`
       - Le champ `Verification Tag` du paquet contient la valeur du champ `Initiate Tag` de l'`INIT` paquet
-      - Le champ `Sequence Number` du paquet est à `0xa1104d8` (correspondant au champ `Sequence Number` du paquet `ASCONF` du paquet 6)
+      - Le champ `Sequence Number` du paquet est à `0xa1104d8a` (correspondant au champ `Sequence Number` du paquet `ASCONF` du paquet 6)
     - Sources :
       - #link(
           "https://www.rfc-editor.org/rfc/rfc5061#section-4.2.5",
@@ -395,17 +399,19 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 + *[Paquet 9] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `0`, `SID` : `0`, `SSN` : `0`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 10] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
-  - _Chunk_ : `SACK` du paquet 9, voir paquet 7 pour les détails
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
   - `Cumulative TSN Ack (relative)` : `0`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 11] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `1`, `SID` : `0`, `SSN` : `1`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 12] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
-  - _Chunk_ : `SACK` du paquet 11, voir paquet 7 pour les détails
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
   - `Cumulative TSN Ack (relative)` : `1`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `1`, `SID` : `0`, `SSN` : `1`, `Payload Protocol Identifier` : `0`
@@ -417,119 +423,105 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
 + *[Paquet 13] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `2`, `SID` : `0`, `SSN` : `2`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 14] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
-  - _Chunk_ : `SACK` du paquet 13, voir paquet 7 pour les détails
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
   - `Cumulative TSN Ack (relative)` : `2`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 15] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
   - `TSN` : `3`, `SID` : `0`, `SSN` : `3`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 16] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : `0`
+  - `TSN` : `2`, `SID` : `0`, `SSN` : `2`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 17] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `ASCONF`, voir paquet 6 pour les détails
+  - `Sequence Number` : `0xa1104d8b` (deuxième paquet `ASCONF` de l'association)
+  - `Address Parameter` : contient l'adresse IP `192.168.0.102`
+  - `ASCONF Parameter` : Ici, "_Set primary address parameter_" ; indique le changement d'adresse IP principale de l'association à l'adresse IPv4 `192.168.0.102`
+
+#align(center, image("../asset/p17.png", width: 100%))
 
 + *[Paquet 18] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
-  - _Chunk_ : `ASCONF_ACK` du paquet TODO, voir paquet 8 pour les détails
+  - _Chunk_ : `ASCONF_ACK`, voir paquet 8 pour les détails
+  - `Sequence Number` : `0xa1104d8b` (correspondant au champ `Sequence Number` du paquet `ASCONF` du paquet 17)
 
 + *[Paquet 19] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `3`, `SID` : `0`, `SSN` : `3`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 20] - Serveur (`192.168.0.100`) → Client (`192.168.0.101`)*
-  - _Chunk_ : `SACK` du paquet TODO, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
+  - `Cumulative TSN Ack (relative)` : `3`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 21] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
-  - _Chunk_ : `SACK` du paquet TODO, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
+  - `Cumulative TSN Ack (relative)` : `3`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 22] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `4`, `SID` : `0`, `SSN` : `4`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 23] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `4`, `SID` : `0`, `SSN` : `4`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 24] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `5`, `SID` : `0`, `SSN` : `5`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 25] - Client (`192.168.0.101`) → Serveur (`192.168.0.100`)*
-  - _Chunk_ : `SACK` du paquet TODO, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
+  - `Cumulative TSN Ack (relative)` : `5`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 26] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `6`, `SID` : `0`, `SSN` : `6`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 27] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `ASCONF`, voir paquet 6 pour les détails
+  - `Sequence Number` : `0xa1104d8c` (troisième paquet `ASCONF` de l'association)
+  - `Address Parameter` : contient l'adresse IP `192.168.0.102`
+  - `ASCONF Parameter` : Ici, "_Delete IP address parameter_" ; indique la demande de suppression de l'adresse IPv4 `192.168.0.101` de l'association
+
+¼#align(center, image("../asset/p27.png", width: 100%))
 
 + *[Paquet 28] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
-  - _Chunk_ : `ASCONF_ACK` du paquet TODO, voir paquet 8 pour les détails
+  - _Chunk_ : `ASCONF_ACK`, voir paquet 8 pour les détails
+  - `Sequence Number` : `0xa1104d8c` (correspondant au champ `Sequence Number` du paquet `ASCONF` du paquet 27)
 
 + *[Paquet 29] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `5`, `SID` : `0`, `SSN` : `5`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 30] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
-  - _Chunk_ : `SACK` du paquet TODO, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
+  - `Cumulative TSN Ack (relative)` : `5`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 31] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `6`, `SID` : `0`, `SSN` : `6`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 32] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SACK`, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - `Cumulative TSN Ack (relative)` : `6`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 33] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `DATA`, voir paquet 5 pour les détails
-  - `TSN` : ``
-  - `SID` : ``
-  - `SSN` : ``
-  - `Payload Protocol Identifier` : ``
+  - `TSN` : `7`, `SID` : `0`, `SSN` : `7`, `Payload Protocol Identifier` : `0`
+  - `I-Bit` : `0`, `U-Bit` : `0`, `B-Bit` : `1`, `E-Bit` : `1`
 
 + *[Paquet 34] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
   - _Chunk_ : `SHUTDOWN`
@@ -543,10 +535,8 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
         )[Wikipedia - SCTP packet structure : https://en.wikipedia.org/wiki/SCTP_packet_structureS]
 
 + *[Paquet 35] - Serveur (`192.168.0.100`) → Client (`192.168.0.102`)*
-  - _Chunk_ : `SACK` du paquet TODO, voir paquet 7 pour les détails
-  - `Cumulative TSN Ack (relative)` : ``
-  - `Number of Gap Ack Blocks` : ``
-  - `Number of Duplicate TSNs` : ``
+  - _Chunk_ : `SACK`, voir paquet 7 pour les détails
+  - `Cumulative TSN Ack (relative)` : `7`, `Number of Gap Ack Blocks` : `0`, `Number of Duplicate TSNs` : `0`
 
 + *[Paquet 36] - Client (`192.168.0.102`) → Serveur (`192.168.0.100`)*
   - _Chunk_ : `SHUTDOWN_ACK`
