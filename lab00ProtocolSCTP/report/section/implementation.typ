@@ -597,22 +597,47 @@ Le diagramme de séquence ci-dessous illustre la phase de fermeture de l'associa
   [1. Quelle est la différence principale entre le handshake SCTP (4-way) et le handshake TCP (3-way) ?],
 )
 
-Outre le fait que SCTP comporte une étape supplémentaire, la différence majeure réside dans le moment où le serveur alloue ses ressources. Avec TCP, cette allocation se fait dès la réception du SYN. En revanche, avec SCTP, le serveur n'alloue ses ressources qu'à la réception du COOKIE_ECHO, une fois que le client a prouvé sa légitimité.
+Outre le fait que `SCTP` comporte une étape supplémentaire, la différence majeure réside dans le moment où le serveur alloue ses ressources. Avec `TCP`, cette allocation se fait dès la réception du `SYN`. Un attaquant peut donc saturer le serveur en envoyant de nombreux `SYN` sans jamais compléter le _handshake_ avec un `ACK`. En revanche, avec `SCTP`, le serveur génère un _State Cookie_ lors de la réception de l'`INIT` et n'alloue ses ressources qu'après avoir reçu un `COOKIE_ECHO` valide. Cela rend `SCTP` plus résilient face aux attaques par déni de service.
+
+Sources :
+- #link(
+    "https://www.rfc-editor.org/rfc/rfc4960#section-11.2.4.1",
+  )[RFC 4960 - Stream Control Transmission Protocol : https://www.rfc-editor.org/rfc/rfc4960#section-11.2.4.1]
+- #link(
+    "https://en.wikipedia.org/wiki/SYN_flood",
+  )[Wikipédia - SYN flood : https://en.wikipedia.org/wiki/SYN_flood]
 
 #qbox(
   [2. Pourquoi SCTP utilise-t-il un cookie lors de l’établissement de connexion ?],
 )
 
-SCTP utilise un cookie pour pallier les vulnérabilités de TCP face aux attaques par déni de service, comme le SYN Flood, qui visent à saturer et faire planter le serveur. Ce cookie agit comme un mécanisme de sécurité : le serveur n'alloue sa mémoire qu'après avoir reçu un COOKIE_ECHO valide, évitant ainsi de gaspiller des ressources pour des requêtes illégitimes.
+Comme expliqué à la question précédente, `SCTP` utilise un cookie pour pallier les vulnérabilités de `TCP` face aux attaques par déni de service, comme le `SYN Flood`. Ce cookie agit comme un mécanisme de sécurité : le serveur n'alloue sa mémoire qu'après avoir reçu un `COOKIE_ECHO` valide, évitant ainsi de gaspiller des ressources pour des requêtes illégitimes.
+
+Sources :
+- #link(
+    "https://www.rfc-editor.org/rfc/rfc4960#section-11.2.4.1",
+  )[RFC 4960 - Stream Control Transmission Protocol : https://www.rfc-editor.org/rfc/rfc4960#section-11.2.4.1]
+- #link(
+    "https://en.wikipedia.org/wiki/SYN_flood",
+  )[Wikipédia - SYN flood : https://en.wikipedia.org/wiki/SYN_flood]
 
 #qbox(
   [3. Quel est l’avantage du SACK par rapport à un ACK classique ?],
 )
 
-Le principal avantage du SACK est l'optimisation de la bande passante grâce à l'élimination des retransmissions inutiles. Avec un ACK, la perte d'un paquet entraîne souvent la retransmission de celui-ci ainsi que de tous les paquets l'ayant suivi. Le SACK, en revanche, permet d'indiquer précisément les paquets manquants et ceux bien reçus, limitant ainsi le renvoi aux seules données perdues.
+Le principal avantage du `SACK` est l'optimisation de la bande passante grâce à l'élimination des retransmissions inutiles. Avec un `ACK`, la perte d'un paquet entraîne souvent la retransmission de celui-ci ainsi que de tous les paquets l'ayant suivi (selon l'implémentation du `ACK`). Le `SACK`, en revanche, permet d'indiquer précisément les paquets manquants et ceux bien reçus, limitant ainsi le renvoi aux seules données perdues.
+
+Sources :
+- #link("https://www.geeksforgeeks.org/computer-networks/selective-acknowledgments-sack-in-tcp/")[GeeksforGeeks - Selective Acknowledgments (SACK) in TCP : https://www.geeksforgeeks.org/computer-networks/selective-acknowledgments-sack-in-tcp/],
+  )
 
 #qbox(
   [4. Dans quel contexte l’extension ADD-IP (ASCONF) est-elle utile ?],
 )
 
-L'extension ADD-IP est particulièrement utile pour gérer le multihoming et la mobilité, car elle permet de modifier dynamiquement les adresses IP d'une association en cours sans l'interrompre. Concrètement, si l'interface principale d'un serveur tombe en panne, le chunk ASCONF permet de basculer sur une autre adresse IP. De même, si un téléphone passe d'une connexion Wi-Fi à un réseau 4G/5G, cette extension assurera la continuité de la communication.
+L'extension `ADD-IP` est particulièrement utile pour gérer le multihoming et la mobilité, car elle permet de modifier dynamiquement les adresses IP d'une association en cours sans l'interrompre. Concrètement, si une nouvelle interface réseau est ajoutée ou qu'une adresse doit être retirée pendant l'association, le _chunk_ `ASCONF` permet de le faire dynamiquement sans interrompre la session. De même, si un téléphone passe d'une connexion Wi-Fi à un réseau 4G/5G, cette extension assurera la continuité de la communication.
+
+Sources :
+- #link(
+    "https://www.rfc-editor.org/rfc/rfc5061",
+  )[RFC 5061 - Stream Control Transmission Protocol (SCTP) Dynamic Address Reconfiguration : https://www.rfc-editor.org/rfc/rfc5061]
