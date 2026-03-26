@@ -1,7 +1,7 @@
 sequenceDiagram
     participant A as Client (192.168.0.101)
     participant B as Server (192.168.0.100)
-    participant C as Server (192.168.0.102)
+    participant C as Client (192.168.0.102)
 
 Note over A, C: Échange de données et Configuration (Phase 2)
     A->>B: 5. [SCTP] DATA (TSN=0)

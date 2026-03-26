@@ -1,6 +1,6 @@
 sequenceDiagram
-    participant B as Client (192.168.0.100)
-    participant C as Server (192.168.0.102)
+    participant B as Server (192.168.0.100)
+    participant C as Client (192.168.0.102)
 
     Note over B, C: Fermeture de la connexion
     B->>C: 34. [SCTP] SHUTDOWN
