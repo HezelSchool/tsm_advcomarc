@@ -260,7 +260,8 @@ Dans le sous-menu `User Manager > Users`, double-cliquer sur l'utilisateur `labo
 
 #align(center, image("../asset/group_labo.png", width: 100%))
 
-TODO test connection.
+Pour ce qui est de mon cas (Dylan), concernant les tests de connexion, mon ordinateur présente un dysfonctionnement au niveau de son interface Ethernet, ce qui entraîne une interruption de la configuration du routeur après quelques minutes. En conséquence, il m’a été impossible de procéder à la mise en place d’un réseau RADIUS.
+
 
 #sourcecode(```sh
 sudo mv ~/Downloads/cert_export_advcomarc-client-cert.p12 /etc/ca-certificates/trust-source/anchors/
