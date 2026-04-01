@@ -9,23 +9,23 @@
  * Modified By: Dimitri Julmy
  * --------------------------------------------------------------------------------
  * Copyright (c) 2025 Dimitri Julmy
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * --------------------------------------------------------------------------------
  */
 
-  // ---------- Imports
+// ---------- Imports
 
 #import "@preview/codelst:2.0.2": sourcecode
 #import "../helper.typ": qbox
@@ -35,14 +35,14 @@
 == Étape 1 : Configuration d’un login par RADIUS
 
 #qbox(
-    [En premier lieu, vous aurez besoin d’ajouter un serveur vers lequel réaliser les requêtes d’authentification.
-    -  Ouvrez le menu « RADIUS ».
+  [En premier lieu, vous aurez besoin d’ajouter un serveur vers lequel réaliser les requêtes d’authentification.
+    - Ouvrez le menu « RADIUS ».
     - Ajouter un nouveau serveur.
       - Dans les paramètres à fournir, l’adresse IP doit être 127.0.0.1
       - Les utilisations de ce serveur seront pour les « logins » ainsi que le « Wireless »
       - Fournissez un SECRET qui devra être reporté dans le serveur RADIUS.
     - Acceptez les requêtes d’authentification en provenance du port 3799
-    ]
+  ],
 )
 
 Cliquer sur le menu `RADIUS` puis sur le bouton `New`. Configurer le serveur comme suit :
@@ -55,14 +55,14 @@ Cliquer sur le menu `RADIUS` puis sur le bouton `New`. Configurer le serveur com
 
 Cliquer sur le bouton `OK` puis `Apply` pour créer le serveur RADIUS.
 
-#align(center, image("../asset/create_radius.png", width: 100%))
+#align(center, image("../asset/create_radius.png", width: 50%))
 
 Le serveur RADIUS créé apparaît dans la liste des serveurs RADIUS.
 
 #align(center, image("../asset/radius_list.png", width: 100%))
 
 #qbox(
-    [Pour créer le serveur, ouvrez le menu « User Manager » et dans l’onglet « Router », ajoutez-en un nouveau avec les paramètres adéquats.]
+  [Pour créer le serveur, ouvrez le menu « User Manager » et dans l’onglet « Router », ajoutez-en un nouveau avec les paramètres adéquats.],
 )
 
 Dans le sous-menu `User Manager > Router` et l'onglet `Router`, cliquer sur le bouton `New`. Configurer le routeur comme suit :
@@ -74,18 +74,20 @@ Dans le sous-menu `User Manager > Router` et l'onglet `Router`, cliquer sur le b
 
 Cliquer sur le bouton `OK` puis `Apply` pour créer le routeur.
 
-#align(center, image("../asset/create_radius_router.png", width: 100%))
+#align(center, image("../asset/create_radius_router.png", width: 50%))
+
+#pagebreak()
 
 Le routeur RADIUS créé apparaît dans la liste des routeurs.
 
 #align(center, image("../asset/radius_router_list.png", width: 100%))
 
 #qbox(
-    [Toujours dans les paramètres de l’application « User Manager », ajoutez un utilisateur avec les paramètres suivant :
+  [Toujours dans les paramètres de l’application « User Manager », ajoutez un utilisateur avec les paramètres suivant :
     - Username : labo
     - Password : labo
     - Mikrotik-Attribute : write
-    N’oubliez pas d’activer le serveur RADIUS dans les « Settings ».]
+    N’oubliez pas d’activer le serveur RADIUS dans les « Settings ».],
 )
 
 Dans le sous-menu `User Manager > Users`, onglet `Users`, cliquer sur le bouton `New`. Configurer l'utilisateur comme suit :
@@ -96,29 +98,33 @@ Dans le sous-menu `User Manager > Users`, onglet `Users`, cliquer sur le bouton 
 
 #align(center, image("../asset/create_user.png", width: 100%))
 
+#pagebreak()
+
 L'utilisateur créé apparaît dans la liste des utilisateurs.
 
 #align(center, image("../asset/list_user.png", width: 100%))
 
 Pour activer le serveur RADIUS, aller dans le menu `User Manager > Settings`, onglet `Routers` et cliquer sur le bouton `Settings`. Cocher l'option `Enabled` et garder les autres paramètres par défaut. Cliquer sur le bouton `OK` puis `Apply` pour activer le serveur RADIUS.
 
-#align(center, image("../asset/enable_radius.png", width: 100%))
+#align(center, image("../asset/enable_radius.png", width: 70%))
 
 #qbox([
-    Afin que RouterOS authentifie les utilisateurs au travers de ce que l’on vient de configurer, rendez-vous dans les utilisateurs système de l’access point et activez l’authentification AAA. Testez vos logins avec une nouvelle fenêtre Winbox et observer les sessions ouvertes.
+  Afin que RouterOS authentifie les utilisateurs au travers de ce que l’on vient de configurer, rendez-vous dans les utilisateurs système de l’access point et activez l’authentification AAA. Testez vos logins avec une nouvelle fenêtre Winbox et observer les sessions ouvertes.
 ])
 
 Dans le sous-menu `System > Users`, onglet `Users`, sélectionner l'utilisateur `system default user` et cliquer sur le bouton `AAA`. Cocher l'option `Use RADIUS` et garder les autres paramètres par défaut. Cliquer sur le bouton `Apply`.
 
-#align(center, image("../asset/activate_aaa.png", width: 100%))
+#align(center, image("../asset/activate_aaa.png", width: 70%))
+
+#pagebreak()
 
 Pour tester les _logins_, ouvrir une nouvelle fenêtre `Winbox` et se connecter à l'AP en utilisant les crédits de connexion `labo` (_Username_: `labo`, _Password_: `labo`).
 
-#align(center, image("../asset/login_labo.png", width: 100%))
+#align(center, image("../asset/login_labo.png", width: 50%))
 
 Nous pouvons observer que l'utilisateur `labo` est connecté à l'AP.
 
-#align(center, image("../asset/logged_labo.png", width: 100%))
+#align(center, image("../asset/logged_labo.png", width: 50%))
 
 On peut également vérifier les sessions ouvertes dans le sous-menu `User Manager > Sessions`, où l'on peut voir que l'utilisateur `labo` est connecté.
 
@@ -126,8 +132,10 @@ On peut également vérifier les sessions ouvertes dans le sous-menu `User Manag
 
 == Étape 2 : Configuration de l’authentification avec WPA2 Enterprise
 
-#qbox([Pour cette étape vous aurez besoin de certificats. Afin de faciliter la création de ces derniers,voici les commandes à exécuter pour les générer.
-])
+#qbox(
+  [Pour cette étape vous aurez besoin de certificats. Afin de faciliter la création de ces derniers,voici les commandes à exécuter pour les générer.
+  ],
+)
 
 Nous exécutons les commandes suivantes dans le terminal de l'AP pour générer les certificats (_Certificate Authority_, _Certificate User Manager_ et _Certificate Client_) nécessaires à l'authentification _WPA2 Enterprise_.
 
@@ -181,11 +189,13 @@ On peut vérifier que les certificats ont été créés dans le menu `System > C
 
 #align(center, image("../asset/list_cert.png", width: 100%))
 
+#pagebreak()
+
 #qbox([
-    Configurez le WLAN dans le menu « Wireless ».
-    - Ajoutez un nouveau profil de sécurité avec qui nécessite le protocole WPA2 Enterprise avec EAP-TLS.
-    - Nommez-le « radius-auth ».
-    - Configurez l’un des deux WLAN pour qu’il utilise le profil adéquat
+  Configurez le WLAN dans le menu « Wireless ».
+  - Ajoutez un nouveau profil de sécurité avec qui nécessite le protocole WPA2 Enterprise avec EAP-TLS.
+  - Nommez-le « radius-auth ».
+  - Configurez l’un des deux WLAN pour qu’il utilise le profil adéquat
 ])
 
 Dans le sous-menu `WiFi > Security`, cliquer sur le bouton `New`. Configurer un nouveau profil de sécurité comme suit :
@@ -203,6 +213,8 @@ Cliquer sur le bouton `OK` puis `Apply` pour créer le profil de sécurité.
 
 #align(center, image("../asset/wifi_sec.png", width: 100%))
 
+#pagebreak()
+
 Le profil de sécurité créé apparaît dans la liste des profils de sécurité.
 
 #align(center, image("../asset/list_wifi_sec.png", width: 100%))
@@ -212,19 +224,19 @@ Finalement, dans le menu `WiFi`, double-cliquer sur l'entré `wifi1` pour le con
 #align(center, image("../asset/apply_wifi_sec.png", width: 100%))
 
 #qbox([
-    A partir d’ici, on doit indiquer à notre serveur RADIUS que nous allons utiliser TLS pour l’authentification des utilisateurs.
-    - Ouvrez le menu "User Manager"
-    - Dans le menu system et dans certificates, activez les options crl-download et crl-use
-    - Fournissez le certificat adéquat dans le champ correspondant.
-    - Créez ensuite un nouveau groupe d’utilisateur dans le RADIUS.
-      - Nommez le auth-by-cert
-      - Autorisez uniquement le protocole EAP-TLS pour ce groupe.
-    - Créez un second groupe d’utilisateurs
-      - Nommez le auth-with-passwd
-      - Autorisez pour ce groupe les protocoles EAP-TLS ainsi que EAP-PEAP
-      - Autorisez également l’authentification en interne par MSCHAPv2
-    - Ajoutez l’utilisateur labo dans le groupe adéquat.
-    - Enfin, vérifiez que vous arrivez à vous authentifier sur le WLAN sécurisé en WPA2 Enterprise depuis un appareil externe
+  A partir d’ici, on doit indiquer à notre serveur RADIUS que nous allons utiliser TLS pour l’authentification des utilisateurs.
+  - Ouvrez le menu "User Manager"
+  - Dans le menu system et dans certificates, activez les options crl-download et crl-use
+  - Fournissez le certificat adéquat dans le champ correspondant.
+  - Créez ensuite un nouveau groupe d’utilisateur dans le RADIUS.
+    - Nommez le auth-by-cert
+    - Autorisez uniquement le protocole EAP-TLS pour ce groupe.
+  - Créez un second groupe d’utilisateurs
+    - Nommez le auth-with-passwd
+    - Autorisez pour ce groupe les protocoles EAP-TLS ainsi que EAP-PEAP
+    - Autorisez également l’authentification en interne par MSCHAPv2
+  - Ajoutez l’utilisateur labo dans le groupe adéquat.
+  - Enfin, vérifiez que vous arrivez à vous authentifier sur le WLAN sécurisé en WPA2 Enterprise depuis un appareil externe
 ])
 
 Dans le sous-menu `System > Certificates`, cliquer sur le bouton `Settings`. Cocher les options `CRL Download` et `Use CRL`. Cliquer sur le bouton `Apply` puis `OK` pour appliquer les changements.
@@ -245,10 +257,10 @@ Dans le sous-menu `User Manager > User Groups`, créer deux nouveaux groupes d'u
 #align(center, image("../asset/auth_by_cert.png", width: 100%))
 
 - Groupe `auth-with-passwd` :
-    - Saisir la valeur `auth-with-passwd` dans le champ `Name`
-    - Cocher les options `EAP TLS`, `EAP PEAP`, `MSCHAP2`, `EAP TTLS` et `EAP MSCHAP2` dans la section `Outer Auths`
-    - Cocher l'option `PEAP MSCHAP2` ET `TTLS MSCHAP2` dans la section `Inner Auths`
-    - Créer le groupe en cliquant sur le bouton `Apply` puis `OK`
+  - Saisir la valeur `auth-with-passwd` dans le champ `Name`
+  - Cocher les options `EAP TLS`, `EAP PEAP`, `MSCHAP2`, `EAP TTLS` et `EAP MSCHAP2` dans la section `Outer Auths`
+  - Cocher l'option `PEAP MSCHAP2` ET `TTLS MSCHAP2` dans la section `Inner Auths`
+  - Créer le groupe en cliquant sur le bouton `Apply` puis `OK`
 
 #align(center, image("../asset/auth_with_pwd.png", width: 100%))
 
@@ -262,26 +274,46 @@ Dans le sous-menu `User Manager > Users`, double-cliquer sur l'utilisateur `labo
 
 Pour ce qui est de mon cas (Dylan), concernant les tests de connexion, mon ordinateur présente un dysfonctionnement au niveau de son interface Ethernet, ce qui entraîne une interruption de la configuration du routeur après quelques minutes. En conséquence, il m’a été impossible de procéder à la mise en place d’un réseau RADIUS.
 
+Lors des tests de connexion pour le _laptop_ sous _Arch Linux_ (Dimitri), la connexion semble s'effectuer mais est rapidement interrompue par une _activation request_, ce qui entraîne l'échec de la connexion. Malgré plusieurs tentatives, je n'ai pas réussi à établir une connexion stable au réseau RADIUS configuré sur l'AP. Voici les commandes utilisées pour les tests de connexion et les messages d'erreur rencontrés :
 
 #sourcecode(```sh
 sudo mv ~/Downloads/cert_export_advcomarc-client-cert.p12 /etc/ca-certificates/trust-source/anchors/
 sudo mv ~/Downloads/advcomarc-radius-ca.crt /etc/ca-certificates/trust-source/anchors/
 sudo update-ca-trust
-
 nmcli con add type wifi ifname wlp97s0 con-name test-radius ssid MyWifi \
 wifi-sec.key-mgmt wpa-eap 802-1x.eap peap 802-1x.phase2-auth mschapv2 \
 802-1x.ca-cert /etc/ca-certificates/trust-source/anchors/advcomarc-radius-ca.crt \
 802-1x.client-cert /etc/ca-certificates/trust-source/anchors/cert_export_advcomarc-client-cert.p12 \
 802-1x.private-key-password "MyWifiPassword" \
 802-1x.identity "labo" 802-1x.password "labo"
-
 nmcli con up test-radius & sudo journalctl -fu NetworkManager
 ```)
+
+#sourcecode(```sh
+sudo nmcli device wifi connect MyWifi ifname wlp97s0 password 'MyWifiPassword' hidden yes & sudo journalctl -fu NetworkManager
+# Output
+# ...
+# Get IP address from DHCP server
+Mar 10 17:04:28 laptop-hezel NetworkManager[1093]: <info>  [1773158668.2215] dhcp4 (wlp97s0): state changed new lease, address=192.168.88.254, acd pending
+Mar 10 17:04:28 laptop-hezel NetworkManager[1093]: <info>  [1773158668.4073] dhcp4 (wlp97s0): state changed new lease, address=192.168.88.254
+# ...
+# Connection is successful
+Mar 10 17:04:36 laptop-hezel NetworkManager[1093]: <info>  [1773158676.3051] audit: op="connection-update" uuid="5e585623-3b53-49fa-bebe-3e920000b132" name="MyWifi" pid=93197 uid=0 result="success"
+Mar 10 17:04:36 laptop-hezel NetworkManager[1093]: <info>  [1773158676.3056] agent-manager: agent[01ba2d8aae6465ff,:1.225/nmcli-connect/0]: agent registered
+# But then the interface disconnects after a few seconds
+Mar 10 17:04:36 laptop-hezel NetworkManager[1093]: <info>  [1773158676.3060] device (wlp97s0): disconnecting for new activation request.
+# ...
+# Final error message
+Error: Connection activation failed: IP configuration could not be reserved (no available address, timeout, etc.).
+Mar 10 17:05:22 laptop-hezel NetworkManager[1093]: <warn>  [1773158722.8095] device (wlp97s0): Activation: failed for connection 'MyWifi'
+```)
+
+#pagebreak()
 
 == Étape 3 : Exportez votre configuration
 
 #qbox([
-    Pour exporter votre configuration actuelle de Router OS, ouvrez un terminal à l’intérieur de Router OS et entrez la commande : export file=FILE_NAME
+  Pour exporter votre configuration actuelle de Router OS, ouvrez un terminal à l’intérieur de Router OS et entrez la commande : export file=FILE_NAME
 ])
 
 La procédure de téléchargement du fichier de configuration est disponible #link("https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/")[sur le site de SocialWiFi: https://academy.socialwifi.com/en/hardware-and-installation/setup-faqs/how-to-export-configuration-from-a-mikrotik-device/].
@@ -292,29 +324,23 @@ Cliquer sur le sous-menu `New Terminal` puis entrer la commande suivante :
 export file=config-lab02
 ```)
 
-// #align(center, image("../asset/save_config_terminal.png", width: 65%)) TODO changer l'image
-
 Ensuite, cliquer sur le sous-menu `Files` pour vérifier que le fichier `config-lab02.rsc` a bien été créé.
 
-// #align(center, image("../asset/file_backup.png", width: 65%)) TODO changer l'image
-
 #qbox([
-    Pour exporter le fichier sur votre machine :
-    - Allez dans « Files »
-    - Sélectionnez le fichier que vous venez de créer qui devrait avoir l’extension «.rsc »
-    - Faites un clic droit sur le fichier et « Download »
+  Pour exporter le fichier sur votre machine :
+  - Allez dans « Files »
+  - Sélectionnez le fichier que vous venez de créer qui devrait avoir l’extension «.rsc »
+  - Faites un clic droit sur le fichier et « Download »
 ])
 
 Télécharger le fichier de configuration en effectuant un clic droit sur le fichier `config-lab02.rsc` puis en sélectionnant l'option `Download`. Le fichier de configuration est disponible dans le #link("https://github.com/HezelTm/tsm_advcomarc/tree/main/lab02/annexe")[_repository_ GitHub du projet: https://github.com/HezelTm/tsm_advcomarc/tree/main/lab02/annexe].
-
-// #image("../asset/download_config.png", width: 100%) TODO changer l'image
 
 == Questions
 
 === Question 1
 
 #qbox([
-    Avec vos mots, expliquez l’utilité de RADIUS ?
+  Avec vos mots, expliquez l’utilité de RADIUS ?
 ])
 
 _`RADIUS`_ (_(Remote Authentication Dial-In User Service)_) est un protocole client-serveur qui implémente le _framework_ `AAA` qui signifie _Authentication_, _Authorization_ et _Accounting_.
@@ -331,7 +357,7 @@ Il a pour but de fournir une solution centralisée pour les processus et base de
 === Question 2
 
 #qbox([
-    Quel est le type de chiffrement utilisé pour les certificats qui ont été générés ? Quelle est la taille de la clé ?
+  Quel est le type de chiffrement utilisé pour les certificats qui ont été générés ? Quelle est la taille de la clé ?
 ])
 
 Etant donné que ce sont des certificats, le chiffrement utilisé est de type asymétrique. La taille de la clé est de `384` bits (nous le voyons avec l'attribut `key-size=secp384r1` dans les commandes utilisées à la section Étape 2). Plus précisément, `secp384r1` fait référence à une courbe elliptique `P-384`.
@@ -341,7 +367,7 @@ Source : #link("https://std.neuromancer.sk/secg/secp384r1")[Center for Research 
 === Question 3
 
 #qbox([
-    Pour quelle(s) raison(s) avons-nous besoin de certificats dans EAP-TLS ?
+  Pour quelle(s) raison(s) avons-nous besoin de certificats dans EAP-TLS ?
 ])
 
 Les certificats sont nécessaires dans EAP-TLS pour assurer une authentification forte et mutuelle entre le client et le serveur. Ils permettent de vérifier l'identité des deux parties et d'établir une connexion sécurisée en utilisant le chiffrement asymétrique.
@@ -349,18 +375,16 @@ Les certificats sont nécessaires dans EAP-TLS pour assurer une authentification
 === Question 4
 
 #qbox([
-    Ou peut-on vérifier les utilisateurs qui ont des sessions ouvertes dans le RADIUS ?
+  Ou peut-on vérifier les utilisateurs qui ont des sessions ouvertes dans le RADIUS ?
 ])
 
 Cette information est disponible dans le sous-menu `User Manager > Sessions` (voir section Étape 1).
 
-TODO ajouter capture
-
 === Question 5
 
 #qbox[(
-    Dans le cas d’une mise en production de notre AP dans un open space. On souhaite éviter l’utilisation de certificats autogénérés. Quelles sont les opérations additionnelles ?
-)]
+  Dans le cas d’une mise en production de notre AP dans un open space. On souhaite éviter l’utilisation de certificats autogénérés. Quelles sont les opérations additionnelles ?
+  )]
 
 Pour éviter l'utilisation de certificats autogénérés, il est possible d'utiliser une autorité de certification (CA) reconnue. On peut donc utiliser une _Public Key Infrastructure_ (_PKI_), externe (tiers de confiance) ou interne, pour créer, gérer et délivrer les certificats nécessaires à l'authentification EAP-TLS. La _PKI_ émets donc le certificat du serveur _RADIUS_ ainsi que les certificats clients, qui sont tous signés par la même CA, permettant ainsi une authentification mutuelle fiable et sécurisée.
 
