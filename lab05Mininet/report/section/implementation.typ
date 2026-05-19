@@ -78,6 +78,8 @@ Exécuter la machine virtuelle et se connecter avec les identifiants suivants :
 - _Username_ : `mininet`
 - _Password_ : `mininet`
 
+#pagebreak()
+
 Trouver l'adresse IP de la machine virtuelle à l'aide de la commande suivante (à exécuter dans la machine virtuelle). Pour ce travail, l'adresse IP est : `192.168.56.101`.
 
 #sourcecode(```sh
@@ -136,6 +138,8 @@ sudo mn -x --topo linear,3 --controller remote
 sudo mn --topo linear,4 --controller remote
 ```)
 
+#pagebreak()
+
 Les paramètres communs à ces commandes `mn` :
 
 - `-x` : ouvre un terminal `xterm` pour chaque nœud du réseau (requiert le transfert X11 activé par `ssh -Y`).
@@ -154,7 +158,7 @@ h2 wget -O - h1
 - `&` : exécute le serveur en arrière-plan pour libérer le terminal Mininet.
 - `wget -O -` : télécharge la ressource et redirige le contenu vers `stdout` au lieu de l'enregistrer dans un fichier.
 
-== Vérification du fonctionnement des composants
+== Vérification des composants
 
 #qbox(
   [2. Please verify the functionality of all system components.],
@@ -180,6 +184,8 @@ h3 h3-eth0:s1-eth3
 s1 lo:  s1-eth1:h1-eth0 s1-eth2:h2-eth0 s1-eth3:h3-eth0
 c0
 ```)
+
+#pagebreak()
 
 *Vérifier la configuration réseau de `h1` :*
 
@@ -238,6 +244,8 @@ h3 -> h1 h2
 ```)
 
 Le résultat `0% dropped (6/6 received)` confirme que tous les hôtes communiquent correctement et que le contrôleur `POX` gère le réseau dans son intégralité.
+
+#pagebreak()
 
 *Affichage de la table de flux de `s1` :*
 
@@ -341,7 +349,9 @@ Pour isoler les requêtes `ARP`, filtrer sur `arp` dans _Wireshark_. Les paquets
 
 Les échanges `OFPT_PACKET_IN` et `OFPT_PACKET_OUT` associés à ces paquets `ARP` sont décrits dans la section précédente.
 
-== Échanges de création de socket ICMP et HTTP
+#pagebreak()
+
+== Création de socket ICMP et HTTP
 
 #qbox(
   [6. Isolate and comment the socket creation exchanges using both ICMP and HTTP.],
@@ -371,6 +381,8 @@ Finalement, la _socket_ est fermée via un _4-way handshake_ :
 - Le paquet `No. 341` est un `FIN, ACK` envoyé par `h2` vers `h1`, initiant la fermeture de la connexion.
 - Le paquet `No. 415` est le `FIN, ACK` de `h1` vers `h2`, confirmant la fermeture de son côté.
 - Le paquet `No. 417` est le `ACK` final de `h2`, clôturant définitivement la _socket_.
+
+#pagebreak()
 
 Pour isoler le trafic `ICMP`, filtrer sur `icmp` dans _Wireshark_ (voir @icmp).
 

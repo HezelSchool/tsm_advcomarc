@@ -28,4 +28,6 @@
 
 // ---------- Conclusion
 
-TODO
+Ce laboratoire a permis de mettre en pratique les principes du _Software-Defined Networking_ à travers un environnement _Mininet_ complet. L'analyse des captures _Wireshark_ a confirmé le comportement attendu du protocole _OpenFlow_ : initialisation via l'échange `HELLO` / `FEATURES_REPLY` / `SET_CONFIG`, apprentissage des adresses MAC par le contrôleur _POX_ via les messages `OFPT_PACKET_IN`, installation des règles de flux avec `OFPT_FLOW_MOD`, et transmission directe des paquets suivants par le _switch_ sans intervention du contrôleur.
+
+Les échanges `ARP`, `ICMP` et `HTTP` ont illustré concrètement la séparation entre plan de contrôle et plan de données : les premiers paquets d'un flux inconnu transitent par le contrôleur, tandis que les suivants sont forwardés directement par le _switch_ grâce aux règles installées. Cette différence est particulièrement visible sur le trafic `HTTP`, où le _3-way handshake_ `TCP` matérialise la création de la _socket_, et sur `ICMP`, où tous les pings passent directement par le _switch_ dès lors que la règle de flux est en place.
