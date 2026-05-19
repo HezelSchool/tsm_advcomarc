@@ -299,7 +299,29 @@ La capture peut ensuite être ouverte dans Wireshark sur la machine hôte pour a
   [4. Isolate the OpenFlow initialization exchange (get inspiration from the course slides).],
 )
 
-TODO
+Pour isoler l'initialisation _OpenFlow_, filtrer sur `openflow_v1` dans _Wireshark_. Les paquets capturés sont présentés par @openflow_packets.
+
+#figure(
+  image("../asset/openflow_packets.png", width: 100%),
+  caption: [Paquets OpenFlow capturés lors de l'initialisation entre le contrôleur et le switch.],
+) <openflow_packets>
+
+Une première séquence d'échange de 14 paquets se fait entre le _controller_ (`127.0.0.1`) et le _switch_ (`127.0.0.1`).
+
+- Le premier paquet (`No. 102`) est de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_hello-0")[type `OFPT_HELLO`], il est utilisé pour établir la connection et négocier la version du protocole à utiliser (dans notre cas, version `1.0`).
+- Le deuxième paquet (`No. 104`) est de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_stats_request-16-ofpt_stats_reply-17")[type `OFPT_STATS_REQUESTS`], il permet de récupérer différentes informations sur le _switch_. Le paquet `No. 109` est la réponse du _switch_ à ce paquet.
+- Le troisième paquet (`No. 108`) est de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_stats_request-16-ofpt_stats_reply-17")[`OFPT_STATS_REPLY`], c'est une réponse du _switch_ à une requête d'information sur ses capacités et ses ports.
+- Le paquet `No. 109` est de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_get_config_request-7-ofpt_get_config_reply-8-ofpt_set_config-9")[type `OFPT_SET_CONFIG`] et permet de configurer le _switch_.
+- Le paquet `No. 117` est de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_barrier_request-18-ofpt_barrier_reply-19")[type `OFPT_BARRIER_REQUEST`] permet de synchroniser le _controller_ et le _switch_ et d'ordrer ainsi les messages. Le paquet `No. 119` est la réponse du _switch_ à ce paquet.
+- Les paquets `No. 155, 179, 202, 233` sont de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_echo_request-2-ofpt_echo_reply-3")[type `OFPT_ECHO_REQUEST`], envoyé par le _controller_ pour vérifier que la connexion avec le _switch_ est toujours active et mesurer la latence. Les paquets `No. 119, 157, 180, 203, 234` sont les `OFPT_ECHO_REPLY` du _switch_ confirmant la réception.
+
+Puis une séquence d'échange de 4 paquets entre `h2`, `h1`, le _switch_ et le contrôleur, liés à la résolution ARP transitant par le plan de contrôle OpenFlow :
+
+- Le paquet `No. 258` de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_packet_in-10")[type `OFPT_PACKET_IN`] est envoyé par le _switch_ au contrôleur lorsqu'il reçoit une requête ARP de `h2` (`10.0.0.2`) vers l'adresse _broadcast_, sans règle de flux correspondante. Le contrôleur répond avec un #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_packet_out-13")[`OFPT_PACKET_OUT`] pour indiquer au _switch_ comment transmettre ce paquet. Une deuxième interaction similaire a lieu avec les paquets `No. 268` et `No. 279`, cette fois pour la réponse ARP de `h1` (`10.0.0.1`) vers `h2`.
+
+Finalement, une fois les adresses MAC de `h1` et `h2` apprises, le contrôleur installe une règle de flux dans le _switch_ :
+
+- Le paquet `No. 269` de #link("https://deepwiki.com/mininet/openflow/8.1-openflow-message-types#ofpt_flow_mod-14")[type `OFPT_FLOW_MOD`] est envoyé par le contrôleur pour installer, modifier ou supprimer une règle de flux dans la table du _switch_, afin que les prochains paquets similaires soient traités directement sans repasser par le contrôleur.
 
 == Requêtes et réponses ARP
 
@@ -307,7 +329,17 @@ TODO
   [5. Try identifying the ARP requests and replies (get inspired from the course slides).],
 )
 
-TODO
+Pour isoler les requêtes `ARP`, filtrer sur `arp` dans _Wireshark_. Les paquets capturés sont présentés par @arp_packets.
+
+#figure(
+  image("../asset/arp.png", width: 100%),
+  caption: [Paquets ARP capturés lors de la résolution d'adresse entre `h1` et `h2`.],
+) <arp_packets>
+
+- Les paquets `No. 255`, `No. 265` et `No. 266` proviennent de `h2` (`8a:5d:a7:3b:49:43`) et sont des requêtes `ARP` (_ARP request_) demandant `Who has 10.0.0.1? Tell 10.0.0.2`, diffusées en _broadcast_ pour résoudre l'adresse MAC de `h1`.
+- Les paquets `No. 267` et `No. 282` proviennent de `h1` (`2a:b2:0a:d9:81:af`) et ont le contenu `10.0.0.1 is at 2a:b2:0a:d9:81:af`. Ce sont des réponses `ARP` (_ARP reply_) aux paquets `No. 255`, `No. 265` et `No. 266`.
+
+Les échanges `OFPT_PACKET_IN` et `OFPT_PACKET_OUT` associés à ces paquets `ARP` sont décrits dans la section précédente.
 
 == Échanges de création de socket ICMP et HTTP
 
@@ -315,4 +347,42 @@ TODO
   [6. Isolate and comment the socket creation exchanges using both ICMP and HTTP.],
 )
 
-TODO
+Pour isoler le trafic `HTTP`, filtrer sur `tcp.port == 80` dans _Wireshark_ (voir @http).
+
+#figure(
+  image("../asset/http.png", width: 100%),
+  caption: [Échanges TCP/HTTP entre `h2` et `h1` : _3-way handshake_, requête `GET` et réponse `200 OK`, puis fermeture de connexion.],
+) <http>
+
+La création de la _socket_ `TCP` entre `h2` (`10.0.0.2`) et `h1` (`10.0.0.1`) suit le _3-way handshake_ standard :
+
+- Le paquet `No. 283` est un `SYN` envoyé par `h2` vers `h1` (port `35964 → 80`), initiant la connexion.
+- Le paquet `No. 285` est le `SYN-ACK` de `h1` en réponse, acceptant la connexion.
+- Le paquet `No. 287` est le `ACK` final de `h2`, confirmant l'établissement de la _socket_.
+
+Une fois la _socket_ établie, l'échange applicatif peut avoir lieu :
+
+- Le paquet `No. 289` est la requête `GET / HTTP/1.1` envoyée par `h2` vers `h1`.
+- Les paquets `No. 295` à `No. 315` sont des segments `TCP` (`PSH, ACK`) transportant des fragments de la réponse `HTTP`. La réponse étant trop grande pour tenir dans un seul paquet, `TCP` la découpe en plusieurs segments. _Wireshark_ les affiche comme `TCP` (et non `HTTP`) car chaque segment est incomplet.
+- Le paquet `No. 337` est le dernier segment : _Wireshark_ réassemble l'ensemble et affiche `HTTP/1.0 200 OK` — c'est à ce moment qu'il reconnaît le message `HTTP` complet.
+
+Finalement, la _socket_ est fermée via un _4-way handshake_ :
+
+- Le paquet `No. 341` est un `FIN, ACK` envoyé par `h2` vers `h1`, initiant la fermeture de la connexion.
+- Le paquet `No. 415` est le `FIN, ACK` de `h1` vers `h2`, confirmant la fermeture de son côté.
+- Le paquet `No. 417` est le `ACK` final de `h2`, clôturant définitivement la _socket_.
+
+Pour isoler le trafic `ICMP`, filtrer sur `icmp` dans _Wireshark_ (voir @icmp).
+
+#figure(
+  image("../asset/icmp.png", width: 100%),
+  caption: [Paquets ICMP _Echo request_ et _Echo reply_ entre `h2` (`10.0.0.2`) et `h1` (`10.0.0.1`) lors du ping.],
+) <icmp>
+
+Les paquets `ICMP` observés sont :
+
+- Les paquets `No. 920` et `No. 922` correspondent au premier _ping_ (`seq=1`) : _Echo request_ de `h2` (`10.0.0.2`) vers `h1` (`10.0.0.1`) et _Echo reply_ en retour.
+- Les paquets `No. 933` et `No. 935` correspondent au deuxième _ping_ (`seq=2`).
+- Les paquets `No. 945` et `No. 947` correspondent au troisième _ping_ (`seq=3`).
+
+Contrairement au protocole `TCP`, `ICMP` est sans connexion (_connectionless_) : il n'y a ni établissement ni fermeture de _socket_. Chaque _Echo request_ est une communication indépendante.
