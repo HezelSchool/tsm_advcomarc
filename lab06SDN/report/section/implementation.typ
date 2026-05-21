@@ -36,7 +36,7 @@
 
 La procédure ci-dessous est détaillée pour un environnement `Arch Linux OS`.
 
-Premièrement, installer `VirtualBox` (#link("https://wiki.archlinux.org/title/VirtualBox")[https://wiki.archlinux.org/title/VirtualBox]):
+Installer `VirtualBox` (#link("https://wiki.archlinux.org/title/VirtualBox")[https://wiki.archlinux.org/title/VirtualBox]):
 
 #sourcecode(```sh
 yay -S virtualbox
@@ -44,11 +44,11 @@ yay -S virtualbox
 
 Télécharger #link("https://www.eve-ng.net/index.php/download/#DL-COMM")[_Free EVE Community Edition Version 6.2.0-4_].
 
-Exécuter `VirtualBox`, cliquer sur l'onglet `machine` puis `New` (raccourci `Ctrl + n`). Définir les paramètres ci-dessous puis cliquer sur `Finish`.
+Créer une nouvelle VM (`machine` → `New`, `Ctrl + n`) avec les paramètres suivants, puis cliquer sur `Finish` :
 
 - _Virtual machine name and operating system_ :
   - `VM Name` : `EVE-NG`
-  - `ISO Image ` : `/path/to/image/eve-ce-prod-6.2.0-4-full.iso`
+  - `ISO Image` : `/path/to/image/eve-ce-prod-6.2.0-4-full.iso`
   - `OS` : `Linux`
 - _Specify virtual hardware_
   - `Base Memory` : `8000 MB`
@@ -56,13 +56,16 @@ Exécuter `VirtualBox`, cliquer sur l'onglet `machine` puis `New` (raccourci `Ct
 - _Specify virtual hard disk_
   - `Disk Size` : `50 GB`
 
-Puis dans les `Settings` (mode `Expert`), se rendre dans l'onglet `Network` et définir l'`Adapter 1` avec `Attached to` en `Bridged Adapter`. Valider la configuration en appuyant sur `OK`.
+Dans `Settings` (mode `Expert`) → `Network`, passer l'`Adapter 1` en `Bridged Adapter`. Laisser les autres paramètres par défaut.
 
-Tous les autres paramètres sont à laisser sur la _default value_.
-
-Lors du premier démarrage de la _VM_, l'installation de `EVE-NG Community 6.2.0-4` se fait une fois la langue et le _layout_ du clavier indiqués. Lorsque l'installation s'est faite, la _VM_ va retourner sur _GRUB_ et propose à nouveau une installation. À ce moment, cliquer sur l'onglet `Device` puis `Optical Device` et cliquer sur `Remove Disk From Virtual Device`. Quitter la machine en choisissant `Power off the machine`. Redémarrer la machine et se connecter avec les identifiants de connexion suivants :
+Au premier démarrage, suivre l'installation de `EVE-NG Community 6.2.0-4` (langue et clavier). Une fois terminée, la _VM_ retourne sur _GRUB_ : retirer le disque via `Device` → `Optical Device` → `Remove Disk From Virtual Device`, puis éteindre la machine (`Power off the machine`). Au redémarrage, se connecter avec :
 
 - Nom d'utilisateur : `root`
+- Mot de passe : `eve`
+
+Conserver les valeurs par défaut pour les configurations suivantes. La machine redémarre ; se reconnecter avec les mêmes identifiants. L'_URL_ de l'interface web est affichée dans la console (`http://192.168.1.113` dans notre cas). Se connecter avec les identifiants suivant :
+
+- Nom d'utilisateur : `admin`
 - Mot de passe : `eve`
 
 Source : #link("https://www.youtube.com/watch?v=-WnV8UyVjek&t=213s")[Youtube - TechNPlay -  How to Install EVE-NG on Oracle VirtualBox 2025]
