@@ -63,10 +63,32 @@ Au premier démarrage, suivre l'installation de `EVE-NG Community 6.2.0-4` (lang
 - Nom d'utilisateur : `root`
 - Mot de passe : `eve`
 
-Conserver les valeurs par défaut pour les configurations suivantes. La machine redémarre ; se reconnecter avec les mêmes identifiants. L'_URL_ de l'interface web est affichée dans la console (`http://192.168.1.113` dans notre cas). Se connecter avec les identifiants suivant :
+Conserver les valeurs par défaut pour les configurations suivantes. La machine redémarre ; se reconnecter avec les mêmes identifiants. L'_URL_ de l'interface web est affichée dans la console (`http://10.24.45.108` dans notre cas). Se connecter avec les identifiants suivant :
 
 - Nom d'utilisateur : `admin`
 - Mot de passe : `eve`
+
+Télécharger l'image du routeur _Arista_ `vEOS-lab-4.36.0.1F.qcow2` et le _bootloader_ `Aboot-veos-serial-8.0.2.iso` depuis le support de cours _Moodle_.
+
+Avant de démarrer la _VM_, activer la virtualisation imbriquée (_nested virtualization_) dans _VirtualBox_ pour que _KVM_ soit disponible dans le _guest_ (VM éteinte) :
+
+#sourcecode(```sh
+# Sur la machine hôte (VM éteinte)
+VBoxManage modifyvm "EVE-NG" --nested-hw-virt on
+```)
+
+Démarrer la _VM_, puis transférer les images et corriger les permissions :
+
+#sourcecode(```sh
+# Sur la machine hôte
+ssh root@10.24.45.108 "mkdir -p /opt/unetlab/addons/qemu/veos-4.36.0.1F"
+scp ~/Downloads/vEOS-lab-4.36.0.1F.qcow2 root@10.24.45.108:/opt/unetlab/addons/qemu/veos-4.36.0.1F/hda.qcow2
+scp ~/Downloads/Aboot-veos-serial-8.0.2.iso root@10.24.45.108:/opt/unetlab/addons/qemu/veos-4.36.0.1F/cdrom.iso
+
+# Sur la VM
+echo "kvm" > /opt/unetlab/platform
+/opt/unetlab/wrappers/unl_wrapper -a fixpermissions
+```)
 
 Source : #link("https://www.youtube.com/watch?v=-WnV8UyVjek&t=213s")[Youtube - TechNPlay -  How to Install EVE-NG on Oracle VirtualBox 2025]
 
