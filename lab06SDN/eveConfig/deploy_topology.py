@@ -1,23 +1,29 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 import uuid
+import ipaddress
 import xml.etree.ElementTree as ET
+from pathlib import Path
 import paramiko
 import requests
 from urllib.parse import quote
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).parent / ".env")
 
 # ----- Constants
 
-EVE_URL    = "http://192.168.1.113"
-USERNAME   = "admin"
-PASSWORD   = "eve"
-SSH_USER   = "root"
-SSH_PASS   = "eve"
-LAB_NAME   = "Test100"
-LAB_FOLDER = "/"
-VEOS_IMAGE = "veos-4.36.0.1F"
+EVE_URL    = os.getenv("EVE_URL",    "http://192.168.1.113")
+USERNAME   = os.getenv("USERNAME",   "admin")
+PASSWORD   = os.getenv("PASSWORD",   "eve")
+SSH_USER   = os.getenv("SSH_USER",   "root")
+SSH_PASS   = os.getenv("SSH_PASS",   "eve")
+LAB_NAME   = os.getenv("LAB_NAME",   "Test1")
+LAB_FOLDER = os.getenv("LAB_FOLDER", "/")
+VEOS_IMAGE = os.getenv("VEOS_IMAGE", "veos-4.36.0.1F")
 VEOS_QEMU  = (
     "-machine type=pc-1.0,accel=kvm -serial mon:stdio -nographic "
     "-display none -no-user-config -rtc base=utc -boot order=d -cpu host"
@@ -62,6 +68,26 @@ VPCS_NODES = [
     {"name": "Server4", "lan": "LAN4", "left": 160, "top":  40},
 ]
 
+# interface name → IP/prefix per router
+ROUTER_IFACE_CONFIGS = {
+    "TLMRT1": [("Ethernet1", "192.168.1.1/24"),  ("Ethernet2", "192.168.12.1/24"), ("Ethernet3", "192.168.13.1/24")],
+    "TLMRT2": [("Ethernet1", "192.168.2.1/24"),  ("Ethernet2", "192.168.12.2/24"), ("Ethernet3", "192.168.24.2/24")],
+    "TLMRT3": [("Ethernet1", "192.168.3.1/24"),  ("Ethernet2", "192.168.34.3/24"), ("Ethernet3", "192.168.13.3/24")],
+    "TLMRT4": [("Ethernet1", "192.168.4.1/24"),  ("Ethernet2", "192.168.34.4/24"), ("Ethernet3", "192.168.24.4/24")],
+}
+
+# VPCS startup: ip_cidr, gateway
+VPCS_IP_CONFIGS = {
+    "Client1": ("192.168.1.101/24", "192.168.1.1"),
+    "Server1": ("192.168.1.11/24",  "192.168.1.1"),
+    "Client2": ("192.168.2.101/24", "192.168.2.1"),
+    "Server2": ("192.168.2.11/24",  "192.168.2.1"),
+    "Client3": ("192.168.3.101/24", "192.168.3.1"),
+    "Server3": ("192.168.3.11/24",  "192.168.3.1"),
+    "Client4": ("192.168.4.101/24", "192.168.4.1"),
+    "Server4": ("192.168.4.11/24",  "192.168.4.1"),
+}
+
 # ----- Helpers
 
 def lab_url_path(name, folder):
@@ -79,6 +105,18 @@ def check(r, action):
         print(f"[ERROR] {action} → {data.get('message', data)}")
         sys.exit(1)
     return data
+
+def make_router_config(name, ifaces):
+    lines = [f"hostname {name}", "!", "ip routing", "!"]
+    nets = []
+    for iface, addr in ifaces:
+        lines += [f"interface {iface}", f"   ip address {addr}", "   no shutdown", "!"]
+        nets.append(str(ipaddress.ip_interface(addr).network))
+    lines.append("router ospf 1")
+    for net in nets:
+        lines.append(f"   network {net} area 0.0.0.0")
+    lines += ["!", "end", ""]
+    return "\n".join(lines)
 
 # ----- Deploy
 
@@ -150,7 +188,7 @@ def main():
             console="telnet", cpu="2", cpulimit="1", ram="2048", ethernet="4",
             uuid=str(uuid.uuid4()),
             qemu_options=VEOS_QEMU, qemu_version="2.4.0", qemu_arch="x86_64",
-            delay="0", icon="Router.png", config="0",
+            delay="0", icon="Router.png", config="1",
             left=str(router["left"]), top=str(router["top"]),
         )
         for iface_idx, net_name in ROUTER_CONNECTIONS[router["name"]].items():
@@ -165,7 +203,7 @@ def main():
         node_el = ET.SubElement(nodes_el, "node",
             id=str(i), name=vpc["name"],
             type="vpcs", template="vpcs", image="",
-            ethernet="1", delay="0", icon="Router.png", config="0",
+            ethernet="1", delay="0", icon="Router.png", config="1",
             left=str(vpc["left"]), top=str(vpc["top"]),
         )
         ET.SubElement(node_el, "interface",
@@ -190,6 +228,35 @@ def main():
     sftp.close()
     ssh.close()
     print("[OK] .unl written via SFTP")
+
+    # ----- Push startup configs via SSH
+    print("\n[CONFIGS] Pushing startup configurations...")
+    ssh_cfg = paramiko.SSHClient()
+    ssh_cfg.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh_cfg.connect(EVE_URL.split("//")[1], username=SSH_USER, password=SSH_PASS)
+    sftp_cfg = ssh_cfg.open_sftp()
+    config_base = f"/opt/unetlab/labs/{LAB_NAME}"
+
+    for i, router in enumerate(ROUTERS, start=1):
+        node_dir = f"{config_base}/{i}"
+        _, stdout, _ = ssh_cfg.exec_command(f"mkdir -p {node_dir}")
+        stdout.channel.recv_exit_status()
+        cfg = make_router_config(router["name"], ROUTER_IFACE_CONFIGS[router["name"]])
+        with sftp_cfg.open(f"{node_dir}/startup-config", "w") as f:
+            f.write(cfg)
+        print(f"[OK] Router {router['name']:6s} startup-config written")
+
+    for i, vpc in enumerate(VPCS_NODES, start=len(ROUTERS) + 1):
+        node_dir = f"{config_base}/{i}"
+        _, stdout, _ = ssh_cfg.exec_command(f"mkdir -p {node_dir}")
+        stdout.channel.recv_exit_status()
+        ip_cidr, gw = VPCS_IP_CONFIGS[vpc["name"]]
+        with sftp_cfg.open(f"{node_dir}/startup.vpc", "w") as f:
+            f.write(f"ip {ip_cidr} {gw}\n")
+        print(f"[OK] VPCS {vpc['name']:8s} startup.vpc written")
+
+    sftp_cfg.close()
+    ssh_cfg.close()
 
     # ----- Verify
     print("\n[VERIFY] Reading back .unl for verification...")
