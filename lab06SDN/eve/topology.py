@@ -1,6 +1,6 @@
 VEOS_QEMU = (
     "-machine type=pc-1.0,accel=tcg -serial mon:stdio -nographic "
-    "-display none -no-user-config -rtc base=utc -boot order=d"
+    "-display none -no-user-config -rtc base=utc -boot order=d -cpu Haswell"
 )
 
 ROUTERS = [
