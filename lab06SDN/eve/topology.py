@@ -59,6 +59,13 @@ VPCS_IP_CONFIGS = {
 
 VPCS_IPS = {name: cidr.split("/")[0] for name, (cidr, _) in VPCS_IP_CONFIGS.items()}
 
+SAME_LAN_PAIRS = [
+    ("Client1", "Server1"),
+    ("Client2", "Server2"),
+    ("Client3", "Server3"),
+    ("Client4", "Server4"),
+]
+
 TEST_PAIRS = [
     ("Client1", "Server2"),
     ("Client1", "Server3"),
