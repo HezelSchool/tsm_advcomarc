@@ -5,6 +5,7 @@ import sys
 import time
 import socket
 import threading
+import ipaddress
 import paramiko
 import requests
 from pathlib import Path
@@ -24,7 +25,7 @@ LAB_NAME   = os.getenv("LAB_NAME",   "Test1")
 LAB_FOLDER = os.getenv("LAB_FOLDER", "/")
 
 VEOS_BOOT_TIMEOUT  = 900   # seconds to wait for EVE-NG status=2
-VEOS_LOGIN_TIMEOUT = 3600  # seconds to wait for vEOS login prompt (TCG is slow)
+VEOS_LOGIN_TIMEOUT = 7200  # seconds to wait for vEOS login prompt (TCG is slow; wfw runs for 3600s starting ~400s in)
 
 # --- telnet helpers ---
 
@@ -97,17 +98,32 @@ def vpcs_run(port, commands, timeout=15):
     sock.close()
     return results
 
-def wait_for_veos_login(port, router_name):
-    """Wait for vEOS login prompt — confirms boot+startup-config applied. Does NOT login."""
+def boot_and_configure_veos(port, router_name):
+    """Wait for vEOS login prompt, log in as admin, and apply interface+OSPF config via CLI."""
+    iface_configs = ROUTER_IFACE_CONFIGS[router_name]
+
+    config_cmds = ["ip routing"]
+    for iface, ip_cidr in iface_configs:
+        config_cmds += [f"interface {iface}", f"   ip address {ip_cidr}", "   no shutdown"]
+    config_cmds.append("router ospf 1")
+    for _, ip_cidr in iface_configs:
+        net = str(ipaddress.ip_interface(ip_cidr).network)
+        config_cmds.append(f"   network {net} area 0.0.0.0")
+
     print(f"    [{router_name}] waiting for login prompt (up to {VEOS_LOGIN_TIMEOUT}s)...", flush=True)
-    sock = socket.create_connection((EVE_HOST, port), timeout=30)
-    # Send ESC+newline immediately: ESC unblocks "press ESC to skip" if vEOS already
-    # reached that phase before we connected (QEMU buffers it); newline pokes login: prompt.
-    sock.sendall(b"\x1b\n")
-    buf = b""
     start = time.time()
     deadline = start + VEOS_LOGIN_TIMEOUT
     _line_buf = [""]
+
+    try:
+        sock = socket.create_connection((EVE_HOST, port), timeout=30)
+    except Exception as e:
+        print(f"    [{router_name}] connection failed: {e}", flush=True)
+        return False
+
+    sock.sendall(b"\n")
+    buf = b""
+
     while time.time() < deadline:
         sock.settimeout(30)
         try:
@@ -115,7 +131,7 @@ def wait_for_veos_login(port, router_name):
         except socket.timeout:
             elapsed = int(time.time() - start)
             print(f"    [{router_name}] still booting... ({elapsed}s)", flush=True)
-            sock.sendall(b"\x1b\n")  # keep sending: ESC for skip phase, \n for login: poke
+            sock.sendall(b"\n")
             continue
         if not chunk:
             break
@@ -129,57 +145,66 @@ def wait_for_veos_login(port, router_name):
             elif char != "\r":
                 _line_buf[0] += char
         if b"login:" in buf:
+            break
+    else:
+        sock.close()
+        print(f"    [{router_name}] login prompt not reached within {VEOS_LOGIN_TIMEOUT}s", flush=True)
+        return False
+
+    if b"login:" not in buf:
+        sock.close()
+        print(f"    [{router_name}] login prompt not reached (EOF)", flush=True)
+        return False
+
+    elapsed = int(time.time() - start)
+    print(f"    [{router_name}] reached login: ({elapsed}s), configuring...", flush=True)
+    time.sleep(1)
+    sock.sendall(b"admin\r\n")
+
+    buf = _read_until_any(sock, [b"Password:", b">", b"#"], timeout=30)
+    if b"Password:" in buf:
+        sock.sendall(b"\r\n")
+        buf = _read_until_any(sock, [b">", b"#"], timeout=30)
+    if not (b">" in buf or b"#" in buf):
+        sock.close()
+        print(f"    [{router_name}] no shell prompt after login", flush=True)
+        return False
+
+    if b">" in buf and b"#" not in buf:
+        sock.sendall(b"enable\r\n")
+        buf = _read_until(sock, b"#", timeout=30)
+        if b"#" not in buf:
             sock.close()
-            print(f"    [{router_name}] ready ({int(time.time()-start)}s)", flush=True)
-            return True
+            print(f"    [{router_name}] enable failed", flush=True)
+            return False
+
+    sock.sendall(b"configure terminal\r\n")
+    buf = _read_until(sock, b"(config)", timeout=30)
+    if b"(config)" not in buf:
+        sock.close()
+        print(f"    [{router_name}] configure terminal failed", flush=True)
+        return False
+
+    for cmd in config_cmds:
+        sock.sendall(cmd.encode() + b"\r\n")
+        time.sleep(1.0)
+
+    sock.sendall(b"end\r\n")
+    _read_until(sock, b"#", timeout=30)
+    sock.sendall(b"write memory\r\n")
+    _read_until(sock, b"#", timeout=30)
+
+    # Verify interfaces are up
+    sock.sendall(b"show ip interface brief\r\n")
+    ifbuf = _read_until(sock, b"#", timeout=30)
+    for line in ifbuf.decode(errors="replace").splitlines():
+        if line.strip():
+            print(f"    [{router_name}] | {line}", flush=True)
+
     sock.close()
-    print(f"    [{router_name}] login prompt not reached within {VEOS_LOGIN_TIMEOUT}s", flush=True)
-    return False
-
-# --- QCOW2 startup-config injection ---
-
-def inject_router_configs(lab_uuid, nodes):
-    """Stop nodes, SSH into EVE-NG, inject startup-config into each router QCOW2 overlay."""
-    ssh = paramiko.SSHClient()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(EVE_HOST, username=SSH_USER, password=SSH_PASS)
-
-    def run(cmd):
-        _, stdout, stderr = ssh.exec_command(cmd)
-        rc = stdout.channel.recv_exit_status()
-        return rc, stderr.read().decode().strip()
-
-    run("modprobe nbd 2>/dev/null; true")
-    run("umount /mnt 2>/dev/null; true")
-    run("qemu-nbd -d /dev/nbd0 2>/dev/null; true")
-
-    for router_name in ROUTER_IFACE_CONFIGS:
-        info = nodes.get(router_name)
-        if not info:
-            print(f"  [WARN] {router_name} not found, skipping injection")
-            continue
-        node_id = info["node_id"]
-        overlay = f"/opt/unetlab/tmp/0/{lab_uuid}/{node_id}/hda.qcow2"
-        src_cfg = f"/opt/unetlab/labs/{LAB_NAME}/{node_id}/startup-config"
-        print(f"  [{router_name}] injecting startup-config (node {node_id})...", flush=True)
-
-        run("qemu-nbd -d /dev/nbd0 2>/dev/null; true")
-        rc, err = run(f"qemu-nbd -c /dev/nbd0 {overlay}")
-        if rc != 0:
-            print(f"    [ERROR] qemu-nbd connect: {err}")
-            continue
-        run("sleep 1")
-        rc, err = run("mount /dev/nbd0p2 /mnt")
-        if rc != 0:
-            run("qemu-nbd -d /dev/nbd0")
-            print(f"    [ERROR] mount: {err}")
-            continue
-        run(f"cp {src_cfg} /mnt/startup-config && sync")
-        run("umount /mnt")
-        run("qemu-nbd -d /dev/nbd0")
-        print(f"  [OK] {router_name} startup-config injected", flush=True)
-
-    ssh.close()
+    elapsed = int(time.time() - start)
+    print(f"    [{router_name}] configured and saved ({elapsed}s)", flush=True)
+    return True
 
 # --- EVE-NG helpers ---
 
@@ -287,53 +312,6 @@ def main():
         info["node_id"] = nid
         nodes[info["name"]] = info
 
-    # Stop nodes, inject startup-config into vEOS QCOW2 overlays, restart
-    print("\n[INJECT] Stopping nodes for startup-config injection...")
-    try:
-        session.get(f"{base}/nodes/stop", timeout=10)
-    except requests.exceptions.Timeout:
-        pass
-    stop_deadline = time.time() + 90
-    while time.time() < stop_deadline:
-        data = check(session.get(f"{base}/nodes"), "get nodes")
-        if all(info.get("status") in (0, "0") for info in data["data"].values()):
-            break
-        time.sleep(3)
-    print("[OK] All nodes stopped")
-
-    print("\n[INJECT] Injecting startup-config into vEOS QCOW2 overlays...")
-    inject_router_configs(lab_uuid, nodes)
-
-    print("\n[INJECT] Restarting nodes...")
-    try:
-        r = session.get(f"{base}/nodes/start", timeout=10)
-        if r.status_code == 200 and r.json().get("code") in (200, 201):
-            print("[OK] All nodes restarted")
-        else:
-            print(f"[WARN] nodes/start → {r.status_code}")
-    except requests.exceptions.Timeout:
-        print("[OK] nodes/start sent (timed out, nodes booting)")
-
-    # Wait for all nodes to reach status=2 again
-    print(f"\n[WAIT] Waiting for nodes to come back up...")
-    data = check(session.get(f"{base}/nodes"), "get nodes")
-    pending = set(data["data"].keys())
-    deadline = time.time() + VEOS_BOOT_TIMEOUT
-    while pending and time.time() < deadline:
-        for nid in list(pending):
-            r = session.get(f"{base}/nodes/{nid}")
-            if r.status_code == 200:
-                info = r.json().get("data", {})
-                if info.get("status") in (2, "2"):
-                    pending.discard(nid)
-                    print(f"  [UP] {info.get('name', nid)}")
-        if pending:
-            time.sleep(5)
-    if pending:
-        print(f"[WARN] Still not running: ids={pending}")
-    else:
-        print("[OK] All nodes are running")
-
     # Configure all VPCS nodes (retry up to 3 times on failure)
     print("\n[CONFIG] Configuring VPCS nodes...")
     for name in VPCS_IP_CONFIGS:
@@ -365,8 +343,8 @@ def main():
     # Same-LAN pings (no routing needed)
     run_pings(SAME_LAN_PAIRS, nodes, "Same-LAN pings")
 
-    # Wait for all vEOS routers to finish booting — in parallel so ESC reaches each router promptly
-    print("\n[WAIT] Waiting for vEOS routers to boot (parallel)...")
+    # Boot vEOS routers and configure via telnet CLI after login: — in parallel
+    print("\n[CONFIG] Booting and configuring vEOS routers via telnet (parallel)...")
     router_ports = {}
     for router_name in ROUTER_IFACE_CONFIGS:
         info = nodes.get(router_name)
@@ -383,7 +361,7 @@ def main():
     threads = []
     for router_name, port in router_ports.items():
         def _wait(name=router_name, p=port):
-            results[name] = wait_for_veos_login(p, name)
+            results[name] = boot_and_configure_veos(p, name)
         t = threading.Thread(target=_wait, daemon=True)
         threads.append(t)
         t.start()
@@ -391,35 +369,46 @@ def main():
         t.join()
     routers_ok = all(results.get(n, False) for n in router_ports)
 
-    # Gateway ping — tests whether vEOS applied startup-config (interfaces up with IPs)
+    # Poll for gateways to respond — agents apply startup-config in background after login:
+    # Under TCG, this can take several minutes after the login prompt appears.
     gw_pairs = [(name, VPCS_IP_CONFIGS[name][1]) for name in VPCS_IP_CONFIGS]
-    print("\n[TEST] Gateway pings (checks if vEOS startup-config was applied)")
+    GW_POLL_TIMEOUT = 1800  # 30 minutes
+    print(f"\n[WAIT] Polling for gateway IPs (up to {GW_POLL_TIMEOUT}s, agents start in background)...")
+    gw_deadline = time.time() + GW_POLL_TIMEOUT
     gw_passed = 0
-    for vpcs_name, gw_ip in gw_pairs:
-        info = nodes.get(vpcs_name)
-        if not info:
-            continue
-        port = telnet_port(info)
-        try:
-            outs = vpcs_run(port, [f"ping {gw_ip}"])
-            ok = "84 bytes" in outs[0]
-            print(f"  {'[PASS]' if ok else '[FAIL]'} {vpcs_name} → {gw_ip} (gateway)")
-            if ok:
-                gw_passed += 1
-        except Exception as e:
-            print(f"  [FAIL] {vpcs_name} → {gw_ip} ({e})")
-    print(f"\n{gw_passed}/{len(gw_pairs)} gateway pings passed")
-    if gw_passed == 0:
-        print("  → startup-config NOT applied by EOS (interfaces have no IPs)")
-    elif gw_passed < len(gw_pairs):
-        print("  → startup-config partially applied")
+    gw_api_last = time.time()
+    while time.time() < gw_deadline:
+        # keepalive: touch the EVE-NG session every 60s to prevent PHP session expiry
+        if time.time() - gw_api_last > 60:
+            try:
+                session.get(f"{base}/nodes", timeout=10)
+            except Exception:
+                pass
+            gw_api_last = time.time()
+        gw_passed = 0
+        for vpcs_name, gw_ip in gw_pairs:
+            info = nodes.get(vpcs_name)
+            if not info:
+                continue
+            try:
+                outs = vpcs_run(telnet_port(info), [f"ping {gw_ip}"])
+                if "84 bytes" in outs[0]:
+                    gw_passed += 1
+            except Exception:
+                pass
+        elapsed = int(GW_POLL_TIMEOUT - (gw_deadline - time.time()))
+        print(f"  [{elapsed:3d}s] {gw_passed}/{len(gw_pairs)} gateways up", flush=True)
+        if gw_passed == len(gw_pairs):
+            print("[OK] All gateways up — EOS agents applied startup-config")
+            break
+        time.sleep(30)
     else:
-        print("  → startup-config applied, interfaces are up")
+        print(f"[WARN] Only {gw_passed}/{len(gw_pairs)} gateways responded — agents may not have started")
 
-    # Wait for OSPF convergence
-    if routers_ok and gw_passed > 0:
-        print("\n[WAIT] Waiting 300s for OSPF to converge...")
-        time.sleep(300)
+    # Wait for OSPF convergence after interfaces are up
+    if gw_passed > 0:
+        print("\n[WAIT] Waiting 90s for OSPF to converge...")
+        time.sleep(90)
 
     # Cross-LAN pings (require routing)
     run_pings(TEST_PAIRS, nodes, "Cross-LAN pings")
