@@ -216,7 +216,7 @@ Priorités : VoLTE signaling (1er, QCI 5) → voix (QCI 1) → gaming/V2X (QCI 3
 
 = 5G
 
-*Objectifs 5G* (IMT-2020) :
+#text(red, "Objectifs 5G (IMT-2020)"):
 #grid(
   columns: (1fr, 1fr),
   gutter: 4pt,
@@ -233,16 +233,16 @@ Priorités : VoLTE signaling (1er, QCI 5) → voix (QCI 1) → gaming/V2X (QCI 3
     - M2M ultra low cost
   ],
 )
-*3 cas d'usage* (triangle 5G) :
-#text(red, "eMBB (enhanced Mobile Broadband)"): haut débit amélioré — 4K/3D, AR/VR, cloud, Gbps en mobilité.
-#text(red, "URLLC (Ultra-Reliable Low-Latency Communications)"): ultra-fiable et faible latence — voiture autonome, automation industrielle/V2X.
-#text(red, "mMTC (massive Machine Type Communications)"): connectivité massive IoT — smart home, smart city, capteurs, M2M, 10 ans de batterie.
-*SA vs NSA* :
-#text(red, "5G NSA (Non-Standalone)"): radio 5G (gNB) + core 4G (EPC) — déploiement rapide, ne libère pas tout le potentiel 5G.
-#text(red, "5G SA (Standalone)"): radio 5G + 5G Core dédié — plein potentiel : ultra-low latency, network slicing, cloud-native.
+#text(red, "Triangle 5G"): 3 cas d'usage (triangle 5G):
+*eMBB (enhanced Mobile Broadband*: haut débit amélioré — 4K/3D, AR/VR, cloud, Gbps en mobilité.
+*URLLC (Ultra-Reliable Low-Latency Communications)*: ultra-fiable et faible latence — voiture autonome, automation industrielle/V2X.
+*mMTC (massive Machine Type Communications)*: connectivité massive IoT — smart home, smart city, capteurs, M2M, 10 ans de batterie.
+#text(red, "SA vs NSA")
+*5G NSA (Non-Standalone)*: radio 5G (gNB) + core 4G (EPC) — déploiement rapide, ne libère pas tout le potentiel 5G.
+*5G SA (Standalone)*: radio 5G + 5G Core dédié — plein potentiel : ultra-low latency, network slicing, cloud-native.
 #image("img/5g_network.png", width: 100%)
 #image("img/5g_2.png", width: 100%)
-*5G Core — Control Plane* :
+#text(red, "5G Core — Control Plane"): gère la signalisation, l'authentification, la mobilité et les politiques. Architecture orientée services (SBI), chaque fonction expose une API REST. *Composé de*: AMF, SMF, AUSF, UDM, PCF, NSSF, NEF, NRF.
 #text(red, "AMF (Access & Mobility Function)"): remplace le MME — registration, connection, reachability, mobility management. Interface N2 (gNB) et N1 (UE).
 #text(red, "SMF (Session Management Function)"): gestion des sessions PDU, allocation IP, QoS SLAs, roaming, charging, lawful intercept. Interface N4 (UPF).
 #text(red, "AUSF (Authentication Server Function)"): remplace l'AuC — authentification des UE.
@@ -251,14 +251,20 @@ Priorités : VoLTE signaling (1er, QCI 5) → voix (QCI 1) → gaming/V2X (QCI 3
 #text(red, "NSSF (Network Slice Selection Function)"): sélection du slice réseau approprié pour chaque UE.
 #text(red, "NEF (Network Exposure Function)"): exposition sécurisée des fonctions réseau aux applications tierces.
 #text(red, "NRF (NF Repository Function)"): registre des fonctions réseau (service discovery).
-*5G Core — User Plane* :
+#text(red, "5G Core — User Plane"): achemine les paquets IP entre l'UE et Internet, séparé du control plane pour la performance et le slicing. *Composé de*: UPF.
 #text(red, "UPF (User Plane Function)"): remplace S-GW + P-GW — routage des paquets, application des QoS, reporting usage. Interface N3 (gNB) et N6 (DN/Internet).
-*RAN 5G* :
+#text(red, "RAN 5G"): partie radio du réseau 5G, sans contrôleur centralisé, gère l'interface air entre l'UE et le core. *Composé de*: gNB, SBI.
 #text(red, "gNB (gNodeB)"): divisé en CU (Central Unit) + DU (Distributed Unit) — ORAN Split 7.2 entre radio et DU, Midhaul (Split 2) entre DU et CU.
 #text(red, "SBI (Service-Based Interface)"): architecture 5G Core orientée services — chaque NF expose une API REST, remplace les interfaces point-à-point.
-*Interfaces N* : N1 (UE↔AMF), N2 (gNB↔AMF), N3 (gNB↔UPF), N4 (SMF↔UPF), N6 (UPF↔Internet/DN).
+#text(red, "Interfaces N"): N1 (UE↔AMF), N2 (gNB↔AMF), N3 (gNB↔UPF), N4 (SMF↔UPF), N6 (UPF↔Internet/DN).
 #image("img/private_5g.png", width: 100%)
-*Réseau privé 5G* : tout logiciel sur COTS HW (hardware standard) — DU + CU + Packet Core déployés on-premise, connectés à un DN privé.
+#text(red, "Réseau privé 5G"): tout logiciel sur COTS HW (hardware standard) — DU + CU + Packet Core déployés on-premise, connectés à un DN privé.
+#image("img/5g_sec_1.png", width: 100%)
+#image("img/5g_sec_2.png", width: 100%)
+#text(red, "Sécurité 5G — 5G AKA"): acteurs : *AMF/SEAF* (contrôle d'accès core), *AUSF* (authentification), *UDM/ARPF/SIDF* (base abonnés + Ki). Phase 1 (initiation): UE envoie *SUCI* (identité chiffrée, remplace IMSI en clair) ou 5G-GUTI. Phase 2 (auth): échange RAND || AUTN || ngKSI, UE calcule RES, MME vérifie → dérive *K\_AUSF* → *K\_SEAF* → *K\_AMF* → clés NAS/RRC/UP.
+#text(red, "SUCI (Subscriber Concealed Identifier)"): remplace l'IMSI en clair — IMSI chiffré avec la clé publique de l'opérateur, protège la vie privée contre les IMSI catchers.
+#text(red, "Hiérarchie de clés 5G"): K → CK/IK → K\_AUSF → K\_SEAF → K\_AMF → K\_NASint/K\_NASenc (signalisation NAS) → K\_gNB → K\_RRCint/K\_RRCenc (radio) + K\_UPint/K\_UPenc (user plane).
+#text(red, "Comparaison 3G/4G/5G"): intégrité: f9/KASUMI → EIA/SNOW3G+AES → NIA/AES-CMAC+ZUC+HMAC-SHA256. Chiffrement: f8/KASUMI → EEA → NEA/AES+ZUC+SNOW3G. Protection user plane: Non (3G) → Oui (4G/5G). Anonymat: IMSI clair (3G) → GUTI (4G) → SUCI chiffré (5G). Crypto-agilité: faible → moyenne → forte (post-quantique préparé).
 
 = Evolution
 
@@ -298,6 +304,22 @@ Tendances clés :
 *Services transverses* : HLR → HSS (abonnés), IMS (VoLTE), OCS/Charging (facturation).
 *Migration 4G > 5G*:
 #image("img/4g_network.png", width: 100%)
+
+#text(red, "Evolution Securité"):
+#table(
+  columns: (auto, auto, auto, auto),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Aspect*][*3G (UMTS)*][*4G (LTE)*][*5G (NR)*],
+  [Intégrité], [f9/KASUMI], [EIA: SNOW3G, AES], [NIA: AES-CMAC, ZUC, HMAC-SHA256],
+  [Chiffrement], [f8/KASUMI], [EEA: SNOW3G, AES], [NEA: AES, ZUC, SNOW3G],
+  [Clés], [K unique], [K+K\_ASME], [K+K\_AMF, K\_gNB...],
+  [Protection UP], [Non], [Oui], [Oui],
+  [Crypto-agilité], [Non], [Moyenne], [Forte (post-quantique)],
+  [Algos modulables], [Non], [Partiel], [Oui (dynamique)],
+  [Anonymat], [IMSI clair], [GUTI], [SUCI (chiffré)],
+)
 
 = IMS Architecture
 
