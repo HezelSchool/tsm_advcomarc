@@ -160,13 +160,25 @@
 = UMTS (3G)
 
 #image("img/umts.png", width: 100%)
-#text(red, "UMTS (Universal Mobile Telecommunications System)"): technologie téléphonie mobile 3G, successeur de GSM..
+#text(red, "UMTS (Universal Mobile Telecommunications System)"): technologie téléphonie mobile 3G, successeur de GSM. Réutilise les principes de sécurité GSM (module hardware amovible, chiffrement radio, protection identité) mais corrige ses failles : *USIM* remplace la SIM (authentification mutuelle), confiance limitée au réseau visité, clés/données d'auth ne transitent plus en clair, chiffrement obligatoire, *intégrité des données* ajoutée. Corrige aussi les attaques par fausse station de base.
 #text(red, "Radio Network Controller (RNC)"): remplace le BSC, contrôle plusieurs NodeB, gère handover, allocation de ressources radio et chiffrement.
 #text(red, "Gateway Mobile Switching Center (GMSC)"): point de sortie du réseau vers d'autres réseaux (PSTN, autres opérateurs).
 #text(red, "Serving GPRS Support Node (SGSN)"): nœud data du cœur, gère la mobilité et l'authentification pour le trafic paquet, achemine les données entre le RNC et le GGSN.
 #text(red, "Gateway GPRS Support Node (GGSN)"): passerelle entre le réseau mobile et Internet, attribue les adresses IP aux mobiles et route le trafic vers l'extérieur.
 #text(red, "USIM (Universal Subscriber Identity Module)"): version 3G de la SIM, supporte l'AKA (Authentication and Key Agreement) et permet l'authentification mutuelle : le terminal peut aussi authentifier le réseau (protection contre les fausses stations de base).
 #text(red, "eNodeB"): station de base UMTS, connectée au RNC via l'interface Iub, gère l'interface radio WCDMA avec les terminaux.
+#image("img/umts_auth.png", width: 100%)
+#text(red, "UMTS AKA — Flux général"): protocole à 3 parties (Mobile/USIM, Réseau visité, Home Env./HLR). (1) Home Env. génère vecteurs d'auth et les envoie au réseau visité. (2) Réseau visité envoie RAND || AUTN au mobile. (3) Mobile vérifie AUTN → *réseau authentifié*. (4) Mobile envoie RES. (5) Réseau compare RES=XRES → *mobile authentifié*. (6) Les deux dérivent CK et IK. K ne quitte jamais la SIM ni le HLR.
+#image("img/gen_auth_vector_hn.png", width: 100%)
+#text(red, "UMTS AKA — Génération des vecteurs"): le HLR calcule via f1-f5(K, RAND, SQN) : *MAC*=f1 (authenticité), *XRES*=f2 (vérif mobile), *CK*=f3 (chiffrement), *IK*=f4 (intégrité), *AK*=f5 (masquage SQN). Construit *AUTN = (SQN ⊕ AK) || AMF || MAC* : SQN masqué par AK pour la vie privée, MAC prouve l'authenticité du réseau. Vecteur complet : AV = RAND || XRES || CK || IK || AUTN.
+#image("img/user_auth_usim.png", width: 100%)
+#text(red, "UMTS AKA — Vérification côté mobile"): le mobile recalcule AK=f5(K,RAND), démasque SQN=(SQN⊕AK)⊕AK, vérifie MAC=f1(K,...) → réseau authentique. Vérifie que SQN est dans la plage valide (anti-replay). Calcule RES=f2, CK=f3, IK=f4.
+#text(red, "MILENAGE (dia 47)"): implémentation de référence 3GPP des fonctions f1-f5, basée sur AES (Rijndael). Opérateur-spécifique mais MILENAGE fourni comme exemple standard.
+#image("img/signal_integrity_protection.png", width: 100%)
+#image("img/f9.png", width: 100%)
+#text(red, "f9 — Intégrité signalisation"): protège les messages de signalisation NAS/RRC. f9(IK, COUNT, FRESH, MESSAGE, DIRECTION) → MAC-I 32 bits. Basé sur KASUMI (dérivé de MISTY1) pour UIA1, AES-CMAC pour UIA2.
+#image("img/f8.png", width: 100%)
+#text(red, "f8 — Chiffrement"): chiffrement par flot des données. f8(CK, COUNT-C, BEARER, DIRECTION, LENGTH) → keystream XORé avec les données (blocs 114 bits). Basé sur KASUMI.
 
 = LTE (4G)
 
