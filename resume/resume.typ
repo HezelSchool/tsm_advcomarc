@@ -183,6 +183,8 @@
 = LTE (4G)
 
 #image("img/4g_network.png", width: 100%)
+#text(red, "LTE — Sécurité"): Réutilise l'AKA (Authentication and Key Agreement) d'UMTS avec une hiérarchie de clés étendue. Permet des clés plus longues et offre une protection renforcée du backhaul. *Principaux apports*: réutilisation AKA UMTS, hiérarchie de clés étendue, possibilité de clés plus longues, meilleure protection du backhaul.
+#text(red, "Backhaul"): liaison réseau entre la station de base (eNodeB) et le cœur du réseau (EPC). En LTE, ce lien est protégé par IPsec car il transite souvent sur des liaisons non dédiées (fibre, micro-ondes) pouvant être exposées.
 #text(red, "Evolved Packet System (EPS)"): = Réseau 4G séparé en RAN et CN.
 #text(red, "Radio Access Network (RAN)"): User Equipement (UE), communication sans fil (Air Interface), station de base evolved Node B (eNodeB).
 #text(red, "Core Network (CN)"): Coeur du réseau = Evolved Packet Core (EPC), basé sur IP, plus de commutation circuit tout est packet switched.
@@ -193,24 +195,24 @@
 #text(red, "Meadowcell/Macrocell"): Zones urbaines extérieurs, 50-200 users, grande portée
 #image("img/lte_arch.png", width: 100%)
 #text(red, "Long Term Evolution (LTE)"): technologie 4G, évolution de l'UMTS, tout IP, plus rapide et plus efficace que les générations précédentes.
-*E-UTRAN (Radio)*
+#text(red, "E-UTRAN (Radio)"): Evolved Universal Terrestrial Radio Access Network, partie radio du réseau LTE. Gère l'interface air entre l'UE et le réseau, sans contrôleur centralisé (RNC supprimé vs UMTS). *Composé de*: eNodeB.
 #text(red, "eNodeB"): station de base 4G, gère l'interface radio avec l'UE et communique directement entre eNodeB voisins pour les handovers.
-*EPC — Control Plane*
+#text(red, "EPC — Control Plane"): Plan de contrôle de l'EPC, gère la signalisation, l'authentification, la mobilité et les politiques. Aucune donnée utilisateur ne transite ici. *Composé de*: MME, HSS, PCRF, OCS.
 #text(red, "MME (Mobility Management Entity)"): nœud de signalisation principal, authentification, gestion de la mobilité et des sessions, pagination.
 #text(red, "HSS (Home Subscriber Server)"): remplace le HLR, base de données des abonnés et clés de sécurité.
 #text(red, "PCRF (Policy Charging Rules Function)"): définit les règles de QoS et de facturation en temps réel, décide la priorité de chaque flux.
 #text(red, "OCS (Online Charging System)"): facturation prepaid en temps réel,peut couper ou adapter le service si le crédit est épuisé.
-*EPC — User Plane*
+#text(red, "EPC — User Plane"): Plan de données de l'EPC, achemine les paquets IP entre l'UE et Internet. Séparé du control plane pour des raisons de performance et de scalabilité. *Composé de*: S-GW, P-GW.
 #text(red, "S-GW (Serving Gateway)"): passerelle data côté RAN, route les paquets entre eNodeB et P-GW, ancrage local lors des handovers.
 #text(red, "P-GW (Packet Gateway)"): passerelle vers Internet, attribue les adresses IP, applique les règles définies par le PCRF.
-*Protocoles*
 #text(red, "AS (Access Stratum)"): protocoles entre UE et eNodeB (interface radio).
 #text(red, "NAS (Non-Access Stratum)"): protocoles entre UE et MME (mobilité, authentification), transparent au eNodeB.
-*Sécurité LTE*: Réutilise l'AKA (Authentication and Key Agreement) d'UMTS, hiérarchie de clés étendue, protection renforcée du backhaul.
-*QoS — QCI (QoS Class Identifier)*: en cas de congestion radio, les flux sont priorisés par QCI.
+#text(red, "QoS — QCI (QoS Class Identifier)"): en cas de congestion radio, les flux sont priorisés par QCI.
 #text(red, "GBR (Guaranteed Bit Rate)"): bande passante réservée — utilisé pour voix/vidéo temps réel.
 #text(red, "non-GBR (Best Effort)"): pas de garantie — utilisé pour internet, email.
 Priorités : VoLTE signaling (1er, QCI 5) → voix (QCI 1) → gaming/V2X (QCI 3) → vidéo live (QCI 2) → vidéo buffered (QCI 4) → internet (QCI 6–9).
+#image("img/lte_auth.png", width: 100%)
+#text(red, "LTE Authentication (EPS-AKA)"): similaire à UMTS AKA mais avec une hiérarchie de clés étendue. (1) UE envoie IMSI au MME. (2) MME envoie IMSI + SN id (Serving Network ID) au HSS. (3) HSS exécute EPS AKA (K, RAND, SQN, SN ID) → génère AUTN\_hss, XRES, *K\_ASME*. (4) MME envoie RAND || AUTN à l'UE. (5) UE exécute EPS AKA côté mobile → génère AUTN\_UE, RES, K\_ASME. (6) UE envoie RES au MME. *Vérifications*: AUTN\_UE = AUTN\_hss (réseau authentifié), RES = XRES (mobile authentifié). *K\_ASME (Key Access Security Management Entity)*: clé racine LTE dérivée avec le SN ID, de laquelle sont dérivées toutes les clés de chiffrement et d'intégrité. *Algorithmes LTE (128 bits)*: chiffrement EEA: 128-EEA0 (NULL), 128-EEA1 (SNOW 3G), 128-EEA2 (AES) ; intégrité EIA: 128-EIA1 (SNOW 3G), 128-EIA2 (AES). Deux algos obligatoires dès le départ : SNOW 3G (issu d'UMTS) et AES (NIST FIPS 197).
 
 = 5G
 
