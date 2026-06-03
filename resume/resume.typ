@@ -15,27 +15,23 @@
 #text(red, "")
 #text(purple, $$)
 
+#text(red, "TDMA"): TODO
+#text(red, "Roaming"): TODO
+
 = Autres
 
-*Théorie de l'information*
 #text(red, "Entropie"): mesure la quantité d'information moyenne (en bits) =~ le degré d'incertitude sur le prochain symbole émis #text(purple, $H(X) = −∑ p(x) · log₂(p(x))$)
 #text(red, "Shannon-Hartley"): Débit maximal auquel il existe un code permettant un taux d'erreur arbitrairement faible = #text(purple, $C = B_p · log_2(1 + P_"signal"/P_"bruit")$), $B_p$ = bande passante (Hz), $P$ = puissance (Watts) ; SNR = rapport signal/bruit — plus SNR est élevé, plus la capacité C est grande
 #text(red, "Théorème 1"): On peut compresser jusqu’à l’Entropie
 #text(red, "Théorème 2"): Si le débit est inférieur à la capacité du canal, le taux d’erreur peut tendre vers zéro moyennant un code correcteur
 #text(red, "Théorème 3"): La sécurité parfaite si : La clef est au moins aussi longue que le message, la clef est choisie uniformément au hasard et n'est utilisée qu'une seule fois
-*Contraintes clés pour les réseaux de communication*
-#text(red, "Economique"): Time to Market, Economy of Scale, Economy of Scope, Energy optimization, Autonomy, User Centric, User Experience, Ubiquitous.
-#text(red, "Techniques"): Couverture globale, Convergence IP, Convergence Fixe_Mobile, Zero_Trust Security, Cross-Layring Security, Couverture Globale, Latence et Gigue, Débit, SDN, Réseaux Privés Open-RAN.
+#text(red, "Contraintes Economique"): Time to Market, Economy of Scale, Economy of Scope, Energy optimization, Autonomy, User Centric, User Experience, Ubiquitous.
+#text(red, "Contraintes Techniques"): Couverture globale, Convergence IP, Convergence Fixe_Mobile, Zero_Trust Security, Cross-Layring Security, Couverture Globale, Latence et Gigue, Débit, SDN, Réseaux Privés Open-RAN.
 // TODO to remove if not enough space
 #image("img/chart_of_elec_spectrum.png", width: 100%)
-*SLA for Industry Digital Transformation* définit un SLA réseau 5G industriel selon *3 axes* :
-#text(red, "Capabilities"): Bandwidth, Latency, Jitter, Packet Loss Rate, Availability, High Precise Positioning, WAN/LAN Networking
-#text(red, "Operation"): DIY Operation, Self-management, Self-provisioning, Self-operation, Self-define Network, Online/Offline Order, Dedicated Network
-#text(red, "Security"): Data/Signaling Protection, Isolation Level, Secure Level
-*TDD / FDD*:
-Les deux méthodes permettent la communication bidirectionnelle (UL = uplink mobile→antenne, DL = downlink antenne→mobile).
-#text(red, "FDD (Frequency Division Duplex)"): UL et DL sur deux fréquences différentes simultanément, simple à implémenter, pas de synchronisation, nécessite un spectre paired (deux bandes séparées), ratio UL/DL fixe.
-#text(red, "TDD (Time Division Duplex)"): UL et DL sur la même fréquence, synchronisation réseau obligatoire, une seule bande suffit (pas de spectre paired), Ratio UL/DL ajustable dynamiquement adapté au trafic asymétrique (ex. streaming)
+#text(red, "SLA for Industry Digital Transformation"): définit un SLA réseau 5G industriel selon 3 axes : *Capabilities*: Bandwidth, Latency, Jitter, Packet Loss Rate, Availability, High Precise Positioning, WAN/LAN Networking *Operation*: DIY Operation, Self-management, Self-provisioning, Self-operation, Self-define Network, Online/Offline Order, Dedicated Network *Security*: Data/Signaling Protection, Isolation Level, Secure Level
+#text(red, "FDD (Frequency Division Duplex)"): Permet la communication bidirectionnelle (UL = uplink mobile→antenne, DL = downlink antenne→mobile), UL et DL sur deux fréquences différentes simultanément, simple à implémenter, pas de synchronisation, nécessite un spectre paired (deux bandes séparées), ratio UL/DL fixe.
+#text(red, "TDD (Time Division Duplex)"): Permet la communication bidirectionnelle, UL et DL sur la même fréquence, synchronisation réseau obligatoire, une seule bande suffit (pas de spectre paired), Ratio UL/DL ajustable dynamiquement adapté au trafic asymétrique (ex. streaming)
 #grid(
   columns: 2,
   gutter: 4pt,
@@ -85,6 +81,9 @@ Les deux méthodes permettent la communication bidirectionnelle (UL = uplink mob
 *Basse fréquence*: pénètre mieux les murs, portée plus grande, plus d'utilisateurs par cellule
 *Haute fréquence*: atténuation élevée, se reflète sur les murs, mauvaise pénétration indoor — mais bande passante plus large → débits plus élevés
 
+= SS7 Signalling System \#7
+
+
 = Mobile / Wi-Fi
 // TODO remove if not enough space
 #table(
@@ -107,31 +106,56 @@ Les deux méthodes permettent la communication bidirectionnelle (UL = uplink mob
   [802.11az], [Sensing], [60 GHz], [localisation], [$<$1 m],
 )
 
+= AMPS (1G)
+
+#text(red, "Advanced Mobile Phone Service (AMPS)"): première génération de système téléphonie moderne à cellule. *Aucune sécurité* : identification via ESN (Electronic Serial Number) + CTN (Cellular Telephone Number) en clair, communications analogiques non chiffrées. Vulnérabilités : écoute passive (eavesdropping) et clonage de mobile.
+
 = GSM (2G)
 
 #image("img/gsm_arch.png", width: 100%)
-#text(red, "Global System for Mobile Communications (GSM)"): Famile de standards pour décrire les protocoles 2G (réseau numérique voix + SMS, données lentes, voix en Circuit Switched).
-*RAN (Radio Access Network)*
-#text(red, "Base Transceiver Station (BTS)"): antenne radio, communique avec le mobile via l'interface air.
+#text(red, "Global System for Mobile Communications (GSM)"): Famile de standards pour décrire les protocoles 2G (réseau numérique voix + SMS, données lentes, voix en Circuit Switched). Basée sur TDMA radio access et PCM trunking. Utilise SS7 signaling *Securité*: Authentication et encryption => vise à donnée confidentialité et anonymité avec une authentification cliente forte pour protéger les opérateurs contre fraudeurs. Prévenir opérateur compromette la sécurité d'un autre opérateur par inadvertance ou sous pression concurentielle.
+#text(red, "Signalling System #7 (SS7)"): suite de protocoles utilisée par les opérateurs télécom pour communiquer entre eux. modèle de confiance mutuelle entre opérateurs, *aucune authentification intégrée*. Accès achetable pour quelques centaines de dollars/mois, nombreux hubs SS7 non sécurisés sur le web.
+#text(red, "RAN (Radio Access Network)"): TODO. *Composé de*: BTS, BSC.
+#text(red, "Base Transceiver Station (BTS)"): antenne radio, communique avec le mobile via l'interface air. *Stocke*: Kc, A5.
 #text(red, "Base Station Controller (BSC)"): contrôle plusieurs BTS, gère l'allocation des canaux radio et le handover.
-*Core Network*
+#text(red, "Core Network (CN)"): partie fixe du réseau GSM, gère la commutation, la mobilité, l'authentification et les bases de données abonnés. *Composé de*: MSC, OMC.
 #text(red, "Mobile Switching Center (MSC)"): nœud central de commutation, route les appels voix et gère la mobilité.
 #text(red, "Operation and Maintenance Center (OMC)"): supervision et maintenance du réseau.
-*Bases de données*
-#text(red, "Home Location Register (HLR)"): base permanente des abonnés , contient le profil, les services autorisés et la localisation courante.
-#text(red, "Visitor Location Register (VLR)"): copie locale du HLR pour les abonnés présents dans la zone du MSC (évite des requêtes HLR constantes).
-#text(red, "Authentication Center (AuC)"): stocke les clés d'authentification (Ki) et génère les triplets de sécurité.
-#text(red, "Equipment Identity Register (EIR)"): vérifie si l'équipement (IMEI) est autorisé, volé ou défectueux.
-*Mobile (UE)*
-#text(red, "ME (Mobile Equipment)"): l'appareil physique, identifié par l'IMEI.
-#text(red, "Subscriber Identity Module (SIM)"): carte à puce contenant les clés et identifiants de l'abonné.
+#text(red, "Home Location Register (HLR) (Database)"): base permanente des abonnés , contient le profil, les services autorisés et la localisation courante. *Stocke*: IMSI, Ki, A3, A8
+#text(red, "Visitor Location Register (VLR) (Database)"): copie locale du HLR pour les abonnés présents dans la zone du MSC (évite des requêtes HLR constantes). *Stocke*: IMSI, TMSI, Kc, RAND, SRES.
+#text(red, "Authentication Center (AuC) (Database)"): génère les triplets de sécurité. *Stocke*: IMSI, Ki, A3, A8.
+#text(red, "Equipment Identity Register (EIR) (Database)"): vérifie si l'équipement (IMEI) est autorisé, volé ou défectueux.
+#text(red, "User Equipement (UE)"): terminal mobile de l'abonné, combine le matériel physique et la carte SIM. *Composé de*: ME, SIM, IMEI, Ki, IMSI, TMSI, MSISDN, LAI, PTN.
+#text(red, "Mobile Equipment (ME)"): l'appareil physique, identifié par l'IMEI.
+#text(red, "Subscriber Identity Module (SIM)"): carte à puce contenant les clés et identifiants de l'abonné. *Smart Card*: single chip avec OS, File System et Applications, appartient à l'opérateur. *Spec*: 8 bit CPU, 16 K ROM, 256 bytes RAM, 4K EEPROM, Cost: \$5. *Technology*: ISO 7816, Card size, contact layout, electrical characteristics, I/O Protocols: byte/block based, File Structure. *Stocke*: IMSI, TMSI, Kc, Ki, A3, A8, A5.
 #text(red, "International Mobile Equipment Identity (IMEI)"): numéro unique du terminal.
-#text(red, "Subscriber Authentication Key (Ki)"): clé secrète d'authentification (jamais transmise sur le réseau).
-#text(red, "International Mobile Subscriber Identity (IMSI)"): identité permanente de l'abonné (stockée dans la SIM et le HLR).
-#text(red, "Temporary Mobile Subscriber Identity (TMSI)"): alias temporaire remplaçant l'IMSI sur l'interface radio (protection de la vie privée).
+#text(red, "Subscriber Authentication Key (Ki)"): clé secrète partagée 128 bits pour l'authentification de l'abonné par l'opérateur, jamais transmise sur le réseau. *Stockée dans*: la SIM de l'abonné (appartient à l'opérateur, donc de confiance) et le HLR du réseau home de l'abonné.
+#text(red, "International Mobile Subscriber Identity (IMSI)"): identité permanente de l'abonné (stockée dans la SIM et le HLR), max 15 chiffres. *Composé de*: MCC + MNC + NMSI. *MCC (Mobile Country Code)*: identifie le pays (228 = Suisse). *MNC (Mobile Network Code)*: identifie l'opérateur (ex. 01 = Swisscom). *NMSI (Network Mobile Subscriber Identity)*: identifie l'abonné chez cet opérateur.
+#text(red, "Temporary Mobile Subscriber Identity (TMSI)"): alias temporaire remplaçant l'IMSI sur l'interface radio (confidentialité), attribué par le VLR (4 bytes, sauf FFFF). Associé à un IMSI et à une Location Area : le couple (TMSI, LAI) remplace l'IMSI et permet une identification unique.
 #text(red, "Mobile Station International Service Digital Network (MSISDN)"): le numéro de téléphone composé.
-#text(red, "Location Area Identity (LAI)"): identifiant de la zone de localisation courante de l'abonné.
+#text(red, "Location Area Identity (LAI)"): identifiant de la zone de localisation courante de l'abonné, diffusé régulièrement par la BTS sur le BCCH. LAI = CC + MNC + LAC (Location Area Code). Exemples MCC: 228 Suisse (01=Swisscom, 02=Sunrise, 03=Orange), 262 Allemagne (07=Viag Interkom).
 #text(red, "Personal Identity Number (PIN)"): code protégeant l'accès à la SIM.
+#text(red, "Cell Identifier (CI)"): max 2×8 bits, identifie une cellule. LAI+CI identifie de manière unique une cellule au niveau international.
+#text(red, "Mobile Station Roaming Number (MSRN)"): numéro d'acheminement temporaire (conforme E.164) alloué par le VLR, permet aux commutateurs d'atteindre le MSC où se trouve un mobile en roaming lors d'un appel entrant.
+#image("img/gsm_auth.png", width: 100%)
+#text(red, "GSM Authentication"): protocole challenge-response entre le mobile (SIM) et l'opérateur, tous deux connaissant Ki. (1) L'opérateur envoie un challenge *RAND* (128 bits) au mobile. (2) La SIM calcule *SRES* = A3(Ki, RAND) et *Kc* = A8(Ki, RAND), renvoie SRES. (3) L'opérateur calcule son propre SRES et compare : si égaux → abonné authentifié. (4) Kc (64 bits) sert ensuite à chiffrer les données via A5. Ki ne transite jamais sur le réseau.
+#image("img/a3_a8.png", width: 100%)
+#text(red, "A3 (authentification)"): fonction implémentée sur la SIM, prend RAND (128 bits) + Ki (128 bits) → *SRES* (32 bits). Choix de l'algo laissé à l'opérateur, indépendant du matériel.
+#text(red, "A8 (session key)"): fonction implémentée sur la SIM, prend RAND (128 bits) + Ki (128 bits) → *Kc* (64 bits). Jamais rendu public.
+#text(red, "COMP128"): implémentation combinée de A3+A8 (fonction de hachage à clé), produit 128 bits : SRES (32 bits) + Kc (*54 bits effectifs*, 10 bits mis à zéro — affaiblissement intentionnel).
+#image("img/a5.png", width: 100%)
+#text(red, "A5 (chiffrement radio)"): chiffrement par flot (stream cipher), implémenté en hardware, design jamais rendu public (fuité à Ross Anderson et Bruce Schneier). Prend *Kc* (64 bits) + *Fn* (numéro de trame, 22 bits) → keystream 114 bits, XORé avec les données (blocs de 114 bits). *Variantes*: A5/1 (forte, Europe), A5/2 (faible, export), A5/3 (basée sur KASUMI, utilisée en 3G).
+#image("img/attack_extract_key_from_sim.png", width: 100%)
+#text(red, "Attack Extracting key from SIM"): *Goal*: extraire Ki de la SIM pour la cloner. *Principe cardinal*: les bits intermédiaires du calcul doivent être statistiquement indépendants des entrées, sorties et données sensibles. *Idée*: trouver une violation de ce principe via des canaux auxiliaires (side channels) dont les signaux dépendent de Ki  *Méthode*: exploiter la dépendance statistique entre ces signaux et Ki.
+#text(red, "Attack fake BS (IMSI Catcher)"): fausse station de base qui se fait passer pour une vraie BTS. Exploite le fait que GSM n'authentifie que le mobile (pas le réseau) : le téléphone se connecte automatiquement au signal le plus fort. *Conséquences*: capture des IMSI/TMSI, interception des appels, forçage du chiffrement A5/2 (faible) voire désactivation du chiffrement. *Outils*: tiSRP, OpenBTS. Utilisé par les forces de l'ordre mais aussi par des attaquants.
+#image("img/ss7_attack_1.png", width: 100%)
+#image("img/ss7_attack_2.png", width: 100%)
+#text(red, "Attack: Location Tracking using SS7"): exploite l'absence d'authentification SS7 pour localiser un abonné. *Étape 1*: envoyer `sendRoutingInfoForSM` au HLR → réponse avec l'IMSI + adresse du MSC/VLR courant. *Étape 2*: envoyer `provideSubscriberInfo` au MSC → le MSC page le mobile et répond avec le Cell ID. LAI+CI permet de localiser géographiquement l'abonné. Des services en ligne permettent cette localisation automatiquement.
+#image("img/attack_ssl_dos.png")
+#text(red, "Attack: SS7 Denial of Service"): une fois IMSI et adresse VLR obtenus, l'attaquant peut modifier les données de l'abonné (aucune vérification chez la plupart des opérateurs). En envoyant `insertSubscriberData`, `deleteSubscriberData` ou `cancelLocation` au VLR, il peut contrôler la disponibilité des services : désactiver les appels sortants, couper la connectivité, etc.
+#image("img/sms_1.png", width: 100%)
+#image("img/sms_2.png", width: 100%)
+#text(red, "Attack: SS7 SMS Interception (Man-in-the-Middle)"): attaque similaire à un MITM, intercepte les SMS (ex. codes 2FA). *Setup (étape 1)*: (A) l'attaquant enregistre le MSISDN de la victime sur un faux MSC via SS7 → (B) le vrai HLR met à jour la localisation vers le faux MSC → (C) le vrai HLR demande au vrai MSC de libérer la mémoire. *Hijacking (étape 2)*: la banque envoie un SMS → le SMS-C demande la localisation au HLR → le HLR répond avec l'adresse du faux MSC → le SMS-C achemine le SMS vers l'attaquant.
 
 = UMTS (3G)
 
@@ -150,12 +174,11 @@ Les deux méthodes permettent la communication bidirectionnelle (UL = uplink mob
 #text(red, "Evolved Packet System (EPS)"): = Réseau 4G séparé en RAN et CN.
 #text(red, "Radio Access Network (RAN)"): User Equipement (UE), communication sans fil (Air Interface), station de base evolved Node B (eNodeB).
 #text(red, "Core Network (CN)"): Coeur du réseau = Evolved Packet Core (EPC), basé sur IP, plus de commutation circuit tout est packet switched.
-*Taille de cellules* Différentes tailles pour optimiser la couverture et la capacité selon l'environnement. Plus elle est petite, plus elle est déployé dans zones denses avec beaucoup d'utilisateurs concentrés.
+#text(red, "Taille de cellules")Différentes tailles pour optimiser la couverture et la capacité selon l'environnement. Plus elle est petite, plus elle est déployé dans zones denses avec beaucoup d'utilisateurs concentrés.
 #text(red, "Femtocell"): Usage domestique/entreprise, 8-16 users, petite portée, indoor
 #text(red, "Picocell"): Entreprise et zones à forte densités, portée légèrement supérieur à Femtocell
 #text(red, "Microcell/Metrocell"): Zone à forte densité et indoor, ~64 users
 #text(red, "Meadowcell/Macrocell"): Zones urbaines extérieurs, 50-200 users, grande portée
-
 #image("img/lte_arch.png", width: 100%)
 #text(red, "Long Term Evolution (LTE)"): technologie 4G, évolution de l'UMTS, tout IP, plus rapide et plus efficace que les générations précédentes.
 *E-UTRAN (Radio)*
