@@ -414,10 +414,18 @@ Tendances clés :
 
 = DIAMETER / RADIUS
 
-*Contexte* : Diameter remplace MAP (mobilité/AAA) et CAP (prepaid CAMEL) dans les réseaux modernes — MAP/CAP → Diameter, ISUP/INAP → SIP.
+#text(red, "Protocole AAA (Authentication, Authorization, Accounting)"): framework de contrôle d'accès réseau. *Authentication*: vérifie l'identité (qui es-tu ?). *Authorization*: définit les droits/ressources accordés (que peux-tu faire ?). *Accounting*: trace les sessions — durée, volume, facturation, roaming. Implémenté par RADIUS ou Diameter.
 #text(red, "RADIUS (Remote Authentication Dial-In User Service)"): protocole AAA client-serveur sur UDP, centralisé, scalable — Authentication (vérifier identité), Authorization (droits/ressources), Accounting (suivi sessions, facturation, roaming). Ports : auth 1812, accounting 1813.
+*EAP-TLS*: authentification mutuelle forte par certificats — le client et le serveur s'authentifient réciproquement via PKI (CA commune).
+*WPA2 Enterprise*: Wi-Fi sécurisé via RADIUS + EAP — chaque utilisateur a ses propres credentials, contrairement à WPA2 PSK (clé partagée).
+*PKI en production*: éviter les certificats auto-signés — utiliser une CA reconnue (interne ou externe), HSM pour stocker les clés privées, procédures de révocation (CRL).
 #text(red, "Diameter"): successeur de RADIUS sur TCP/SCTP, rétrocompatible (AVP codes 1–255 et command codes 0–255 réutilisés) — corrige toutes les limitations de RADIUS.
-*Diameter vs RADIUS*
+*Transport*: clients Diameter MUST support SCTP ou TCP, serveurs/agents MUST support SCTP ET TCP.
+*Sécurité*: TLS et IPSec — ordre de sélection : IPSec → SCTP/TCP → TLS après négociation.
+*Message Header*: Version, Length, Flags (R=Request, P=Proxiable, E=Error, T=Re-transmitted), Command Code, Application-ID, Hop-by-Hop ID, End-to-End ID.
+*AVP (Attribute-Value Pair)*: unité de données Diameter — AVP Code, Flags, Vendor-ID (optionnel), Data.
+*Result-Code AVP (268)*: présent dans toute réponse Diameter — 1xxx (Info), 2xxx (Succès), 3xxx (Erreurs protocole), 4xxx (Transitoires), 5xxx (Permanentes).
+#text(red, "Diameter vs Radius"):
 #table(
   columns: (auto, 1fr, 1fr),
   inset: 3pt,
@@ -433,16 +441,6 @@ Tendances clés :
   [Taille max AVP], [16 777 215 octets], [255 octets],
   [Vendor-specific], [Messages + attributs], [Attributs seulement],
 )
-*Diameter — protocole et structure*
-#text(red, "Transport"): clients Diameter MUST support SCTP ou TCP, serveurs/agents MUST support SCTP ET TCP.
-#text(red, "Sécurité"): TLS et IPSec — ordre de sélection : IPSec → SCTP/TCP → TLS après négociation.
-#text(red, "Message Header"): Version, Length, Flags (R=Request, P=Proxiable, E=Error, T=Re-transmitted), Command Code, Application-ID, Hop-by-Hop ID, End-to-End ID.
-#text(red, "AVP (Attribute-Value Pair)"): unité de données Diameter — AVP Code, Flags, Vendor-ID (optionnel), Data.
-#text(red, "Result-Code AVP (268)"): présent dans toute réponse Diameter — 1xxx (Info), 2xxx (Succès), 3xxx (Erreurs protocole), 4xxx (Transitoires), 5xxx (Permanentes).
-*EAP / WPA2 Enterprise (RADIUS)*
-#text(red, "EAP-TLS"): authentification mutuelle forte par certificats — le client et le serveur s'authentifient réciproquement via PKI (CA commune).
-#text(red, "WPA2 Enterprise"): Wi-Fi sécurisé via RADIUS + EAP — chaque utilisateur a ses propres credentials, contrairement à WPA2 PSK (clé partagée).
-#text(red, "PKI en production"): éviter les certificats auto-signés — utiliser une CA reconnue (interne ou externe), HSM pour stocker les clés privées, procédures de révocation (CRL).
 
 = Wired Security
 
