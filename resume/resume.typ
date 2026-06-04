@@ -81,9 +81,6 @@
 *Basse fréquence*: pénètre mieux les murs, portée plus grande, plus d'utilisateurs par cellule
 *Haute fréquence*: atténuation élevée, se reflète sur les murs, mauvaise pénétration indoor — mais bande passante plus large → débits plus élevés
 
-= SS7 Signalling System \#7
-
-
 = Mobile / Wi-Fi
 // TODO remove if not enough space
 #table(
@@ -374,42 +371,34 @@ Tendances clés :
 
 = TCP/UDP/SCTP/MPTCP
 
-*Motivation* : migration PSTN → packet, signalisation téléphonique, ni TCP ni UDP n'est adapté.
+#text(red, "Motivation SCTP/MPTCP"): migration PSTN → packet, signalisation téléphonique, ni TCP ni UDP n'est adapté.
 #text(red, "TCP"): fiable, orienté bytes, mais head-of-line blocking, pas de multi-homing, vulnérable DoS (SYN flood).
 #text(red, "UDP"): orienté messages, mais sans fiabilité, sans contrôle de congestion ni de flux.
-*SCTP (Stream Control Transmission Protocol)*: combine le meilleur des deux.
-#text(red, "Fiable"): acquittements, retransmissions comme TCP.
-#text(red, "Orienté messages"): préserve les frontières de messages (contrairement à TCP).
-#text(red, "Multi-homing"): une association peut utiliser plusieurs adresses IP, bascule automatique en cas de panne d'un chemin.
-#text(red, "Multi-streaming"): plusieurs flux indépendants dans une association — perte sur un flux ne bloque pas les autres (élimine le head-of-line blocking inter-streams).
-#text(red, "Sécurité"): handshake 4-way avec mécanisme cookie (INIT > INIT-ACK > COOKIE-ECHO > COOKIE-ACK) — protège contre les attaques SYN flood.
-#text(red, "Shutdown"): 3-way (SHUTDOWN > SHUTDOWN-ACK > SHUTDOWN-CMPL), pas d'état half-closed contrairement à TCP.
-*Chunks SCTP* (unités de données atomiques, plusieurs peuvent être bundlés dans un même paquet) :
-#text(red, "INIT"): initie une association — Verification Tag = 0x0, déclare Initiate Tag, a_rwnd (fenêtre réception), nb flux IN/OUT, Initial TSN.
-#text(red, "INIT_ACK"): répond à l'INIT — contient le State Cookie (MAC + timestamp + durée de vie, calculé par le serveur avec une clé secrète) — le serveur reste stateless jusqu'au COOKIE_ECHO (protection DoS).
-#text(red, "COOKIE_ECHO"): renvoie le State Cookie reçu dans l'INIT_ACK pour prouver la validité du client.
-#text(red, "COOKIE_ACK"): confirme la réception du COOKIE_ECHO — association établie.
-#text(red, "DATA"): transporte les données — identifié par TSN (global), SID (flux), SSN (séquence dans le flux), bits B/E (début/fin de fragment), I (SACK immédiat), U (non ordonné).
-#text(red, "SACK (Selective ACK)"): acquitte les DATA via Cumulative TSN Ack, signale les écarts (Gap Ack Blocks) et les doublons — plus précis que le ACK TCP.
-#text(red, "ASCONF / ASCONF_ACK"): reconfiguration dynamique des adresses IP d'une association active (RFC 5061 ADD-IP) — permet d'ajouter/supprimer une adresse ou changer l'adresse principale sans couper l'association.
-#text(red, "HEARTBEAT / HEARTBEAT_ACK"): vérification périodique de la disponibilité de chaque chemin — détecte les pannes et déclenche le basculement sur un chemin alternatif.
-*Identifiants clés* :
-#text(red, "TSN (Transmission Sequence Number)"): numéro de séquence global à l'association — garantit la livraison fiable indépendamment du flux.
-#text(red, "SSN (Stream Sequence Number)"): numéro de séquence local à un flux — garantit l'ordre dans un stream sans bloquer les autres.
-#text(red, "Verification Tag"): tag inclus dans chaque paquet (sauf INIT où il vaut 0x0) — valide l'identité de l'émetteur et lie le paquet à l'association.
-*MPTCP (Multipath TCP)* — extension de TCP standard, transparent pour les applications.
-#text(red, "Transferts transparents"): bascule d'un chemin à l'autre sans couper la connexion TCP — ex. Apple utilise MPTCP sur iPhone (Wi-Fi → 4G sans interruption).
-#text(red, "Sélection du meilleur chemin"): choix dynamique selon latence, pertes, coût, bande passante.
-#text(red, "Agrégation"): utilisation simultanée de plusieurs chemins pour cumuler les débits — ex. Wi-Fi + 4G en même temps.
-*Établissement MPTCP* :
-*Connexion principale* : SYN (MP_CAPABLE + clé client) → SYN/ACK (MP_CAPABLE + clé serveur) → ACK (les deux clés).
+#text(red, "SCTP"): combine le meilleur des deux.
+*Fiable*: acquittements, retransmissions comme TCP.
+*Orienté messages*: préserve les frontières de messages (contrairement à TCP).
+*Multi-homing*: une association peut utiliser plusieurs adresses IP, bascule automatique en cas de panne d'un chemin.
+*Multi-streaming*: plusieurs flux indépendants dans une association, perte sur un flux ne bloque pas les autres (élimine le head-of-line blocking inter-streams).
+*Sécurité*: handshake 4-way avec mécanisme cookie (INIT > INIT-ACK > COOKIE-ECHO > COOKIE-ACK) — protège contre les attaques SYN flood.
+*Shutdown*: 3-way (SHUTDOWN > SHUTDOWN-ACK > SHUTDOWN-CMPL), pas d'état half-closed contrairement à TCP.
+*Chunks SCTP*: unités de données atomiques, plusieurs peuvent être bundlés dans un même paquet. *INIT*: initie une association — Verification Tag = 0x0, déclare Initiate Tag, a_rwnd (fenêtre réception), nb flux IN/OUT, Initial TSN.
+*INIT_ACK*: répond à l'INIT — contient le State Cookie (MAC + timestamp + durée de vie, calculé par le serveur avec une clé secrète) — le serveur reste stateless jusqu'au COOKIE_ECHO (protection DoS).
+*COOKIE_ECHO*: renvoie le State Cookie reçu dans l'INIT_ACK pour prouver la validité du client. *COOKIE_ACK*: confirme la réception du COOKIE_ECHO — association établie.
+*DATA*: transporte les données — identifié par TSN (global), SID (flux), SSN (séquence dans le flux), bits B/E (début/fin de fragment), I (SACK immédiat), U (non ordonné).
+*SACK (Selective ACK)*: acquitte les DATA via Cumulative TSN Ack, signale les écarts (Gap Ack Blocks) et les doublons — plus précis que le ACK TCP.
+*ASCONF / ASCONF_ACK*: reconfiguration dynamique des adresses IP d'une association active (RFC 5061 ADD-IP) — permet d'ajouter/supprimer une adresse ou changer l'adresse principale sans couper l'association.
+*HEARTBEAT / HEARTBEAT_ACK*: vérification périodique de la disponibilité de chaque chemin — détecte les pannes et déclenche le basculement sur un chemin alternatif.
+*Identifiants clés* : TSN (Transmission Sequence Number): numéro de séquence global à l'association — garantit la livraison fiable indépendamment du flux. SSN (Stream Sequence Number): numéro de séquence local à un flux — garantit l'ordre dans un stream sans bloquer les autres. Verification Tag: tag inclus dans chaque paquet (sauf INIT où il vaut 0x0) — valide l'identité de l'émetteur et lie le paquet à l'association.
+#text(red, "MPTCP (Multipath TCP"): extension de TCP standard, transparent pour les applications.
+*Transferts transparents*: bascule d'un chemin à l'autre sans couper la connexion TCP — ex. Apple utilise MPTCP sur iPhone (Wi-Fi → 4G sans interruption).
+*Sélection du meilleur chemin*: choix dynamique selon latence, pertes, coût, bande passante. *Agrégation*: utilisation simultanée de plusieurs chemins pour cumuler les débits — ex. Wi-Fi + 4G en même temps.
+*Établissement MPTCP* : Connexion principale : SYN (MP_CAPABLE + clé client) → SYN/ACK (MP_CAPABLE + clé serveur) → ACK (les deux clés).
 *Ajout de sous-flux* : SYN (MP_JOIN + token) → SYN/ACK (MP_JOIN + HMAC serveur) → ACK (HMAC client) — HMAC authentifie l'ajout sans nouveau handshake complet.
-#text(red, "Paquet MPTCP"): header TCP standard + option MPTCP (Type, Length, Subtype, Version, Flags, données spécifiques au subtype) + Payload — rétrocompatible avec les middleboxes qui ignorent les options TCP inconnues.
-*SIP vs H.323*
-#text(red, "SIP"): encodage texte, transport TCP/UDP/SCTP, négociation des capacités via SDP (simple), sécurité via protocoles IETF, supporte IM — flexible et extensible.
-#text(red, "H.323"): encodage binaire, TCP uniquement, négociation via H.245 (riche mais complexe), sécurité moyenne, pas d'IM.
-#text(red, "UAC (User Agent Client)"): entité SIP qui initie les requêtes.
-#text(red, "UAS (User Agent Server)"): entité SIP qui reçoit et répond aux requêtes.
+*Paquet MPTCP*: header TCP standard + option MPTCP (Type, Length, Subtype, Version, Flags, données spécifiques au subtype) + Payload — rétrocompatible avec les middleboxes qui ignorent les options TCP inconnues.
+#text(red, "SIP (Session Initiation Protocol)"): protocole de signalisation inspiré de HTTP/SMTP pour établir, modifier et terminer des sessions multimédia (VoIP, vidéo, IM). Encodage texte lisible (INVITE, BYE, ACK...), transport TCP/UDP/SCTP. Délègue la description des paramètres media (codecs, ports) à SDP. Sécurité via TLS (signalisation) + SRTP (media). Architecture pair-à-pair avec serveurs optionnels (proxy, registrar). Flexible, extensible, standard moderne.
+#text(red, "H.323"): standard ITU-T (1996) plus ancien pour VoIP d'entreprise. Encodage binaire ASN.1 (compact mais illisible), TCP uniquement. Négociation via H.245 (capabilities exchange très riche mais complexe à implémenter). Pas de messagerie instantanée. Sécurité limitée. Présent dans les systèmes legacy (Cisco, Polycom).
+#text(red, "UAC (User Agent Client)"): entité SIP qui initie les requêtes (ex: l'appelant envoie INVITE).
+#text(red, "UAS (User Agent Server)"): entité SIP qui reçoit et répond aux requêtes (ex: l'appelé répond 200 OK). Un endpoint est généralement les deux à la fois (User Agent = UAC + UAS).
 
 = DIAMETER / RADIUS
 
