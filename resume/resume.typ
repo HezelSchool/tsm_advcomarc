@@ -59,6 +59,10 @@
     [5G], [1–10 ms],
   ),
 )
+#text(red, "SIP (Session Initiation Protocol)"): protocole de signalisation inspiré de HTTP/SMTP pour établir, modifier et terminer des sessions multimédia (VoIP, vidéo, IM). Encodage texte lisible (INVITE, BYE, ACK...), transport TCP/UDP/SCTP. Délègue la description des paramètres media (codecs, ports) à SDP. Sécurité via TLS (signalisation) + SRTP (media). Architecture pair-à-pair avec serveurs optionnels (proxy, registrar). Flexible, extensible, standard moderne.
+#text(red, "H.323"): standard ITU-T (1996) plus ancien pour VoIP d'entreprise. Encodage binaire ASN.1 (compact mais illisible), TCP uniquement. Négociation via H.245 (capabilities exchange très riche mais complexe à implémenter). Pas de messagerie instantanée. Sécurité limitée. Présent dans les systèmes legacy (Cisco, Polycom).
+#text(red, "UAC (User Agent Client)"): entité SIP qui initie les requêtes (ex: l'appelant envoie INVITE).
+#text(red, "UAS (User Agent Server)"): entité SIP qui reçoit et répond aux requêtes (ex: l'appelé répond 200 OK). Un endpoint est généralement les deux à la fois (User Agent = UAC + UAS).
 
 = Fréquence
 
@@ -389,16 +393,24 @@ Tendances clés :
 *ASCONF / ASCONF_ACK*: reconfiguration dynamique des adresses IP d'une association active (RFC 5061 ADD-IP) — permet d'ajouter/supprimer une adresse ou changer l'adresse principale sans couper l'association.
 *HEARTBEAT / HEARTBEAT_ACK*: vérification périodique de la disponibilité de chaque chemin — détecte les pannes et déclenche le basculement sur un chemin alternatif.
 *Identifiants clés* : TSN (Transmission Sequence Number): numéro de séquence global à l'association — garantit la livraison fiable indépendamment du flux. SSN (Stream Sequence Number): numéro de séquence local à un flux — garantit l'ordre dans un stream sans bloquer les autres. Verification Tag: tag inclus dans chaque paquet (sauf INIT où il vaut 0x0) — valide l'identité de l'émetteur et lie le paquet à l'association.
+#text(red, "TCP vs SCTP face SYN flooding"): Bonus SCTP: multihoming + détection de plusieurs connexions depuis la même IP.
+#table(
+  columns: (auto, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Critère*][*TCP (Vulnérable)*][*SCTP (Protégé)*],
+  [Allocation mémoire], [Dès réception de SYN], [Rien n'est stocké avant COOKIE-ECHO],
+  [IP spoofing], [L'attaquant n'a pas besoin de réponse], [L'attaquant doit recevoir et renvoyer le cookie],
+  [Table connexions saturée], [Oui (SYN Flooding efficace)], [Non (le serveur ne garde rien en mémoire)],
+  [Protection intégrée], [Non (TCP doit utiliser SYN Cookies)], [Oui (mécanisme du cookie SCTP intégré)],
+)
 #text(red, "MPTCP (Multipath TCP"): extension de TCP standard, transparent pour les applications.
 *Transferts transparents*: bascule d'un chemin à l'autre sans couper la connexion TCP — ex. Apple utilise MPTCP sur iPhone (Wi-Fi → 4G sans interruption).
 *Sélection du meilleur chemin*: choix dynamique selon latence, pertes, coût, bande passante. *Agrégation*: utilisation simultanée de plusieurs chemins pour cumuler les débits — ex. Wi-Fi + 4G en même temps.
 *Établissement MPTCP* : Connexion principale : SYN (MP_CAPABLE + clé client) → SYN/ACK (MP_CAPABLE + clé serveur) → ACK (les deux clés).
 *Ajout de sous-flux* : SYN (MP_JOIN + token) → SYN/ACK (MP_JOIN + HMAC serveur) → ACK (HMAC client) — HMAC authentifie l'ajout sans nouveau handshake complet.
 *Paquet MPTCP*: header TCP standard + option MPTCP (Type, Length, Subtype, Version, Flags, données spécifiques au subtype) + Payload — rétrocompatible avec les middleboxes qui ignorent les options TCP inconnues.
-#text(red, "SIP (Session Initiation Protocol)"): protocole de signalisation inspiré de HTTP/SMTP pour établir, modifier et terminer des sessions multimédia (VoIP, vidéo, IM). Encodage texte lisible (INVITE, BYE, ACK...), transport TCP/UDP/SCTP. Délègue la description des paramètres media (codecs, ports) à SDP. Sécurité via TLS (signalisation) + SRTP (media). Architecture pair-à-pair avec serveurs optionnels (proxy, registrar). Flexible, extensible, standard moderne.
-#text(red, "H.323"): standard ITU-T (1996) plus ancien pour VoIP d'entreprise. Encodage binaire ASN.1 (compact mais illisible), TCP uniquement. Négociation via H.245 (capabilities exchange très riche mais complexe à implémenter). Pas de messagerie instantanée. Sécurité limitée. Présent dans les systèmes legacy (Cisco, Polycom).
-#text(red, "UAC (User Agent Client)"): entité SIP qui initie les requêtes (ex: l'appelant envoie INVITE).
-#text(red, "UAS (User Agent Server)"): entité SIP qui reçoit et répond aux requêtes (ex: l'appelé répond 200 OK). Un endpoint est généralement les deux à la fois (User Agent = UAC + UAS).
 
 = DIAMETER / RADIUS
 
@@ -432,3 +444,22 @@ Tendances clés :
 #text(red, "WPA2 Enterprise"): Wi-Fi sécurisé via RADIUS + EAP — chaque utilisateur a ses propres credentials, contrairement à WPA2 PSK (clé partagée).
 #text(red, "PKI en production"): éviter les certificats auto-signés — utiliser une CA reconnue (interne ou externe), HSM pour stocker les clés privées, procédures de révocation (CRL).
 
+= Wired Security
+
+#text(red, "Open System Authentication"): établit une association IEEE 802.11 sans authentification. Équivalent à brancher un câble réseau : n'importe quel client peut se connecter.
+#image("img/open_system_authentication.png", width: 100%)
+#text(red, "Wired Equivalent Privacy (WEP)"): authentification par clé partagée, chiffrement RC4. *Problèmes de sécurité* : IV de seulement 24 bits — collision d'IV inévitable (le même keystream RC4 réutilisé pour chiffrer des textes différents), permettant des attaques statistiques pour retrouver le plaintext. CRC-32 linéaire et non cryptographique — manipulable pour forger un ICV valide sur un faux message.
+#image("img/wep.png", width: 100%)
+#image("img/rc4.png", width: 100%)
+#text(red, "STA"): wireless client
+#text(red, "Access Point (AP)"): point d'accès Wi-Fi — joue le rôle d'*Authenticator* dans 802.1X : contrôle l'accès au réseau et relaie les messages EAP entre le client et le serveur d'authentification.
+#text(red, "Authentication Server (AS)"): base de données d'authentification (RADIUS ou Diameter) — vérifie les credentials du client et autorise ou refuse l'accès.
+#text(red, "802.1X"): protocole de contrôle d'accès réseau par port (NAC), authentification mutuelle. 3 entités : *Supplicant* (client Wi-Fi), *Authenticator* (AP), *Authentication Server* (RADIUS/Diameter). Utilise EAP comme framework d'authentification — méthodes : EAP-MD5, EAP-TLS, EAP-TTLS, PEAP, EAP-FAST, EAP-SIM, EAP-AKA. Fonctionne au niveau réseau (pas liaison de données).
+#text(red, "Wireless Network"): Wireless client is the supplicant, AP is the authenticator.
+#text(red, "Robust Security Network (RSN / 802.11i)"): définit une RSNA (RSN Association) entre stations. 3 piliers : (1) *Chiffrement* via CCMP (AES en mode CTR + CBC-MAC pour l'intégrité) — TKIP optionnel pour compatibilité. (2) *Gestion des clés* via 4-way handshake (dérive le PTK) + group-key handshake (distribue le GTK). (3) *Authentification* via PSK (personnel) ou 802.1X/EAP (entreprise).
+#text(red, "Cipher Block Chaining (CBC)")
+#image("img/cbc.png", width: 100%)
+#text(red, "CCMP AES Encryption/MIC")
+#image("img/ccmp_aes_encryption_mic.png", width: 100%)
+#text(red, "Wi-Fi Protected Access (WPA)"): amélioration transitoire de WEP (avant 802.11i/WPA2). Améliorations : authentification via 802.1X/RADIUS (entreprise) ou passphrase PSK (personnel), hiérarchie de clés dérivée du master key, IV doublé à 48 bits (vs 24 bits WEP), intégrité via algorithme *Michael* (MIC). Session = authentification + 4-way handshake (génère la hiérarchie de clés) + données chiffrées via *TKIP* (RC4 + Michael).
+#image("img/wpa_personal_vs_enterprise.png", width: 100%)
