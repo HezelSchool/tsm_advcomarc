@@ -414,12 +414,13 @@ Tendances clés :
 
 = DIAMETER / RADIUS
 
+#image("img/auth_component.png", width: 100%)
 #text(red, "Protocole AAA (Authentication, Authorization, Accounting)"): framework de contrôle d'accès réseau. *Authentication*: vérifie l'identité (qui es-tu ?). *Authorization*: définit les droits/ressources accordés (que peux-tu faire ?). *Accounting*: trace les sessions — durée, volume, facturation, roaming. Implémenté par RADIUS ou Diameter.
-#text(red, "RADIUS (Remote Authentication Dial-In User Service)"): protocole AAA client-serveur sur UDP, centralisé, scalable — Authentication (vérifier identité), Authorization (droits/ressources), Accounting (suivi sessions, facturation, roaming). Ports : auth 1812, accounting 1813.
+#text(red, "RADIUS (Remote Authentication Dial-In User Service)"): protocole AAA client-serveur sur UDP, centralisé, scalable — Authentication (vérifier identité), Authorization (droits/ressources), Accounting (suivi sessions, facturation, roaming). Ports : auth 1812, accounting 1813. RADIUS et Diameter encapsulent tous deux des messages EAP, sont utilisés par les NAS (Network Access Server) et relaient les paquets EAP entre les endpoints 802.1X et les serveurs AAA.
 *EAP-TLS*: authentification mutuelle forte par certificats — le client et le serveur s'authentifient réciproquement via PKI (CA commune).
 *WPA2 Enterprise*: Wi-Fi sécurisé via RADIUS + EAP — chaque utilisateur a ses propres credentials, contrairement à WPA2 PSK (clé partagée).
 *PKI en production*: éviter les certificats auto-signés — utiliser une CA reconnue (interne ou externe), HSM pour stocker les clés privées, procédures de révocation (CRL).
-#text(red, "Diameter"): successeur de RADIUS sur TCP/SCTP, rétrocompatible (AVP codes 1–255 et command codes 0–255 réutilisés) — corrige toutes les limitations de RADIUS.
+#text(red, "Diameter"): successeur de RADIUS sur TCP/SCTP, rétrocompatible (AVP codes 1–255 et command codes 0–255 réutilisés) — corrige toutes les limitations de RADIUS. RADIUS et Diameter encapsulent tous deux des messages EAP, sont utilisés par les NAS (Network Access Server) et relaient les paquets EAP entre les endpoints 802.1X et les serveurs AAA.
 *Transport*: clients Diameter MUST support SCTP ou TCP, serveurs/agents MUST support SCTP ET TCP.
 *Sécurité*: TLS et IPSec — ordre de sélection : IPSec → SCTP/TCP → TLS après négociation.
 *Message Header*: Version, Length, Flags (R=Request, P=Proxiable, E=Error, T=Re-transmitted), Command Code, Application-ID, Hop-by-Hop ID, End-to-End ID.
@@ -453,6 +454,22 @@ Tendances clés :
 #text(red, "Access Point (AP)"): point d'accès Wi-Fi — joue le rôle d'*Authenticator* dans 802.1X : contrôle l'accès au réseau et relaie les messages EAP entre le client et le serveur d'authentification.
 #text(red, "Authentication Server (AS)"): base de données d'authentification (RADIUS ou Diameter) — vérifie les credentials du client et autorise ou refuse l'accès.
 #text(red, "802.1X"): protocole de contrôle d'accès réseau par port (NAC), authentification mutuelle. 3 entités : *Supplicant* (client Wi-Fi), *Authenticator* (AP), *Authentication Server* (RADIUS/Diameter). Utilise EAP comme framework d'authentification — méthodes : EAP-MD5, EAP-TLS, EAP-TTLS, PEAP, EAP-FAST, EAP-SIM, EAP-AKA. Fonctionne au niveau réseau (pas liaison de données).
+#table(
+  columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Critère*][*MD5*][*TLS*][*TTLS*][*PEAP*][*FAST*][*LEAP*],
+  [Cert. client], [Non], [Oui], [Non], [Non], [Non (PAC)], [Non],
+  [Cert. serveur], [Non], [Oui], [Oui], [Oui], [Non (PAC)], [Non],
+  [WEP key mgmt], [Non], [Oui], [Oui], [Oui], [Oui], [Oui],
+  [Rogue AP], [Non], [Non], [Non], [Non], [Oui], [Oui],
+  [Auth], [1 sens], [Mutuelle], [Mutuelle], [Mutuelle], [Mutuelle], [Mutuelle],
+  [Déploiement], [Facile], [Difficile], [Modéré], [Modéré], [Modéré], [Modéré],
+  [Sécurité Wi-Fi], [Faible], [Très haute], [Haute], [Haute], [Haute], [Haute si MDP fort],
+)
+#text(red, "Clefs 802.1x"): hiérarchie de clés dérivées : *Root Key (Master Key)* → toutes les autres clés en sont dérivées. *PMK (Pairwise Master Key)* → génère les clés unicast (256 bits, issu de AAA Key ou PSK). *GMK (Group Master Key)* → génère les clés multicast/broadcast. *PTK (Pairwise Transient Key)* → dérivé du PMK via 4-way handshake, chiffre les communications unicast (384 bits pour AES-CCMP, 512 bits pour TKIP). *GTK (Group Temporal Key)* → distribué via group-key handshake, chiffre le trafic multicast/broadcast. *Session Keys* → clés finales effectivement utilisées pour le chiffrement.
+#image("img/key_802.-1.png", width: 100%)
 #text(red, "Wireless Network"): Wireless client is the supplicant, AP is the authenticator.
 #text(red, "Robust Security Network (RSN / 802.11i)"): définit une RSNA (RSN Association) entre stations. 3 piliers : (1) *Chiffrement* via CCMP (AES en mode CTR + CBC-MAC pour l'intégrité) — TKIP optionnel pour compatibilité. (2) *Gestion des clés* via 4-way handshake (dérive le PTK) + group-key handshake (distribue le GTK). (3) *Authentification* via PSK (personnel) ou 802.1X/EAP (entreprise).
 #text(red, "Cipher Block Chaining (CBC)")
@@ -461,3 +478,8 @@ Tendances clés :
 #image("img/ccmp_aes_encryption_mic.png", width: 100%)
 #text(red, "Wi-Fi Protected Access (WPA)"): amélioration transitoire de WEP (avant 802.11i/WPA2). Améliorations : authentification via 802.1X/RADIUS (entreprise) ou passphrase PSK (personnel), hiérarchie de clés dérivée du master key, IV doublé à 48 bits (vs 24 bits WEP), intégrité via algorithme *Michael* (MIC). Session = authentification + 4-way handshake (génère la hiérarchie de clés) + données chiffrées via *TKIP* (RC4 + Michael).
 #image("img/wpa_personal_vs_enterprise.png", width: 100%)
+#text(red, "TKIP (Temporal Key Integrity Protocol)"): amélioration de WEP rétrocompatible (même matériel RC4). *Structure PTK* (512 bits) : KCK (128 bits, intégrité handshake) + KEK (128 bits, chiffre transport GTK) + TK (256 bits = Temporal Encryption Key + MIC Key 1 + MIC Key 2). *Fonctionnement* : clé unique par paquet via key mixing (IV + clé maître → clé RC4 par paquet), IV étendu à 48 bits (vs 24 bits WEP → évite les collisions), intégrité via algorithme *Michael* (MIC). *Faiblesses* : rétrocompatibilité limite la sécurité, vulnérable à l'attaque *Beck-Tews* (2008). Déprécié — remplacé par CCMP/AES dans WPA2.
+#image("img/wpa_tkip_encryption.png", width: 100%)
+#image("img/ptk_for_tkip.png", width: 100%)
+#text(red, "WPA2 (802.11i, 2004)"): standard Wi-Fi Alliance basé sur IEEE 802.11i — marque Wi-Fi certifiée après 2006. Même 4-way handshake et hiérarchie de clés que WPA, mais remplace TKIP par *CCMP/AES* : AES en mode CTR pour le chiffrement, AES en mode CBC-MAC pour l'intégrité (MIC). PTK 384 bits (vs 512 pour TKIP). Sécurité nettement supérieure.
+#text(red, "WPA3 (2018)"): chiffrement 128 bits en mode personnel, 192 bits en mode entreprise. Remplace PSK par *SAE* (Simultaneous Authentication of Equals) — échange de clés PAKE résistant aux attaques par dictionnaire offline (zero-knowledge proof, le mot de passe n'est jamais transmis). Ajoute *PMF* (Protected Management Frames) et *OWE* (Opportunistic Wireless Encryption) pour les réseaux ouverts.
