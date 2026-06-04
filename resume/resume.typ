@@ -414,7 +414,6 @@ Tendances clés :
 
 = DIAMETER / RADIUS
 
-#image("img/auth_component.png", width: 100%)
 #text(red, "Protocole AAA (Authentication, Authorization, Accounting)"): framework de contrôle d'accès réseau. *Authentication*: vérifie l'identité (qui es-tu ?). *Authorization*: définit les droits/ressources accordés (que peux-tu faire ?). *Accounting*: trace les sessions — durée, volume, facturation, roaming. Implémenté par RADIUS ou Diameter.
 #text(red, "RADIUS (Remote Authentication Dial-In User Service)"): protocole AAA client-serveur sur UDP, centralisé, scalable — Authentication (vérifier identité), Authorization (droits/ressources), Accounting (suivi sessions, facturation, roaming). Ports : auth 1812, accounting 1813. RADIUS et Diameter encapsulent tous deux des messages EAP, sont utilisés par les NAS (Network Access Server) et relaient les paquets EAP entre les endpoints 802.1X et les serveurs AAA.
 *EAP-TLS*: authentification mutuelle forte par certificats — le client et le serveur s'authentifient réciproquement via PKI (CA commune).
@@ -445,6 +444,9 @@ Tendances clés :
 
 = Wired Security
 
+#image("img/osa_overview.png", width: 100%)
+#image("img/auth_component.png", width: 100%)
+#image("img/auth_overview.png", width: 100%)
 #text(red, "Open System Authentication"): établit une association IEEE 802.11 sans authentification. Équivalent à brancher un câble réseau : n'importe quel client peut se connecter.
 #image("img/open_system_authentication.png", width: 100%)
 #text(red, "Wired Equivalent Privacy (WEP)"): authentification par clé partagée, chiffrement RC4. *Problèmes de sécurité* : IV de seulement 24 bits — collision d'IV inévitable (le même keystream RC4 réutilisé pour chiffrer des textes différents), permettant des attaques statistiques pour retrouver le plaintext. CRC-32 linéaire et non cryptographique — manipulable pour forger un ICV valide sur un faux message.
@@ -454,6 +456,8 @@ Tendances clés :
 #text(red, "Access Point (AP)"): point d'accès Wi-Fi — joue le rôle d'*Authenticator* dans 802.1X : contrôle l'accès au réseau et relaie les messages EAP entre le client et le serveur d'authentification.
 #text(red, "Authentication Server (AS)"): base de données d'authentification (RADIUS ou Diameter) — vérifie les credentials du client et autorise ou refuse l'accès.
 #text(red, "802.1X"): protocole de contrôle d'accès réseau par port (NAC), authentification mutuelle. 3 entités : *Supplicant* (client Wi-Fi), *Authenticator* (AP), *Authentication Server* (RADIUS/Diameter). Utilise EAP comme framework d'authentification — méthodes : EAP-MD5, EAP-TLS, EAP-TTLS, PEAP, EAP-FAST, EAP-SIM, EAP-AKA. Fonctionne au niveau réseau (pas liaison de données).
+#text(red, "EAP tunnelisé (TTLS, PEAP, FAST)"): approche générale — TLS établit d'abord un tunnel sécurisé (auth serveur via certificat), puis une méthode d'auth interne (inner EAP) s'exécute à l'intérieur du tunnel. Avantage : le client n'a pas besoin de certificat pour la méthode interne. PMK dérivé des nonces et du secret DH/session TLS.
+#image("img/eap_auth.png", width: 100%)
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
   inset: 3pt,
@@ -468,10 +472,14 @@ Tendances clés :
   [Déploiement], [Facile], [Difficile], [Modéré], [Modéré], [Modéré], [Modéré],
   [Sécurité Wi-Fi], [Faible], [Très haute], [Haute], [Haute], [Haute], [Haute si MDP fort],
 )
-#text(red, "Clefs 802.1x"): hiérarchie de clés dérivées : *Root Key (Master Key)* → toutes les autres clés en sont dérivées. *PMK (Pairwise Master Key)* → génère les clés unicast (256 bits, issu de AAA Key ou PSK). *GMK (Group Master Key)* → génère les clés multicast/broadcast. *PTK (Pairwise Transient Key)* → dérivé du PMK via 4-way handshake, chiffre les communications unicast (384 bits pour AES-CCMP, 512 bits pour TKIP). *GTK (Group Temporal Key)* → distribué via group-key handshake, chiffre le trafic multicast/broadcast. *Session Keys* → clés finales effectivement utilisées pour le chiffrement.
+#text(red, "Clefs 802.1x"): hiérarchie de clés dérivées : *Root Key (Master Key)* → toutes les autres clés en sont dérivées. *PMK (Pairwise Master Key)* → génère les clés unicast (256 bits, issu de AAA Key ou PSK). *GMK (Group Master Key)* → génère les clés multicast/broadcast. *PTK (Pairwise Transient Key)* → chiffrement + intégrité des données unicast, protège aussi le 4-way handshake. Dérivé par : #text(purple, $"PTK" = "PRF"("PMK", "ANonce", "SNonce", "AP MAC", "STA MAC")$) (384 bits AES-CCMP, 512 bits TKIP). *GTK (Group Temporal Key)* → distribué via group-key handshake, chiffre le trafic multicast/broadcast. *Session Keys* → clés finales effectivement utilisées pour le chiffrement.
 #image("img/key_802.-1.png", width: 100%)
+#image("img/802-1_key_management.png", width: 100%)
+#image("img/key_management_4_way_handshake.png", width: 100%)
+#image("img/group_key_handshake.png", width: 100%)
 #text(red, "Wireless Network"): Wireless client is the supplicant, AP is the authenticator.
 #text(red, "Robust Security Network (RSN / 802.11i)"): définit une RSNA (RSN Association) entre stations. 3 piliers : (1) *Chiffrement* via CCMP (AES en mode CTR + CBC-MAC pour l'intégrité) — TKIP optionnel pour compatibilité. (2) *Gestion des clés* via 4-way handshake (dérive le PTK) + group-key handshake (distribue le GTK). (3) *Authentification* via PSK (personnel) ou 802.1X/EAP (entreprise).
+#image("img/ptk.png", width: 100%)
 #text(red, "Cipher Block Chaining (CBC)")
 #image("img/cbc.png", width: 100%)
 #text(red, "CCMP AES Encryption/MIC")
@@ -481,5 +489,20 @@ Tendances clés :
 #text(red, "TKIP (Temporal Key Integrity Protocol)"): amélioration de WEP rétrocompatible (même matériel RC4). *Structure PTK* (512 bits) : KCK (128 bits, intégrité handshake) + KEK (128 bits, chiffre transport GTK) + TK (256 bits = Temporal Encryption Key + MIC Key 1 + MIC Key 2). *Fonctionnement* : clé unique par paquet via key mixing (IV + clé maître → clé RC4 par paquet), IV étendu à 48 bits (vs 24 bits WEP → évite les collisions), intégrité via algorithme *Michael* (MIC). *Faiblesses* : rétrocompatibilité limite la sécurité, vulnérable à l'attaque *Beck-Tews* (2008). Déprécié — remplacé par CCMP/AES dans WPA2.
 #image("img/wpa_tkip_encryption.png", width: 100%)
 #image("img/ptk_for_tkip.png", width: 100%)
-#text(red, "WPA2 (802.11i, 2004)"): standard Wi-Fi Alliance basé sur IEEE 802.11i — marque Wi-Fi certifiée après 2006. Même 4-way handshake et hiérarchie de clés que WPA, mais remplace TKIP par *CCMP/AES* : AES en mode CTR pour le chiffrement, AES en mode CBC-MAC pour l'intégrité (MIC). PTK 384 bits (vs 512 pour TKIP). Sécurité nettement supérieure.
+#text(red, "WPA2 (802.11i, 2004)"): standard Wi-Fi Alliance basé sur IEEE 802.11i — marque Wi-Fi certifiée après 2006. Même 4-way handshake et hiérarchie de clés que WPA, mais remplace TKIP par *CCMP/AES* : AES en mode CTR pour le chiffrement, AES en mode CBC-MAC pour l'intégrité (MIC). *PTK AES-CCMP* (384 bits) : KCK (128 bits, intégrité du handshake) + KEK (128 bits, chiffre le transport de la GTK) + TK (128 bits, chiffrement + intégrité des données). TK plus court que TKIP (128 vs 256 bits) car CBC-MAC gère l'intégrité avec une seule clé, sans besoin de 2 clés MIC séparées.
+#image("img/aes_ccmp.png", width: 100%)
 #text(red, "WPA3 (2018)"): chiffrement 128 bits en mode personnel, 192 bits en mode entreprise. Remplace PSK par *SAE* (Simultaneous Authentication of Equals) — échange de clés PAKE résistant aux attaques par dictionnaire offline (zero-knowledge proof, le mot de passe n'est jamais transmis). Ajoute *PMF* (Protected Management Frames) et *OWE* (Opportunistic Wireless Encryption) pour les réseaux ouverts.
+#text(red, "SAE (Simultaneous Authentication of Equals)"): protocole PAKE (Password-Authenticated Key Exchange) introduit par WPA3 — remplace WPA2-PSK. Mécanisme : chaque partie prouve qu'elle connaît le mot de passe sans le transmettre (zero-knowledge proof via courbe elliptique). Résiste aux attaques par dictionnaire offline car chaque tentative nécessite une interaction réseau. Sécurité forte même avec un mot de passe faible.
+#text(red, "WPA2/WPA3-Enterprise (802.1X/EAP)"): mode entreprise — authentification mutuelle via 802.1X + serveur RADIUS centralisé. Supporte des méthodes d'auth fortes : certificats (EAP-TLS), smart cards, tokens. Chaque utilisateur a ses propres credentials (contrairement au PSK partagé du mode personnel). Bénéfice : si un credential est compromis, seul cet utilisateur est affecté.
+#text(red, "PMF (Protected Management Frames)"): protège les trames de management (deauthentication, disassociation) en les authentifiant et chiffrant — empêche les attaques de déconnexion forcée (deauth attacks) qui exploitaient le fait que ces trames étaient en clair dans WPA/WPA2.
+#text(red, "OWE (Opportunistic Wireless Encryption)"): remplace les réseaux Wi-Fi ouverts sans mot de passe. Chiffre le trafic même sans authentification via un échange Diffie-Hellman — chaque client obtient une clé de session unique. Pas de protection contre les rogue AP, mais élimine l'écoute passive sur les réseaux publics.
+#text(red, "Purpose of enhanced authentication mechanisms"): identifier les appareils de façon sécurisée avant d'accorder l'accès, empêcher les accès non autorisés, protéger la confidentialité et l'intégrité des données en transit, corriger les failles de WEP, WPA et WPA2.
+#text(red, "Discovery Message Exchange (Robust Security Network)")
+#image("img/discovery_message_exchange.png", width: 100%)
+#text(red, "Operational phases (Robust Security Network)")
+#image("img/operational_phase.png", width: 100%)
+#text(red, "Key Derivation/Key Partitioning"): la dérivation de clés génère plusieurs clés cryptographiques à partir d'une valeur source via une KDF (Key Derivation Function). Avantage : si une clé dérivée est compromise, la clé maître et les autres clés restent sécurisées. *PMK (256 bits)* est au sommet de la hiérarchie — dérivé soit du *AAA Key* (enterprise, issu de l'auth RADIUS/EAP) soit du *PSK* (personnel, passphrase). Toutes les clés de session (PTK, GTK) en sont dérivées indirectement.
+#image("img/kdf.png", width: 100%)
+#image("img/pairwise_key.png", width: 100%)
+#text(red, "Offline Dictionary Attack")
+#image("img/offline_dict_attack.png", width: 100%)
