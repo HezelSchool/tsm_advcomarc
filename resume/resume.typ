@@ -113,10 +113,15 @@
 
 = GSM (2G)
 
+#text(red, "GSM — Pourquoi ?"): La 1G (réseau analogique comme AMPS) présentait 3 limites majeures ayant motivé la création du GSM. *Saturation de l'analogique*: les réseaux analogiques ne pouvaient plus absorber la demande croissante d'abonnés (spectre limité, capacité insuffisante). *Incompatibilité aux frontières*: chaque pays utilisait son propre standard (D-AMPS aux USA, NTT au Japon, Nordic Mobile en Scandinavie) — aucun roaming international possible. *Aucune confidentialité*: les communications analogiques de la 1G pouvaient être écoutées sans équipement spécial (aucun chiffrement).
+#text(red, "GSM — Historique"): *1982*: début du développement (groupe CEPT — le nom originel "Groupe Spécial Mobile" donne le sigle GSM). *1992*: lancement commercial en Finlande sur un Nokia 1011 — premier appel GSM mondial. *1998*: GPRS (General Packet Radio Service) — premières données paquets sur GSM, jusqu'à 100 kbps. *2003*: EDGE (Enhanced Data rates for GSM Evolution) — amélioration de GPRS, jusqu'à 200 kbps. *2016*: début de l'extinction mondiale des réseaux GSM pour libérer les fréquences au profit de LTE et 5G.
+#text(red, "GSM — Positionnement OSI et alternatives"): GSM opère sur 3 couches du modèle OSI. *Couche 1 (Physique)*: interface radio entre le téléphone et l'antenne BTS (modulation, transmission de bits sur l'interface air). *Couche 2 (Liaison)*: protocole *LAPDm* (Link Access Protocol for the Dm channel) — contrôle d'erreurs et fiabilité de la liaison radio. *Couche 3 (Réseau)*: 3 sous-couches — *RR (Radio Resource Management)*: gestion des canaux radio et handovers, *MM (Mobility Management)*: localisation, authentification, gestion de l'identité (IMSI/TMSI), *CM (Connection Management)*: établissement des appels, SMS, données. Standardisé par l'*ETSI* (Institut Européen des Normes de Télécommunication). Alternatives régionales: *CDMA* (Code Division Multiple Access, Amérique du Nord et Asie), *D-AMPS* (États-Unis), *PDC* (Personal Digital Cellular, Japon).
+#text(red, "GSM — Utilisations"): *Roaming*: itinérance internationale possible grâce au standard mondial (basculement automatique entre opérateurs partenaires). *Prépayé*: cartes SIM sans abonnement. *IoT et SMS M2M*: capteurs et équipements industriels communiquant par SMS entre machines (M2M = Machine to Machine) sur le réseau GSM. *Géolocalisation par cellule*: localisation approximative via l'identifiant de la cellule (Cell ID) sans GPS — précision de quelques centaines de mètres à quelques km selon la densité des antennes. *Internet Mobile*: données paquets via GPRS/EDGE.
+
 #image("img/gsm_arch.png", width: 100%)
 #text(red, "Global System for Mobile Communications (GSM)"): Famile de standards pour décrire les protocoles 2G (réseau numérique voix + SMS, données lentes, voix en Circuit Switched). Basée sur TDMA radio access et PCM trunking. Utilise SS7 signaling *Securité*: Authentication et encryption => vise à donnée confidentialité et anonymité avec une authentification cliente forte pour protéger les opérateurs contre fraudeurs. Prévenir opérateur compromette la sécurité d'un autre opérateur par inadvertance ou sous pression concurentielle.
 #text(red, "Signalling System #7 (SS7)"): suite de protocoles utilisée par les opérateurs télécom pour communiquer entre eux. modèle de confiance mutuelle entre opérateurs, *aucune authentification intégrée*. Accès achetable pour quelques centaines de dollars/mois, nombreux hubs SS7 non sécurisés sur le web.
-#text(red, "RAN (Radio Access Network)"): TODO. *Composé de*: BTS, BSC.
+#text(red, "RAN (Radio Access Network)"): partie radio du réseau GSM — ensemble des équipements gérant la communication sans fil entre les mobiles et le cœur du réseau. Ne stocke pas les identifiants des abonnés. *Composé de*: BTS (antennes radio au contact direct des mobiles, gèrent l'interface air) et BSC (contrôleur coordonnant plusieurs BTS, gère l'allocation des canaux radio et les handovers).
 #text(red, "Base Transceiver Station (BTS)"): antenne radio, communique avec le mobile via l'interface air. *Stocke*: Kc, A5.
 #text(red, "Base Station Controller (BSC)"): contrôle plusieurs BTS, gère l'allocation des canaux radio et le handover.
 #text(red, "Core Network (CN)"): partie fixe du réseau GSM, gère la commutation, la mobilité, l'authentification et les bases de données abonnés. *Composé de*: MSC, OMC.
@@ -157,6 +162,33 @@
 #image("img/sms_1.png", width: 100%)
 #image("img/sms_2.png", width: 100%)
 #text(red, "Attack: SS7 SMS Interception (Man-in-the-Middle)"): attaque similaire à un MITM, intercepte les SMS (ex. codes 2FA). *Setup (étape 1)*: (A) l'attaquant enregistre le MSISDN de la victime sur un faux MSC via SS7 → (B) le vrai HLR met à jour la localisation vers le faux MSC → (C) le vrai HLR demande au vrai MSC de libérer la mémoire. *Hijacking (étape 2)*: la banque envoie un SMS → le SMS-C demande la localisation au HLR → le HLR répond avec l'adresse du faux MSC → le SMS-C achemine le SMS vers l'attaquant.
+#text(red, "GSM — Limites"): *Débits faibles*: GSM voix = 9.6 kbps, GPRS (1998) = jusqu'à 100 kbps, EDGE (2003) = jusqu'à 200 kbps — insuffisant pour les usages modernes. *Sécurité obsolète*: algorithme A5 conçu dans les années 1980, A5/1 et A5/2 aujourd'hui cassables cryptographiquement — interception des communications possible. *Chiffrement limité à la liaison radio*: A5 protège uniquement le tronçon téléphone↔antenne BTS — le reste du réseau opérateur transporte les données sans chiffrement supplémentaire. *Authentification unidirectionnelle*: seul le mobile est authentifié par le réseau, pas l'inverse — un attaquant peut se faire passer pour une vraie BTS (IMSI Catcher). *Latence élevée* (300–600 ms) incompatible avec les applications temps réel.
+#text(red, "GSM — Forces et Faiblesses"):
+#table(
+  columns: (1fr, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Force*][*Faiblesse*][*Problème de sécurité*],
+  [Première architecture mobile numérique], [Chiffrement faible (A5/1 et A5/2 cassables)], [Fausse BTS (IMSI Catcher)],
+  [Introduction de la carte SIM], [Authentification unidirectionnelle (réseau non authentifié par le mobile)], [Clonage de SIM via COMP128],
+  [Standard mondial (roaming international)], [Peu résistant aux attaques modernes], [],
+  [Base des réseaux modernes (3G/4G/5G en héritent)], [], [],
+)
+#text(red, "GSM — Aspects critiques et recommandations"):
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Aspect critique*][*Mécanisme / problème*][*Impact sécurité*][*Recommandation*],
+  [Auth. unilatérale], [Seul le réseau authentifie le mobile — le mobile ne peut pas vérifier l'authenticité du réseau], [Attaque par fausse BTS (IMSI Catcher)], [Authentification mutuelle (comme en LTE/5G)],
+  [Algos A5 faibles], [A5/1 et A5/2 aujourd'hui cassables cryptographiquement], [Interception des communications possible], [Algorithmes robustes (ex. AES)],
+  [COMP128 vulnérable], [Récupération de Ki possible dans certaines conditions (attaques side-channel)], [Clonage de SIM et usurpation d'identité], [Remplacer COMP128 par fonctions basées sur AES ou SHA-2],
+  [IMSI en clair], [L'IMSI peut être transmis en clair lors de certaines procédures d'enregistrement réseau], [Suivi et identification des utilisateurs à distance], [Identifiants temporaires (TMSI en GSM, GUTI en LTE, SUCI chiffré en 5G)],
+  [Chiffrement limité], [GSM chiffre seulement le tronçon téléphone-antenne — le cœur du réseau opérateur ne chiffre pas], [Communications interceptables dans le réseau de l'opérateur], [Chiffrement étendu à toute l'architecture réseau],
+  [Obsolescence], [Conçu dans les années 1980 avec des exigences de sécurité de l'époque], [Difficile d'adapter aux menaces modernes], [Migration progressive vers LTE et 5G],
+)
 
 = UMTS (3G)
 
@@ -376,6 +408,7 @@ Tendances clés :
 = TCP/UDP/SCTP/MPTCP
 
 #text(red, "Motivation SCTP/MPTCP"): migration PSTN → packet, signalisation téléphonique, ni TCP ni UDP n'est adapté.
+#text(red, "SCTP — Historique"): standardisé par IETF début des années 2000 (RFC 2960, révisé RFC 4960), initialement conçu pour *SIGTRAN* — transporter la signalisation SS7 over IP. Couche OSI *4 (Transport)*. Contexte: les équipements modernes ont plusieurs interfaces réseau (Wi-Fi, 4G, 5G), d'où les besoins de mobilité sans coupure, haute disponibilité et sécurité anti-DoS.
 #text(red, "TCP"): fiable, orienté bytes, mais head-of-line blocking, pas de multi-homing, vulnérable DoS (SYN flood).
 #text(red, "UDP"): orienté messages, mais sans fiabilité, sans contrôle de congestion ni de flux.
 #text(red, "SCTP"): combine le meilleur des deux.
@@ -385,6 +418,7 @@ Tendances clés :
 *Multi-streaming*: plusieurs flux indépendants dans une association, perte sur un flux ne bloque pas les autres (élimine le head-of-line blocking inter-streams).
 *Sécurité*: handshake 4-way avec mécanisme cookie (INIT > INIT-ACK > COOKIE-ECHO > COOKIE-ACK) — protège contre les attaques SYN flood.
 *Shutdown*: 3-way (SHUTDOWN > SHUTDOWN-ACK > SHUTDOWN-CMPL), pas d'état half-closed contrairement à TCP.
+#text(red, "SCTP — Architecture interne (sous-couches)"): SCTP intègre plusieurs sous-couches entre Session Layer et Network Layer. *Sequenced Delivery within Streams*: livraison dans l'ordre des messages par flux. *User Data Fragmentation*: fragmente les messages utilisateur pour correspondre au *MTU (Maximum Transmission Unit)* du réseau — les grands messages sont découpés avant transmission. *Acknowledge and Congestion Avoidance*: acquittements sélectifs SACK et contrôle de congestion (similaire à TCP). *Chunk Building*: assemble les chunks en paquets IP. *Packet Verification*: checksum *CRC-32c* (plus robuste que le checksum TCP). *Path Management*: surveillance périodique (HEARTBEAT/HEARTBEAT-ACK) et basculement automatique sur chemin alternatif.
 *Chunks SCTP*: unités de données atomiques, plusieurs peuvent être bundlés dans un même paquet. *INIT*: initie une association — Verification Tag = 0x0, déclare Initiate Tag, a_rwnd (fenêtre réception), nb flux IN/OUT, Initial TSN.
 *INIT_ACK*: répond à l'INIT — contient le State Cookie (MAC + timestamp + durée de vie, calculé par le serveur avec une clé secrète) — le serveur reste stateless jusqu'au COOKIE_ECHO (protection DoS).
 *COOKIE_ECHO*: renvoie le State Cookie reçu dans l'INIT_ACK pour prouver la validité du client. *COOKIE_ACK*: confirme la réception du COOKIE_ECHO — association établie.
@@ -405,41 +439,76 @@ Tendances clés :
   [Table connexions saturée], [Oui (SYN Flooding efficace)], [Non (le serveur ne garde rien en mémoire)],
   [Protection intégrée], [Non (TCP doit utiliser SYN Cookies)], [Oui (mécanisme du cookie SCTP intégré)],
 )
+#text(red, "SCTP — Cas d'usage"): *SIGTRAN (RFC 2719)*: transport de la signalisation SS7 over IP — le multi-homing garantit le failover entre liens, le multi-streaming évite le HoL blocking entre types de messages SS7. *Plan de contrôle LTE/5G*: NGAP (N2: gNB↔AMF en 5G) et S1AP (S1: eNB↔MME en LTE) fonctionnent sur SCTP — le multi-homing assure la redondance entre stations de base et nœuds cœur. *Limite importante*: traversée NAT/Firewall *difficile* — SCTP utilise son propre numéro de protocole IP (132), de nombreux équipements réseau (NAT, pare-feux) ne savent pas le traiter correctement.
+#text(red, "MPTCP — Historique et Problèmes adressés"): standardisé vers *2013* (RFC 6824), conçu pour l'ère smartphone/mobile. Problèmes TCP adressés: *connexion liée à une paire IP/Port stricte* (impossible de changer d'interface sans couper la session), *coupure lors de handover* (basculement Wi-Fi→Cellulaire entraîne une reconnexion), *sous-utilisation de la bande passante* (une seule interface utilisée à la fois même si plusieurs disponibles). Solution: étendre TCP pour utiliser plusieurs chemins tout en restant transparent pour le réseau.
 #text(red, "MPTCP (Multipath TCP"): extension de TCP standard, transparent pour les applications.
 *Transferts transparents*: bascule d'un chemin à l'autre sans couper la connexion TCP — ex. Apple utilise MPTCP sur iPhone (Wi-Fi → 4G sans interruption).
 *Sélection du meilleur chemin*: choix dynamique selon latence, pertes, coût, bande passante. *Agrégation*: utilisation simultanée de plusieurs chemins pour cumuler les débits — ex. Wi-Fi + 4G en même temps.
 *Établissement MPTCP* : Connexion principale : SYN (MP_CAPABLE + clé client) → SYN/ACK (MP_CAPABLE + clé serveur) → ACK (les deux clés).
 *Ajout de sous-flux* : SYN (MP_JOIN + token) → SYN/ACK (MP_JOIN + HMAC serveur) → ACK (HMAC client) — HMAC authentifie l'ajout sans nouveau handshake complet.
 *Paquet MPTCP*: header TCP standard + option MPTCP (Type, Length, Subtype, Version, Flags, données spécifiques au subtype) + Payload — rétrocompatible avec les middleboxes qui ignorent les options TCP inconnues.
-
-= DIAMETER / RADIUS
-
-#text(red, "Protocole AAA (Authentication, Authorization, Accounting)"): framework de contrôle d'accès réseau. *Authentication*: vérifie l'identité (qui es-tu ?). *Authorization*: définit les droits/ressources accordés (que peux-tu faire ?). *Accounting*: trace les sessions — durée, volume, facturation, roaming. Implémenté par RADIUS ou Diameter.
-#text(red, "RADIUS (Remote Authentication Dial-In User Service)"): protocole AAA client-serveur sur UDP, centralisé, scalable — Authentication (vérifier identité), Authorization (droits/ressources), Accounting (suivi sessions, facturation, roaming). Ports : auth 1812, accounting 1813. RADIUS et Diameter encapsulent tous deux des messages EAP, sont utilisés par les NAS (Network Access Server) et relaient les paquets EAP entre les endpoints 802.1X et les serveurs AAA.
-*EAP-TLS*: authentification mutuelle forte par certificats — le client et le serveur s'authentifient réciproquement via PKI (CA commune).
-*WPA2 Enterprise*: Wi-Fi sécurisé via RADIUS + EAP — chaque utilisateur a ses propres credentials, contrairement à WPA2 PSK (clé partagée).
-*PKI en production*: éviter les certificats auto-signés — utiliser une CA reconnue (interne ou externe), HSM pour stocker les clés privées, procédures de révocation (CRL).
-#text(red, "Diameter"): successeur de RADIUS sur TCP/SCTP, rétrocompatible (AVP codes 1–255 et command codes 0–255 réutilisés) — corrige toutes les limitations de RADIUS. RADIUS et Diameter encapsulent tous deux des messages EAP, sont utilisés par les NAS (Network Access Server) et relaient les paquets EAP entre les endpoints 802.1X et les serveurs AAA.
-*Transport*: clients Diameter MUST support SCTP ou TCP, serveurs/agents MUST support SCTP ET TCP.
-*Sécurité*: TLS et IPSec — ordre de sélection : IPSec → SCTP/TCP → TLS après négociation.
-*Message Header*: Version, Length, Flags (R=Request, P=Proxiable, E=Error, T=Re-transmitted), Command Code, Application-ID, Hop-by-Hop ID, End-to-End ID.
-*AVP (Attribute-Value Pair)*: unité de données Diameter — AVP Code, Flags, Vendor-ID (optionnel), Data.
-*Result-Code AVP (268)*: présent dans toute réponse Diameter — 1xxx (Info), 2xxx (Succès), 3xxx (Erreurs protocole), 4xxx (Transitoires), 5xxx (Permanentes).
-#text(red, "Diameter vs Radius"):
+#text(red, "MPTCP — Architecture interne"): *Path Manager*: gère la création et suppression des sous-flux (subflows) en fonction de la disponibilité des interfaces réseau. *Packet Scheduler*: sélectionne le sous-flux optimal pour chaque paquet selon bande passante et latence. *Séquençage multi-chemin*: chaque sous-flux a son propre *SSN (Subflow Sequence Number)* pour le TCP sous-jacent; un *DSN (Data Sequence Number)* global corrèle les données à travers tous les sous-flux; l'option *DSS (Data Sequence Signal)* dans chaque paquet fournit la correspondance SSN↔DSN pour permettre le réassemblage côté récepteur.
+#text(red, "MPTCP — Options clés"):
 #table(
-  columns: (auto, 1fr, 1fr),
+  columns: (auto, 1fr),
   inset: 3pt,
   stroke: 0.4pt,
   align: left,
-  table.header[*Critère*][*Diameter*][*RADIUS*],
-  [Transport], [TCP + SCTP (orienté connexion)], [UDP (sans connexion)],
-  [Sécurité], [Hop-to-Hop + End-to-End], [Hop-to-Hop seulement],
-  [Agents], [Relay, Proxy, Redirect, Translation], [Support implicite],
-  [Négociation cap.], [Oui (applications + sécurité)], [Non],
-  [Peer Discovery], [Statique + dynamique], [Statique seulement],
-  [Msg serveur initié], [Oui (re-auth, terminaison)], [Non],
-  [Taille max AVP], [16 777 215 octets], [255 octets],
-  [Vendor-specific], [Messages + attributs], [Attributs seulement],
+  table.header[*Option TCP*][*Description*],
+  [MP_CAPABLE], [Initiation de la 1ère connexion MPTCP — échange des clés client/serveur dans SYN/SYN-ACK/ACK],
+  [MP_JOIN], [Ajout d'un nouveau sous-flux depuis une nouvelle adresse IP, authentifié par HMAC],
+  [ADD_ADDR], [Informer l'autre extrémité d'une nouvelle adresse IP disponible — peut déclencher un MP_JOIN],
+  [MP_PRIO], [Demander un changement de priorité d'un chemin — ex: préférer Wi-Fi à 4G],
+  [Data FIN], [Terminer la connexion MPTCP globalement (équivalent FIN TCP, applicable à tous les sous-flux)],
+)
+#text(red, "MPTCP — Cas d'usage"): *Mobile handover (iOS/Android)*: maintient les sessions lors du basculement Wi-Fi↔LTE sans reconnexion — Apple utilise MPTCP pour Siri, Maps et Music depuis *iOS 7*. *Agrégation de bande passante*: Wi-Fi + cellulaire simultanément pour cumuler les débits. *Roaming Wi-Fi entreprise*: handover transparent entre points d'accès sans coupure de session.
+#text(red, "Comparaison Couche 4 — UDP / TCP / SCTP / MPTCP"):
+#table(
+  columns: (auto, 1fr, 1fr, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Caractéristique*][*UDP*][*TCP*][*SCTP*][*MPTCP*],
+  [Fiabilité], [Non], [Oui], [Oui], [Oui],
+  [Multipath / Multi-homing], [Non], [Non], [Oui (Failover)], [Oui (Agrégation)],
+  [Ordre de livraison], [Aucun], [Strict], [Flexible (par flux)], [Strict],
+  [Traversée NAT/Firewall], [Facile], [Facile], [*Difficile*], [Facile],
+)
+
+= DIAMETER / RADIUS
+
+#text(red, "Protocole AAA (Authentication, Authorization, Accounting)"): framework de contrôle d'accès réseau centralisé — un seul serveur gère qui peut se connecter, avec quels droits, et journalise tout. *Authentication* (qui es-tu ?): vérifie l'identité via login/MDP, certificat, EAP, MFA. *Authorization* (que peux-tu faire ?): détermine les droits de l'utilisateur authentifié — VLAN attribué, QoS, quota, durée de session, ressources accessibles. *Accounting* (qu'as-tu fait ?): journalise les actions — heure connexion/déconnexion, adresse IP, ressources accédées, volume de données (facturation, roaming). Diameter ajoute le "S" de *Secure Transport* → AAAS. Problématiques adressées: Centralisation des bases de données AAA, Interopérabilité en environnement hétérogène, contrôle granulaire des accès (ACL par utilisateur), Sécurisation des accès distants, Scalabilité, Gestion du Roaming inter-opérateurs.
+#text(red, "AAA — Historique"): *1991*: création de RADIUS par Livingston Enterprises (origine: gestion des accès modem dial-up). *1997*: standardisation IETF (RFC 2138/2139) et IEEE 802. *2000*: limites de RADIUS identifiées (UDP non fiable, chiffrement partiel, scalabilité insuffisante). *2003*: naissance de Diameter (RFC 3588) conçu pour corriger toutes ces limites. *2012*: Diameter en production avec RFC 6733.
+#text(red, "AAA — Positionnement OSI"): RADIUS et Diameter opèrent en *couche 7 (Application)* — ils définissent le protocole de dialogue entre les composants AAA. Ils s'appuient sur la *couche 4 (Transport)*: RADIUS utilise UDP, Diameter utilise TCP ou SCTP.
+#text(red, "RADIUS — Architecture (Supplicant → NAS → Serveur)"): 3 acteurs. *Supplicant*: l'utilisateur ou l'équipement demandant l'accès (PC, smartphone, routeur). *NAS (Network Access Server)*: équipement réseau en bordure recevant la demande de connexion (switch 802.1X, borne Wi-Fi, concentrateur VPN) — il ne stocke jamais les identifiants, il délègue entièrement la décision d'accès au serveur RADIUS. *Serveur RADIUS*: vérifie les credentials dans LDAP ou Active Directory, retourne la décision avec les attributs de session (VLAN attribué, adresse IP, politique QoS, durée max). RFC 2865/2866. UDP port 1812 (authentification) et 1813 (accounting).
+#text(red, "RADIUS — Structure du paquet"): *Code* (1 octet): type du message. *Identifier* (1 octet): corrèle requête et réponse. *Length* (2 octets): longueur totale. *Authenticator* (16 octets): hash MD5 assurant l'intégrité via le *shared secret* (clé secrète partagée uniquement entre NAS et serveur RADIUS, jamais transmise sur le réseau). *AVP (Attribute-Value Pairs)*: paires Type·Longueur·Valeur transportant les credentials et attributs de session. Taille maximale du paquet: 4 096 octets.
+#text(red, "RADIUS — Types de messages"): *Access-Request* (NAS→Srv, code 1): credentials de l'utilisateur (nom, MDP obfusqué MD5). *Access-Accept* (Srv→NAS, code 2): accès accordé + attributs de session (VLAN, IP, QoS). *Access-Reject* (Srv→NAS, code 3): accès refusé. *Access-Challenge* (Srv→NAS, code 11): le serveur demande une information supplémentaire (ex: second facteur EAP) — le NAS retransmet la réponse via un nouvel Access-Request. *Accounting-Request* (NAS→Srv, code 4): signale le début ou la fin d'une session pour journalisation. *Accounting-Response* (Srv→NAS, code 5): accusé de réception de l'accounting.
+#text(red, "RADIUS — Flux d'authentification"): (1) Supplicant envoie une demande de connexion au NAS. (2) NAS envoie *Access-Request* au serveur (login + MDP obfusqué MD5). (3) Optionnel en mode EAP: serveur envoie *Access-Challenge* → NAS retransmet au client → client répond → NAS renvoie *Access-Request* avec la réponse. (4) Serveur répond *Access-Accept* + attributs (VLAN, IP, QoS) → NAS accorde l'accès au réseau. (5) NAS envoie *Accounting-Request START* → serveur répond *Accounting-Response* → session journalisée.
+#text(red, "RADIUS — Mécanismes d'authentification (PAP · CHAP · EAP)"): 3 méthodes supportées. *PAP (Password Authentication Protocol)* — sécurité faible: le client envoie login + MDP obfusqué via MD5 (shared secret), le serveur répond Accept ou Reject. Simple mais MD5 cryptographiquement compromis, vulnérable aux attaques MITM. *CHAP (Challenge-Handshake Auth Protocol)* — sécurité moyenne: le serveur envoie un challenge aléatoire, le client calcule MD5(challenge + MDP) et renvoie le résultat — le MDP ne transite jamais sur le réseau. Limite: MD5 obsolète, vulnérable si le shared secret est compromis. *EAP (Extensible Authentication Protocol)* — sécurité forte: framework extensible supportant de nombreuses méthodes. *EAP-TLS*: authentification mutuelle par certificats PKI (client et serveur s'authentifient réciproquement via une CA commune). *PEAP/EAP-TTLS*: tunnel TLS établi d'abord (auth serveur par certificat), méthode d'auth interne ensuite (le client n'a pas besoin de certificat). Standard 802.1X Wi-Fi entreprise. En production: utiliser une CA reconnue (pas de certificats auto-signés), HSM pour les clés privées, procédures de révocation (CRL). Recommandé: EAP-TLS avec 802.1X.
+#text(red, "RADIUS — Avantages et limites"): *Avantages*: simple à déployer, supporté partout, extensible via *VSA (Vendor-Specific Attributes)* = attributs propriétaires ajoutés par les constructeurs, implémentation libre *FreeRADIUS* très répandue, intégré nativement à LDAP et Active Directory. *Limites*: UDP non fiable (retransmissions gérées manuellement par l'application), chiffrement partiel (seulement le MDP — le reste du paquet est en clair), taille limitée à 4 096 octets, MD5 cryptographiquement compromis (CVE connus), pas de roaming inter-opérateurs natif.
+#text(red, "TACACS+ (Terminal Access Controller Access-Control System Plus)"): alternative à RADIUS développée par Cisco, RFC 8907. Différence fondamentale d'usage: TACACS+ sert à l'*administration des équipements réseau* (accès SSH aux routeurs/switches pour les administrateurs) — alors que RADIUS et Diameter gèrent l'accès des utilisateurs au réseau. Architecture client/serveur sur *TCP* (fiable, port 49), chiffrement *complet* du corps du paquet (contrairement à RADIUS qui ne chiffre que le MDP). Standard Cisco propriétaire (vs RADIUS/Diameter = standards ouverts).
+#text(red, "Diameter (AAAS — Authentication Authorization Accounting Secure Transport)"): successeur de RADIUS sur TCP/SCTP port *3868*, rétrocompatible (AVP codes 1–255 et command codes 0–255 réutilisés). Architecture *peer-to-peer* — tout nœud peut être initiateur ou répondeur, contrairement au modèle strict client/serveur de RADIUS. *Sécurité*: TLS et IPSec, chiffrement complet de bout en bout. *En-tête message* (20 octets): Version (1o, toujours=1), Message Length (3o), Flags R-P-E-T (Request/Proxiable/Error/Retry), Command Code (3o, ex: 265=AA-Req, 316=CC-Req), Application-ID (4o, identifie l'application cible: S6a, Gx, Gy), Hop-by-Hop ID (corrélation entre nœuds adjacents), End-to-End ID (corrélation requête/réponse bout-en-bout). *AVP (Attribute-Value Pair)*: unité de données Diameter — AVP Code (4o), Flags V·M·P (V=Vendor-Specific extension propriétaire, M=Mandatory erreur si inconnu du pair, P=Protected encapsulation sécurité bout-en-bout), AVP Length (3o), Vendor-ID (4o si V=1), Data (variable). *Result-Code AVP (268)*: présent dans toute réponse Diameter — 1xxx (Info), 2xxx (Succès), 3xxx (Erreurs protocole), 4xxx (Transitoires), 5xxx (Permanentes).
+#text(red, "Diameter — Agents"): intermédiaires qui routent les messages Diameter entre clients et serveurs. *Relay Agent*: route les messages sans modifier les AVP — transparent pour les applications, utilisé pour l'interconnexion de domaines. *Proxy Agent*: route les messages + peut modifier les AVP selon les politiques locales de sécurité. *Redirect Agent*: ne route pas lui-même — indique simplement au client vers quel serveur envoyer sa requête. *Translation Agent*: convertit les messages entre Diameter et RADIUS pour assurer l'interworking avec les systèmes RADIUS legacy (anciens déploiements).
+#text(red, "Diameter — Avantages et limites"): *Avantages*: transport fiable TCP/SCTP avec failover natif, chiffrement TLS/IPSec de bout en bout, architecture peer-to-peer permettant le roaming inter-opérateurs natif, taille de paquets illimitée (grands AVP supportés), le serveur peut initier une déconnexion (RAR = Re-Auth-Request, impossible avec RADIUS). *Limites*: configuration et déploiement plus complexes que RADIUS, vulnérabilités de type SS7 sur les interfaces roaming IPX (problèmes de confiance inter-opérateurs similaires à SS7), en cours de remplacement par HTTP/2+JSON dans le 5G Core, nécessite une infrastructure PKI pour TLS, moins répandu dans les déploiements Wi-Fi/VPN grand public.
+#text(red, "Diameter dans LTE/4G — Interfaces EPC"): Diameter est le protocole de signalisation interne du cœur réseau 4G (EPC) — il relie toutes les entités fonctionnelles entre elles. Le P-GW est le seul nœud qui parle les 3 interfaces Diameter simultanément (Gx, Gy, Gz). *S6a* (MME↔HSS): authentification EPS-AKA de l'abonné + transfert du profil abonné via messages AIR (Authentication-Information-Request)/AIA et ULR (Update-Location-Request)/ULA. Interface la plus critique du LTE — seule interface où le serveur (HSS) peut initier des messages vers le client (MME) via CLR (Cancel-Location-Request). *Gx* (P-GW↔PCRF): politique QoS dynamique — le PCRF envoie les règles PCC (débit, priorité) au P-GW en temps réel (CCR/CCA, RAR/RAA). *Gy* (P-GW↔OCS): facturation prépayée en temps réel — l'OCS (Online Charging System) accorde des crédits par quotas avant consommation, coupe la connexion si crédit épuisé (CCR Init/Update/Term). *Gz* (P-GW↔OFCS): facturation postpayée — envoi différé des CDR (Call Detail Records = enregistrements de sessions) via ACR Start/Interim/Stop. *S6b* (P-GW↔Srv.AAA): authentification lors d'un accès Wi-Fi offload (délestage Wi-Fi). *SWx* (AAA↔HSS): récupération du profil Wi-Fi depuis le HSS lors d'un accès WLAN.
+#text(red, "Diameter — Flux S6a (authentification abonné LTE)"): (1) UE envoie *Attach Request* au MME pour s'attacher au réseau. (2) MME envoie *AIR (Authentication-Information-Request)* au HSS via Diameter S6a. (3) HSS répond *AIA* avec les vecteurs EPS-AKA calculés (RAND, XRES, AUTN, K_ASME). (4) MME envoie *Authentication Challenge* (RAND + AUTN) à l'UE. (5) UE vérifie AUTN (authentifie le réseau) et renvoie *RES*. (6) MME vérifie RES=XRES → UE authentifié → envoie *ULR (Update-Location-Request)* au HSS pour signaler sa position. (7) HSS répond *ULA* avec le profil complet de l'abonné (services autorisés, QoS). (8) MME déclenche *CCR (Credit-Control-Request)* vers PCRF/OCS via Gx/Gy pour initialiser la QoS et la facturation.
+#text(red, "Diameter vs RADIUS vs TACACS+"):
+#table(
+  columns: (auto, 1fr, 1fr, 1fr),
+  inset: 3pt,
+  stroke: 0.4pt,
+  align: left,
+  table.header[*Critère*][*Diameter*][*RADIUS*][*TACACS+*],
+  [Transport], [TCP + SCTP (fiable)], [UDP (non fiable)], [TCP (fiable)],
+  [Port], [3868], [1812 / 1813], [49],
+  [Chiffrement], [Complet TLS/IPSec], [Partiel (MDP seul)], [Complet (corps)],
+  [Architecture], [Peer-to-peer], [Client/Serveur], [Client/Serveur],
+  [Agents], [Relay, Proxy, Redirect, Translation], [Implicite], [Non],
+  [Msg serveur initié], [Oui (RAR)], [Non], [Non],
+  [Taille max paquet], [Illimitée (grands AVP)], [4 096 octets], [—],
+  [Roaming natif], [Oui], [Non], [Non],
+  [Usage principal], [LTE/4G, mobilité IP], [Wi-Fi, VPN, accès réseau], [Admin équipements réseau],
+  [Standard], [Ouvert RFC 6733], [Ouvert RFC 2865], [Cisco RFC 8907],
 )
 
 = Wired Security
