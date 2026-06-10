@@ -171,7 +171,10 @@
   align: left,
   table.header[*Force*][*Faiblesse*][*Problème de sécurité*],
   [Première architecture mobile numérique], [Chiffrement faible (A5/1 et A5/2 cassables)], [Fausse BTS (IMSI Catcher)],
-  [Introduction de la carte SIM], [Authentification unidirectionnelle (réseau non authentifié par le mobile)], [Clonage de SIM via COMP128],
+  [Introduction de la carte SIM],
+  [Authentification unidirectionnelle (réseau non authentifié par le mobile)],
+  [Clonage de SIM via COMP128],
+
   [Standard mondial (roaming international)], [Peu résistant aux attaques modernes], [],
   [Base des réseaux modernes (3G/4G/5G en héritent)], [], [],
 )
@@ -182,12 +185,35 @@
   stroke: 0.4pt,
   align: left,
   table.header[*Aspect critique*][*Mécanisme / problème*][*Impact sécurité*][*Recommandation*],
-  [Auth. unilatérale], [Seul le réseau authentifie le mobile — le mobile ne peut pas vérifier l'authenticité du réseau], [Attaque par fausse BTS (IMSI Catcher)], [Authentification mutuelle (comme en LTE/5G)],
-  [Algos A5 faibles], [A5/1 et A5/2 aujourd'hui cassables cryptographiquement], [Interception des communications possible], [Algorithmes robustes (ex. AES)],
-  [COMP128 vulnérable], [Récupération de Ki possible dans certaines conditions (attaques side-channel)], [Clonage de SIM et usurpation d'identité], [Remplacer COMP128 par fonctions basées sur AES ou SHA-2],
-  [IMSI en clair], [L'IMSI peut être transmis en clair lors de certaines procédures d'enregistrement réseau], [Suivi et identification des utilisateurs à distance], [Identifiants temporaires (TMSI en GSM, GUTI en LTE, SUCI chiffré en 5G)],
-  [Chiffrement limité], [GSM chiffre seulement le tronçon téléphone-antenne — le cœur du réseau opérateur ne chiffre pas], [Communications interceptables dans le réseau de l'opérateur], [Chiffrement étendu à toute l'architecture réseau],
-  [Obsolescence], [Conçu dans les années 1980 avec des exigences de sécurité de l'époque], [Difficile d'adapter aux menaces modernes], [Migration progressive vers LTE et 5G],
+  [Auth. unilatérale],
+  [Seul le réseau authentifie le mobile — le mobile ne peut pas vérifier l'authenticité du réseau],
+  [Attaque par fausse BTS (IMSI Catcher)],
+  [Authentification mutuelle (comme en LTE/5G)],
+
+  [Algos A5 faibles],
+  [A5/1 et A5/2 aujourd'hui cassables cryptographiquement],
+  [Interception des communications possible],
+  [Algorithmes robustes (ex. AES)],
+
+  [COMP128 vulnérable],
+  [Récupération de Ki possible dans certaines conditions (attaques side-channel)],
+  [Clonage de SIM et usurpation d'identité],
+  [Remplacer COMP128 par fonctions basées sur AES ou SHA-2],
+
+  [IMSI en clair],
+  [L'IMSI peut être transmis en clair lors de certaines procédures d'enregistrement réseau],
+  [Suivi et identification des utilisateurs à distance],
+  [Identifiants temporaires (TMSI en GSM, GUTI en LTE, SUCI chiffré en 5G)],
+
+  [Chiffrement limité],
+  [GSM chiffre seulement le tronçon téléphone-antenne — le cœur du réseau opérateur ne chiffre pas],
+  [Communications interceptables dans le réseau de l'opérateur],
+  [Chiffrement étendu à toute l'architecture réseau],
+
+  [Obsolescence],
+  [Conçu dans les années 1980 avec des exigences de sécurité de l'époque],
+  [Difficile d'adapter aux menaces modernes],
+  [Migration progressive vers LTE et 5G],
 )
 
 = UMTS (3G)
@@ -409,7 +435,8 @@ Tendances clés :
 
 #text(red, "Motivation SCTP/MPTCP"): migration PSTN → packet, signalisation téléphonique, ni TCP ni UDP n'est adapté.
 #text(red, "SCTP — Historique"): standardisé par IETF début des années 2000 (RFC 2960, révisé RFC 4960), initialement conçu pour *SIGTRAN* — transporter la signalisation SS7 over IP. Couche OSI *4 (Transport)*. Contexte: les équipements modernes ont plusieurs interfaces réseau (Wi-Fi, 4G, 5G), d'où les besoins de mobilité sans coupure, haute disponibilité et sécurité anti-DoS.
-#text(red, "TCP"): fiable, orienté bytes, mais head-of-line blocking, pas de multi-homing, vulnérable DoS (SYN flood).
+#text(red, "TCP"): protocole de transport fiable, orienté flux d'octets (bytestream), identifié par un *4-tuple* (IP_src, IP_dst, Port_src, Port_dst). Contrôle de congestion: +1 segment/RTT sur succès, division par 2 sur perte (réagit à la congestion, ne la prévient pas). Limites: head-of-line blocking, pas de multi-homing, connexion liée à sa paire IP/Port (si l'adresse IP change, la connexion doit être réétablie), vulnérable au DoS (SYN flood).
+#text(red, "ECMP (Equal Cost Multipath)"): mécanisme de routage qui distribue les connexions sur plusieurs chemins de coût égal via hashage: Hash(IP_src, IP_dst, Protocole, Port_src, Port_dst) mod nb_sorties — tous les paquets d'une même connexion TCP suivent le *même chemin*, deux connexions différentes peuvent emprunter des chemins distincts. Conséquence: une connexion TCP standard ne peut pas exploiter plusieurs chemins simultanément.
 #text(red, "UDP"): orienté messages, mais sans fiabilité, sans contrôle de congestion ni de flux.
 #text(red, "SCTP"): combine le meilleur des deux.
 *Fiable*: acquittements, retransmissions comme TCP.
@@ -440,8 +467,9 @@ Tendances clés :
   [Protection intégrée], [Non (TCP doit utiliser SYN Cookies)], [Oui (mécanisme du cookie SCTP intégré)],
 )
 #text(red, "SCTP — Cas d'usage"): *SIGTRAN (RFC 2719)*: transport de la signalisation SS7 over IP — le multi-homing garantit le failover entre liens, le multi-streaming évite le HoL blocking entre types de messages SS7. *Plan de contrôle LTE/5G*: NGAP (N2: gNB↔AMF en 5G) et S1AP (S1: eNB↔MME en LTE) fonctionnent sur SCTP — le multi-homing assure la redondance entre stations de base et nœuds cœur. *Limite importante*: traversée NAT/Firewall *difficile* — SCTP utilise son propre numéro de protocole IP (132), de nombreux équipements réseau (NAT, pare-feux) ne savent pas le traiter correctement.
-#text(red, "MPTCP — Historique et Problèmes adressés"): standardisé vers *2013* (RFC 6824), conçu pour l'ère smartphone/mobile. Problèmes TCP adressés: *connexion liée à une paire IP/Port stricte* (impossible de changer d'interface sans couper la session), *coupure lors de handover* (basculement Wi-Fi→Cellulaire entraîne une reconnexion), *sous-utilisation de la bande passante* (une seule interface utilisée à la fois même si plusieurs disponibles). Solution: étendre TCP pour utiliser plusieurs chemins tout en restant transparent pour le réseau.
+#text(red, "MPTCP — Historique et Problèmes adressés"): standardisé en *2013* (RFC 6824, révisé RFC 8684), conçu pour l'ère smartphone/mobile. Implémenté dans le kernel, compatible avec l'API socket TCP existante (support Linux mainline depuis kernel 5.6). Problèmes TCP adressés: *connexion liée à une paire IP/Port stricte* (impossible de changer d'interface sans couper la session), *coupure lors de handover* (basculement Wi-Fi→Cellulaire entraîne une reconnexion), *sous-utilisation de la bande passante* (une seule interface utilisée à la fois même si plusieurs disponibles). Solution: étendre TCP pour utiliser plusieurs chemins tout en restant transparent pour le réseau et les applications.
 #text(red, "MPTCP (Multipath TCP"): extension de TCP standard, transparent pour les applications.
+*Approche naïve impossible*: envoyer des paquets sur deux chemins avec les numéros de séquence d'une même connexion TCP est rejeté par les équipements réseau (pas de connexion TCP correspondante sur le second chemin). *Décision de conception*: une connexion MPTCP est composée d'un ou plusieurs *sous-flux TCP réguliers* combinés — chaque sous-flux apparaît comme une connexion TCP normale le long de son chemin, les deux hôtes maintiennent un état (*mpcb*) qui les relie ensemble.
 *Transferts transparents*: bascule d'un chemin à l'autre sans couper la connexion TCP — ex. Apple utilise MPTCP sur iPhone (Wi-Fi → 4G sans interruption).
 *Sélection du meilleur chemin*: choix dynamique selon latence, pertes, coût, bande passante. *Agrégation*: utilisation simultanée de plusieurs chemins pour cumuler les débits — ex. Wi-Fi + 4G en même temps.
 *Établissement MPTCP* : Connexion principale : SYN (MP_CAPABLE + clé client) → SYN/ACK (MP_CAPABLE + clé serveur) → ACK (les deux clés).
@@ -460,8 +488,11 @@ Tendances clés :
   [ADD_ADDR], [Informer l'autre extrémité d'une nouvelle adresse IP disponible — peut déclencher un MP_JOIN],
   [MP_PRIO], [Demander un changement de priorité d'un chemin — ex: préférer Wi-Fi à 4G],
   [Data FIN], [Terminer la connexion MPTCP globalement (équivalent FIN TCP, applicable à tous les sous-flux)],
+  [REMOVE_ADDR], [Signaler qu'une adresse IP n'est plus disponible — déclenche la fermeture du sous-flux associé (complément de ADD_ADDR)],
 )
 #text(red, "MPTCP — Cas d'usage"): *Mobile handover (iOS/Android)*: maintient les sessions lors du basculement Wi-Fi↔LTE sans reconnexion — Apple utilise MPTCP pour Siri, Maps et Music depuis *iOS 7*. *Agrégation de bande passante*: Wi-Fi + cellulaire simultanément pour cumuler les débits. *Roaming Wi-Fi entreprise*: handover transparent entre points d'accès sans coupure de session.
+#text(red, "MPTCP — Retransmissions"): *Perte sur un sous-flux*: fast retransmit effectué sur le *même sous-flux* (comme TCP standard). *Timeout expiré*: réévaluation — le segment peut être retransmis sur un *autre sous-flux* disponible. *Perte d'un sous-flux entier*: toutes les données non-acquittées sont retransmises sur les autres sous-flux.
+#text(red, "MPTCP — Contrôle de flux"): MPTCP maintient *une seule fenêtre par connexion*, partagée entre tous les sous-flux, relative au dernier *DAck (Data Acknowledgement)*. Transmise dans le champ `window` du header TCP standard. En présence de middleboxes modifiant ce champ: utiliser la plus grande fenêtre reçue au niveau MPTCP et la fenêtre par sous-flux pour respecter les contraintes du middlebox. *DSN (Data Sequence Number)*: 64 bits (optimisation: transmettre seulement les 32 bits inférieurs).
 #text(red, "Comparaison Couche 4 — UDP / TCP / SCTP / MPTCP"):
 #table(
   columns: (auto, 1fr, 1fr, 1fr, 1fr),
@@ -474,6 +505,7 @@ Tendances clés :
   [Ordre de livraison], [Aucun], [Strict], [Flexible (par flux)], [Strict],
   [Traversée NAT/Firewall], [Facile], [Facile], [*Difficile*], [Facile],
 )
+#text(red, "MPTCP — Topologies Datacenter"): les DC traditionnels en *arbre hiérarchique* n'ont qu'un seul chemin actif entre deux serveurs (faible performance, non tolérant aux pannes). Les architectures modernes offrent plusieurs chemins parallèles exploitables par MPTCP: *FatTree* (K pods de K switches + switches d'agrégation, tous les chemins de coût égal), *BCube*, *VL2*, *EC2*. MPTCP distribue les sous-flux sur ces chemins parallèles pour maximiser débit et résilience sans modifier les équipements réseau.
 
 = DIAMETER / RADIUS
 
@@ -627,6 +659,8 @@ TODO REMOVE objectives :
 #text(red, "Fonctionnement MPLS en 4 étapes"): (1a) Les protocoles de routage (OSPF-TE, IS-IS-TE) échangent la joignabilité des réseaux. (1b) LDP établit les mappings label-destination entre tous les LSR. (2) Le LER ingress reçoit le paquet IP, détermine le FEC, attribue et pousse un label (PUSH). (3) Chaque LSR core lit le label, le swappent selon sa table (SWAP), transmet au prochain saut — sans jamais lire l'IP. (4) Le LER egress retire le label (POP) et livre le paquet IP.
 #text(red, "MPLS et ATM"): le mécanisme de forwarding MPLS (label swapping) est identique au forwarding matériel ATM (VCI swapping). Un switch ATM peut donc fonctionner comme un LSR MPLS: il suffit de remplacer le logiciel de contrôle ATM par des protocoles de routage IP et LDP pour établir les tables VCI automatiquement — sans changer le matériel de forwarding.
 #text(red, "VPN sur MPLS"): MPLS permet de créer des VPNs (Virtual Private Networks) isolés sur un même coeur réseau partagé. Chaque client a son propre espace d'adressage IP, invisible des autres. Les paquets clients sont encapsulés avec un label de VPN (outer) + label de transport (inner). Le coeur MPLS transporte les flux de plusieurs VPNs simultanément sans qu'ils se voient. Tunnels GRE CE-CE possibles entre sites clients.
+#text(red, "MPLS VPN — iBGP-free core"): dans un réseau ISP multi-clients, MPLS VPN permet au coeur de rester ignorant des préfixes clients (ex. Cust A = AS11, Cust B = AS22). Les paquets sont encapsulés dans des tunnels MPLS dès l'entrée au niveau des PE (Provider Edge). Le coeur ISP (P routers, ex. AS65000) commute uniquement sur les labels sans connaître les routes clients, pas besoin d'iBGP dans le coeur, seuls les routeurs PE en bordure parlent eBGP avec les clients. Scalabilité: ajouter un client = configurer uniquement les PE, le coeur reste inchangé.
+#text(red, "Segment Routing (SR)"): extension de MPLS/IPv6 qui simplifie le Traffic Engineering en encodant les instructions de routage directement dans le header du paquet sous forme de liste de segments (liste d'instructions de forwarding). Plus besoin de LDP/RSVP-TE par noeud: le contrôleur SDN calcule le chemin et l'encode dans le paquet, les routeurs exécutent sans état distribué (stateless core). Supporte MPLS (labels) et IPv6 (SRv6). Avantages par rapport à MPLS traditionnel: TE simplifié, FRR (Fast Reroute) intégré, scalabilité améliorée, SDN-ready. Application: *réseau de transport 5G* — un contrôleur SDN gère un plan de forwarding unifié (Unified Service Plane + Unified Forwarding Plane basé sur SR) couvrant le Core DC, l'Aggregation/Edge et l'Access Network.
 
 = Satellite
 
@@ -644,6 +678,35 @@ TODO REMOVE objectives :
 #text(red, "Elastic Optical Network"): modulation adaptative selon la distance: QPSK (phase shifting sur 4 états) pour longues distances (1000 km) à 400 Gbit/s car robuste au bruit, 16QAM pour courtes distances (200 km) à plus haut débit spectral. Elastic channel spacing: largeur de canal variable selon le besoin (pas de grille fixe) pour optimiser l'utilisation du spectre.
 #text(red, "Évolution des technologies réseau"): 3 époques. *Ère Circuit* (avant 1990): PDH, transport de voix par circuits dédiés. *Ère Optique* (1990-2000): SDH + WDM, transport numérique synchrone sur fibre, multiplexage en longueur d'onde. *Ère Packet* (depuis 2000): IP/MPLS + OTH + NG-SDH, tout devient paquets IP portés par des couches optiques intelligentes.
 #text(red, "Câbles sous-marins"): l'essentiel du trafic internet intercontinental transite par des câbles en fibre optique déposés sur le fond des océans par des navires câbliers spécialisés. Structure renforcée: fibres optiques dans un tube, entourées d'armature acier pour résistance mécanique et protection contre la pression. Longueurs: milliers à dizaines de milliers de km (ex. Atlantic Crossing-1: 14 301 km). Carte mondiale: submarinecablemap.com.
+
+= Automatisation Réseau
+
+#text(red, "Problèmes de gestion réseau"): les réseaux modernes sont complexes et les changements sont coûteux. Principaux défis: gérer des milliers d'équipements, maintenir l'inventaire (numéros de série, contrats support), lifecycle management (releases, configurations, patches), baselining, tests et rollback, observabilité (ex. quelles sessions BGP ont eu le plus de mises à jour ?). Documenter le réseau et maintenir la documentation à jour est difficile. En pratique les réseaux "Greenfield" (sans contraintes héritées) n'existent pas.
+
+#text(red, "Objectifs de l'automatisation réseau"): réduire les erreurs humaines, éliminer les tâches répétitives et manuelles, simplifier l'architecture, capturer et documenter les workflows manuels, contrôler les coûts, assurer la gestion de configuration et la reprise après sinistre, scaler les ressources. Effets de bord positifs: force le cycle Analyze-Plan-Implement-Measure, facilite la compliance (ex. "IGP désactivé sur toutes les interfaces eBGP ?"), corrélation et gestion des données réseau.
+
+#text(red, "Évolution du provisioning réseau"): de 1996 à 2013, les commandes CLI réseau n'ont pas changé, seul le protocole de transport a évolué (Telnet vers SSH). La vraie évolution nécessite une automatisation programmable, pas seulement un accès plus sécurisé.
+
+#text(red, "Automatisation par script (exemple Netmiko)"): au lieu d'une connexion SSH manuelle à chaque équipement, un script Python avec *Netmiko* (`ConnectHandler`) exécute automatiquement les commandes et collecte les résultats. Une boucle `for router in network` applique le même script à des dizaines ou centaines d'équipements simultanément, sans erreurs de frappe. Leçon clé: l'itération n'ajoute pas seulement de la simplicité, elle produit de la *connaissance* (visibilité instantanée sur l'ensemble du parc).
+
+#text(red, "Outils d'automatisation réseau"): *Netmiko/NAPALM*: bibliothèques Python multi-vendeur pour interagir via CLI/SSH. *Ansible/Puppet/Chef/SALT*: frameworks d'automatisation et de gestion de configuration (idempotents). *Jinja*: moteur de templates pour générer des configurations. *Git*: versioning des configurations réseau (Infrastructure as Code). *GNS3/EVE-NG/Cisco CML*: émulateurs réseau pour tester l'automation avant production.
+
+= Programmabilité et Data Models
+
+#text(red, "Model Driven Programmability"): paradigme moderne pour interagir avec les équipements réseau via des modèles de données standardisés plutôt que via du texte CLI propriétaire. Stack de communication (de haut en bas): *APP* vers *ncclient/requests/postman* vers *Model Driven API (YDK)* vers *NETCONF/RESTCONF/gRPC* vers *XML/JSON/GPB* vers *SSH/HTTP(S)* vers *DATA Model (YANG)*.
+#text(red, "Données structurées vs non structurées"): les programmes lisent par défaut le texte comme une suite de lettres. Sans structure, la machine ne peut pas interpréter automatiquement la signification des données. Les formats *JSON*, *YAML*, *YANG*, *XML* fournissent la structure syntaxique et sémantique nécessaire au parsing automatique, sans code propriétaire par équipement.
+
+#text(red, "DATA Model Language"): langage qui définit explicitement la structure, la syntaxe et la sémantique des données. Doit être cohérent, complet et externellement visible. Exemple: *YANG* (RFC 6020/7950) est le langage de modélisation standardisé utilisé par NETCONF et RESTCONF.
+
+#text(red, "DATA Model"): framework décrivant un équipement spécifique — définit quels paramètres existent, leurs types et leurs relations. Exemple: le modèle de configuration OSPF d'un routeur.
+
+#text(red, "DATA"): instance concrète d'un DATA Model pour un équipement donné, les valeurs réelles configurées (ex. `router_id = 3.3.3.3`, `ospf_area = 0`).
+
+#text(red, "Protocols (NETCONF/RESTCONF/gRPC)"): fournissent les primitives pour lire et manipuler la DATA selon le modèle. *NETCONF*: via SSH, encodage XML. *RESTCONF*: via HTTP(S), encodage JSON ou XML. *gRPC*: via HTTP/2, encodage GPB (Google Protocol Buffers), très performant pour le streaming de télémétrie réseau.
+
+#text(red, "Workflow Data Modeling"): Pipeline Data Modeling vers Rendering vers Implementing: (1) *Valeurs* (Excel/CSV): paramètres réseau (IP, OSPF area, hostname, type d'OS). (2) *Templates* (Jinja): squelette de configuration avec variables et conditionnels par type d'OS. (3) *Python*: lit les valeurs, applique le template, génère la configuration spécifique à chaque équipement. (4) *Automation Framework* (Ansible...): déploie la configuration sur les devices.
+
+#text(red, "Hétérogénéité des OS réseau"): IOS (Cisco), NXOS (Cisco Nexus) et EOS (Arista) ont des syntaxes CLI différentes pour les mêmes concepts réseau. Exemple pour OSPF: IOS utilise `ip ospf <pid> area <area>`, NXOS utilise `ip router ospf <pid> area <area>`, EOS utilise `ip ospf area <area>`. Un template Jinja avec des conditionnels par type d'OS (`{% if item.type == "cisco_ios" %}`) génère la bonne syntaxe à partir du même data model abstrait, rendant l'automatisation multi-vendeur possible.
 
 = Cloud and Network Architecture Evolution
 
@@ -667,6 +730,7 @@ Locate SDN place in a virtualization architecture
 #text(red, "NV — Défis de recherche"): Interfaçage, Signalisation et bootstrapping, Découverte des ressources et topologie, Allocation des ressources et provisioning, Contrôle d'admission et surveillance d'usage, Nœuds et liens virtuels, Nommage et adressage, Gestion de la mobilité, Monitoring/Configuration/Gestion des pannes, Sécurité et vie privée, Interopérabilité, Économie de la virtualisation réseau.
 #text(red, "NV — À retenir"): la NV occupe une position unique dans l'espace de virtualisation. *D'un côté*: un réseau virtualisé est nécessaire pour interconnecter tous les équipements virtualisés et leur donner une apparence fidèle à leurs homologues physiques. *De l'autre*: l'Internet a atteint un plateau — un redesign est une nécessité, pas un luxe. La NV peut jouer un rôle moteur pour promouvoir l'innovation via des technologies disruptives.
 #image("img/nv_internal_external.png", width: 100%)
+#text(red, "SDN et Virtualisation: le Nirvana"): objectif ultime de la virtualisation réseau, réalisé par la combinaison de la virtualisation serveur et de la virtualisation réseau. *Server Virtualization* (hyperviseur): N VMs s'exécutent sur 1 serveur physique, chaque VM croit être une machine physique indépendante. *Network Virtualization* (contrôleur SDN): N réseaux virtuels s'exécutent sur 1 réseau physique, chaque réseau virtuel croit être un réseau physique indépendant. Les réseaux *Overlay* (virtuels, isolés entre clients) s'appuient de façon transparente sur l'*Underlay* (infrastructure physique partagée).
 #text(red, "Data center"): infrastructure physique hébergeant des systèmes informatiques et leurs composants (télécommunications, calcul, stockage). Inclut alimentation redondante, refroidissement, connectivité réseau redondante et contrôle d'accès physique. *Tiers* (certification Uptime Institute): *Tier I* infrastructure basique non-redondante, 99.671% dispo (28.8h downtime/an). *Tier II* composants redondants, 99.741% (22.7h). *Tier III* maintenable en continu (N+1), 99.982% (1.6h). *Tier IV* tolérant aux pannes (2N+1), 99.995% (25 min), équipements dual-powered, résiste 96h sans alimentation externe.
 #text(red, "Cloud computing"): applications et services fournis sur Internet depuis des data centers. Transformation IT: Innovation > Produits IT (achat+maintenance) > *Cloud* (on-demand, pay-as-you-go). Analogue à l'eau: générer soi-même > acheter en camion > robinet à la demande. *5 caractéristiques essentielles*: *Resource Pooling* (fondamentale: ressources mutualisées entre clients selon policies), *On-Demand Self-Service* (provisioning sans intervention humaine), *Broad Network Access* (accès réseau universel, sans accès physique), *Rapid Elasticity* (scaling automatique selon la demande), *Measured Service* (facturation à l'usage, à la minute/heure). *Pourquoi*: pay-as-you-go, gestion IT simplifiée, scalabilité instantanée, flexibilité, meilleure utilisation des ressources, réduction empreinte carbone (mutualisation).
 #text(red, "IaaS (Infrastructure as a Service)"): outsource de l'équipement (storage, hardware, servers, network). "Migrate to it." *Bénéfices*: billing à l'usage, automation des tâches admin, dynamic scaling, desktop virtualization, policy-based services. *Inconvénients*: moins de contrôle sur le hardware, dépendance provider, latence réseau. *Sécurité*: dépend du modèle de déploiement (cf. Cloud models).
@@ -684,6 +748,15 @@ Locate SDN place in a virtualization architecture
 #text(red, "Hypervisor Type 2"): "hosted", installé sur un OS existant (Windows, Linux, macOS). La machine physique = host machine. Moins efficace (couche OS supplémentaire). Ex: VMware Workstation, Oracle VirtualBox, VMware Fusion, Parallels.
 #text(red, "Network Function Virtualization (NFV)"): virtualise les fonctions réseau (routeur, firewall, load balancer…) sur du hardware commodity (COTS) au lieu d'équipements dédiés. *Valeurs*: vitesse, agilité et réduction des coûts. En centralisant sur du hardware commodity, les opérateurs peuvent: concevoir un seul design PoP/site, utiliser les ressources plus efficacement, déployer des fonctions réseau sans envoyer d'ingénieurs sur chaque site, réduire OpEx et CapEx, réduire la complexité système. *Avant (actuel)*: un appliance physique dédié par fonction (router, firewall, load balancer, distribution switch, web servers) — fully redundant, 40A. *Après (NFV)*: toutes les fonctions virtualisées dans le cloud sur des blade servers ou large hypervisors — scalable, 20A.
 #image("img/nfv.png", width: 100%)
+#text(red, "VNF (Virtual Network Function)"): une ou plusieurs VMs réalisant une seule fonction réseau (ex. routeur virtuel, firewall virtuel, load balancer virtuel).
+#text(red, "Service Chain"): collection d'une ou plusieurs VNFs fournissant un service réseau complet end-to-end (ex. FW + LB + routeur virtuel).
+#text(red, "VNF Catalog"): référentiel des VNFs disponibles — chaque entrée contient l'image, la description et les prérequis (compute, réseau). Un *VNF Instance* déployé possède: image, configuration, liens (connexions), ressources compute et réseau. Un *Network Service* est un assemblage de plusieurs VNF Instances interconnectées.
+#text(red, "NFV MANO (Management and Orchestration)"): framework standardisé par l'*ETSI* (standard IFA011) pour gérer l'ensemble du cycle de vie NFV. Composé de deux parties: le *Framework NFV* (NFVI, VNF Domain, OSS/BSS) et le bloc *MANO* (VIM, VNFM, NFVO). L'ETSI définit également les *interfaces standardisées* entre chaque composant (ex. Nf-Vi entre NFVI et VIM, Or-Vnfm entre NFVO et VNFM, Ve-Vnfm entre VNF et VNFM) — c'est ce qui rend possible les déploiements *multi-vendeur*: VIM d'un fournisseur, VNFM d'un autre, NFVO d'un troisième, tout en garantissant l'interopérabilité.
+#text(red, "NFVI (Network Function Virtualization Infrastructure)"): ensemble hardware et software nécessaire pour héberger les VNFs. Couches: *Hardware* (compute, réseau, stockage physiques) vers *Couche de virtualisation* (hyperviseur) vers *Ressources virtuelles* (réseau virtuel, compute virtuel, stockage virtuel exposés aux VNFs).
+#text(red, "VIM (Virtual Infrastructure Manager)"): contrôle et gère les ressources compute, réseau et stockage de l'NFVI. Exemple: *OpenStack* (VIM open source de référence). Interface entre l'orchestration NFV et l'infrastructure physique.
+#text(red, "VNFM (VNF Manager)"): gère le cycle de vie des VNFs individuels. Workflow: *VNF Provisioning* (bootstrap VM) vers *VNF Configuration* (VM Alive, Service Bootstrap) vers *VNF Monitor* (Service UP, Service Functional) vers *Analytical Engine* vers *Rule Engine*. Événements surveillés: VM UP/DOWN, dépassement de seuil de charge, Service UP, erreur de boot, device introuvable. Actions possibles: Notify, Restart VM, Restart Service, Advertise Service, Scale UP/DOWN (prédéfinies ou via custom scripts).
+#text(red, "NFVO (NFV Orchestrator)"): gère le cycle de vie des Network Services sur un réseau multi-domaine (VNF Domain + NFVI Domain). Alimenté par Network Engineering, Operation et Service creation. Caractéristiques clés: Model driven service creation, Service Abstraction (API unique par service), Open NB interface, Network Abstraction (devices physiques et virtuels), Transaction support (all or nothing avec rollback), Multivendor support.
+#text(red, "Stack NFV complète"): De bas en haut: *Underlay Technologies* (hardware physique: serveurs, switches, stockage) vers *Virtualization and Overlay* (KVM, VXLAN/OpenFlow/MPLS/EVPN, CEPH/Swift) vers *VIM and SDN Controllers* (OpenStack, APIC, OpenDaylight, ONOS) vers *Management and Orchestration ETSI NFV MANO* (Cisco NSO, Ansible) vers *Services Consumption* (portails, BSS) vers *SDN and NFV Solutions* (Cloud VPN, vCPE, vEPC) vers *Business Outcomes*.
 #text(red, "Composants réseau virtuels"): des composants réseau virtualisés existent déjà. *Cisco*: Nexus 1000-V (vSwitch), Virtual Security Gateway (VSG). *VMware*: vShield Edge (firewall et VPN), vShield Endpoint (conformité sécurité et protection des données). *Extreme Networks*: XNV network hypervisor. *Vyatta*: routeur/firewall/VPN enterprise-grade installé directement sur serveurs physiques pour les transformer en routeurs.
 #text(red, "Open vSwitch (OVS)"): switch logiciel open source de qualité production pour environnements serveurs virtualisés. Achemine le trafic entre VMs sur le même hôte physique et entre VMs et le réseau physique. Interfaces de gestion: sFlow, NetFlow, RSPAN, CLI. Programmable et contrôlé via *OpenFlow* et *OVSDB*.
 #text(red, "Cloud networking"): objectif: créer un pool fluide de ressources sur serveurs et data centers, accessible à la demande. *2 missions*: permettre le mouvement de ce pool comme ressource virtuelle unique, connecter les utilisateurs indépendamment de leur localisation. *3 structures interdépendantes*: front-end (utilisateurs ↔ apps), horizontal (interconnexion serveurs physiques + mobilité VMs), storage networks. Réseau cloud construit en L2 ou L3. *Exigences*: bande passante on-demand, très faible latence storage/DC/LAN, connexions non bloquantes entre serveurs (mobilité VM), plan de gestion unifié, visibilité malgré l'environnement dynamique.
@@ -696,6 +769,8 @@ Locate SDN place in a virtualization architecture
 #text(red, "VM Migration avec VXLAN"): VXLAN (même principe pour NVGRE ou STT) résout le problème cross-subnet : un réseau L2 virtuel VXLAN est étendu entre les deux sites via le WAN. Les VTEPs (dans les switches/hyperviseurs) encapsulent le trafic en VXLAN sur le WAN — la VM garde sa même IP, aucune reconfiguration nécessaire.
 #text(red, "Traffic Trombone"): problème post-migration quand la VM migre vers un autre site mais que ses dépendances (firewall, load balancer, stockage, ressources) restent sur le site d'origine. Le trafic doit traverser le WAN en aller-retour inutilement (HR client → WAN → site origine → WAN → VM migrée) au lieu de rester local. Solution: la flexibilité réseau doit être augmentée — c'est la motivation principale pour le *SDN (Software Defined Networking)*.
 #text(red, "SDN (Software Defined Networking)"): architecture réseau qui *sépare* le *control plane* (prise de décision: quelle route, quelle règle ?) du *data plane* (forwarding: exécution physique des décisions). Dans les réseaux traditionnels ces deux plans sont fusionnés dans chaque équipement — SDN les découple en centralisant le contrôle dans un *Network Operating System (netOS)*. Celui-ci collecte les informations des équipements, offre une vue globale du réseau aux applications et leur diffuse les commandes. Les équipements ne font plus que du forwarding. Moteurs de l'essor SDN: Cloud Computing, Big Data, Mobilité.
+#text(red, "SDN vs équipement traditionnel"): dans un routeur classique (ex. Cisco), le plan de contrôle (OSPF, BGP calculent les routes) et le plan de forwarding (CEF exécute la transmission) sont co-localisés dans le même équipement. SDN sépare ces deux plans: l'équipement ne conserve que le plan de forwarding, le plan de contrôle est déporté dans un contrôleur externe via un protocole SDN (OpenFlow, NETCONF, BGP...).
+#text(red, "SDN — Résilience (tradeoff)"): dans un réseau traditionnel, le contrôle est distribué (chaque équipement a son propre cerveau): si un équipement tombe, les autres continuent de fonctionner indépendamment. Dans un réseau SDN, le contrôle est centralisé dans le contrôleur: si le contrôleur tombe, tous les équipements du réseau perdent leur capacité de prise de décision. Mitigation: contrôleurs redondants (architecture master/slave), conserver une table de routage locale de secours sur les équipements.
 #text(red, "Réseaux traditionnels — Limites SDN"): *Spécificité*: chaque protocole résout un problème spécifique sans abstraction commune (ex. OSPF a sa propre table de routage, STP sa propre table de spanning tree — aucun partage). *Communication*: pour connaître la topologie globale, chaque équipement doit échanger des messages avec ses voisins (protocoles distribués, coûteux). *Configuration*: chaque équipement configuré séparément → complexité de gestion croissante. *Flexibilité*: tout changement d'architecture (ajout d'une règle, d'une politique) impose la reconfiguration de nombreux équipements. Code source fermé (propriétaire), interactions difficiles entre constructeurs différents.
 #text(red, "SDN — Architecture (3 couches)"): *Application Layer*: applications métier (routing, contrôle d'accès, monitoring, traffic engineering) — programmées via la *Northbound API* (interface exposée par le controller vers les apps, ex: REST, NETCONF, XMPP). *Control Layer (Controller)*: cerveau SDN — collecte les infos des équipements, maintient une vue globale du réseau, diffuse les commandes via la *Southbound API* (interface vers les équipements, ex: OpenFlow, OVSDB). *Infrastructure Layer (Data Plane)*: équipements réseau physiques ou virtuels, font uniquement le forwarding de paquets. *2 abstractions clés*: (1) *Common Flow Abstraction* — chaque équipement expose une table d'identifiants et d'actions (Switch API), applicable à routers, switches, etc. (2) *Common Map Abstraction* — le netOS construit et expose une vue logique globale du réseau aux applications.
 #text(red, "SDN — Bénéfices"): configuration réseau simplifiée car centralisée en un seul point (controller), architecture dynamique et adaptable à la demande, tout le monde peut développer des applications réseau (pas seulement les constructeurs d'équipements), équipements réseau plus simples, rapides et moins chers (ils ne font que du forwarding), interface de programmation standardisée améliore la vérification, l'extensibilité et la maintenabilité.
